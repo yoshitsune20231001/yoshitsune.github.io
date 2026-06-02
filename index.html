@@ -51,11 +51,30 @@
 
     /* ヒーローセクション */
     .hero {
-      background: linear-gradient(rgba(0,0,0,0.52), rgba(0,0,0,0.52)),
-                  url('hero.png') center center / cover no-repeat;
+      position: relative;
       color: #f0e6d0;
       text-align: center;
-      padding: 140px 20px;
+      padding: 80px 20px;
+      background: #2c1a0e;
+      overflow: hidden;
+    }
+
+    .hero-img {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      opacity: 0.55;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
     }
 
     .hero h1 {
@@ -422,9 +441,12 @@
   </header>
 
   <div class="hero">
-    <h1>義恒</h1>
-    <p>滋賀県近江八幡から、日本の良いものをお届けします</p>
-    <p class="subtitle">ECサイト販売 ／ 八幡堀 古民家スペース 物品販売</p>
+    <img src="hero.png" alt="義恒" class="hero-img">
+    <div class="hero-content">
+      <h1>義恒</h1>
+      <p>滋賀県近江八幡から、日本の良いものをお届けします</p>
+      <p class="subtitle">ECサイト販売 ／ 八幡堀 古民家スペース 物品販売</p>
+    </div>
   </div>
 
   <section id="business">
