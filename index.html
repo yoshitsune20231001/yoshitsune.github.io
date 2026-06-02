@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>義恒 | 滋賀県近江八幡市</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'MS Mincho', serif;
+      color: #333;
+      background: #fafaf8;
+    }
+
+    /* ヘッダー */
+    header {
+      background: #2c1a0e;
+      color: #f0e6d0;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header .logo {
+      font-size: 1.8rem;
+      letter-spacing: 0.2em;
+    }
+
+    nav a {
+      color: #f0e6d0;
+      text-decoration: none;
+      margin-left: 30px;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: #c9a96e;
+    }
+
+    /* ヒーローセクション */
+    .hero {
+      background: linear-gradient(135deg, #2c1a0e 0%, #5a3a1a 50%, #8b6340 100%);
+      color: #f0e6d0;
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      letter-spacing: 0.5em;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      letter-spacing: 0.2em;
+      opacity: 0.85;
+      margin-bottom: 10px;
+    }
+
+    .hero .subtitle {
+      font-size: 1rem;
+      opacity: 0.7;
+      margin-top: 20px;
+    }
+
+    /* セクション共通 */
+    section {
+      padding: 80px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      letter-spacing: 0.3em;
+      color: #2c1a0e;
+      border-left: 5px solid #c9a96e;
+      padding-left: 16px;
+      margin-bottom: 40px;
+    }
+
+    /* 事業内容 */
+    .business-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 36px 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border-top: 4px solid #c9a96e;
+    }
+
+    .card h3 {
+      font-size: 1.15rem;
+      color: #2c1a0e;
+      margin-bottom: 14px;
+      letter-spacing: 0.1em;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: #555;
+    }
+
+    /* 会社概要 */
+    .company-info {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .company-info table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .company-info tr {
+      border-bottom: 1px solid #f0ebe3;
+    }
+
+    .company-info tr:last-child {
+      border-bottom: none;
+    }
+
+    .company-info th {
+      background: #f7f1e8;
+      color: #5a3a1a;
+      font-weight: normal;
+      width: 180px;
+      padding: 20px 24px;
+      text-align: left;
+      letter-spacing: 0.05em;
+      font-size: 0.95rem;
+      vertical-align: top;
+    }
+
+    .company-info td {
+      padding: 20px 24px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #444;
+    }
+
+    /* お問い合わせ */
+    #contact {
+      background: #2c1a0e;
+      color: #f0e6d0;
+      max-width: 100%;
+      padding: 80px 20px;
+    }
+
+    #contact .inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    #contact .section-title {
+      color: #f0e6d0;
+      border-left-color: #c9a96e;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 10px;
+    }
+
+    .contact-item {
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 30px 24px;
+    }
+
+    .contact-item .label {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    .contact-item .value {
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .contact-item a {
+      color: #c9a96e;
+      text-decoration: none;
+    }
+
+    .contact-item a:hover {
+      text-decoration: underline;
+    }
+
+    /* フッター */
+    footer {
+      background: #1a0f06;
+      color: rgba(240,230,208,0.6);
+      text-align: center;
+      padding: 24px;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* レスポンシブ */
+    @media (max-width: 600px) {
+      header {
+        padding: 0 16px;
+      }
+      nav a {
+        margin-left: 14px;
+        font-size: 0.85rem;
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .business-cards,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      .company-info th {
+        width: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">義恒</div>
+    <nav>
+      <a href="#business">事業内容</a>
+      <a href="#about">会社概要</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <h1>義恒</h1>
+    <p>滋賀県近江八幡から、日本の良いものをお届けします</p>
+    <p class="subtitle">ECサイト販売 ／ 八幡堀 古民家スペース 物品販売</p>
+  </div>
+
+  <section id="business">
+    <h2 class="section-title">事業内容</h2>
+    <div class="business-cards">
+      <div class="card">
+        <h3>ECサイト販売</h3>
+        <p>インターネットを通じて、こだわりの商品を全国へお届けしています。お客様の暮らしに彩りを添えるアイテムをセレクトし、丁寧にお届けします。</p>
+      </div>
+      <div class="card">
+        <h3>八幡堀 古民家スペース 物品販売</h3>
+        <p>滋賀県近江八幡・八幡堀の歴史ある古民家スペースにて、観光客の方々に向けた物品販売を行っています。地元の魅力を感じながら、特別なお買い物をお楽しみいただけます。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2 class="section-title">会社概要</h2>
+    <div class="company-info">
+      <table>
+        <tr>
+          <th>会社名</th>
+          <td>義恒</td>
+        </tr>
+        <tr>
+          <th>代表者名</th>
+          <td>川地　義行</td>
+        </tr>
+        <tr>
+          <th>設立</th>
+          <td>2023年10月1日</td>
+        </tr>
+        <tr>
+          <th>所在地</th>
+          <td>〒523-0801<br>滋賀県近江八幡市宮内町182-4　たばこ会館1階</td>
+        </tr>
+        <tr>
+          <th>電話番号</th>
+          <td><a href="tel:07041041001" style="color:#5a3a1a; text-decoration:none;">070-4104-1001</a></td>
+        </tr>
+        <tr>
+          <th>メールアドレス</th>
+          <td><a href="mailto:yoshitsune20231001@gmail.com" style="color:#5a3a1a; text-decoration:none;">yoshitsune20231001@gmail.com</a></td>
+        </tr>
+        <tr>
+          <th>事業内容</th>
+          <td>ECサイトでの物品販売<br>八幡堀古民家スペースにおける観光客への物品販売</td>
+        </tr>
+        <tr>
+          <th>従業員数</th>
+          <td>1名</td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <div id="contact">
+    <div class="inner">
+      <h2 class="section-title">お問い合わせ</h2>
+      <div class="contact-grid">
+        <div class="contact-item">
+          <div class="label">電話番号</div>
+          <div class="value"><a href="tel:07041041001">070-4104-1001</a></div>
+        </div>
+        <div class="contact-item">
+          <div class="label">メールアドレス</div>
+          <div class="value"><a href="mailto:yoshitsune20231001@gmail.com">yoshitsune20231001@gmail.com</a></div>
+        </div>
+        <div class="contact-item">
+          <div class="label">所在地</div>
+          <div class="value">滋賀県近江八幡市宮内町182-4<br>たばこ会館1階</div>
+        </div>
+        <div class="contact-item">
+          <div class="label">営業時間</div>
+          <div class="value">お気軽にお問い合わせください</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2023 義恒 All Rights Reserved.</p>
+  </footer>
+
+</body>
+</html>
