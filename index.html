@@ -255,6 +255,29 @@
       color: #444;
     }
 
+    /* 経営理念 */
+    .philosophy-box {
+      background: #2c1a0e;
+      color: #f0e6d0;
+      border-radius: 8px;
+      padding: 44px 40px;
+      font-size: 1rem;
+      line-height: 2.1;
+      letter-spacing: 0.05em;
+      position: relative;
+    }
+
+    .philosophy-box::before {
+      content: '「';
+      font-size: 4rem;
+      color: #c9a96e;
+      opacity: 0.3;
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      line-height: 1;
+    }
+
     /* 主な取引先・事業の強み */
     .two-col {
       display: grid;
@@ -436,6 +459,8 @@
       <a href="#business">事業内容</a>
       <a href="#about">会社概要</a>
       <a href="#history">沿革</a>
+      <a href="#philosophy">経営理念</a>
+      <a href="#partners">取引先</a>
       <a href="#strengths">事業の強み</a>
       <a href="#contact">お問い合わせ</a>
     </nav>
@@ -548,22 +573,34 @@
     </div>
   </div>
 
-  <!-- 主な取引先・事業の強み -->
+  <!-- 経営理念 -->
+  <section id="philosophy">
+    <h2 class="section-title">経営理念</h2>
+    <div class="philosophy-box">
+      私たちは、画面の向こうのお客様、店舗を訪れる地域の人々、そして支えてくださるお取引先様との「人とのつながり」をすべての事業の根幹に据えます。<br><br>
+      国内外への販路拡大やオリジナル商品の制作、積極的な情報発信を通じて世界中へ笑顔をお届けするとともに、出会えた一期一会を何より大切にいたします。関わるすべての人々と確かな絆を深め、心通う温かい未来を共に紡ぎ、豊かな社会の実現に貢献してまいります。
+    </div>
+  </section>
+
+  <!-- 主な取引先 -->
+  <div id="partners" style="background:#f7f1e8; padding:80px 20px;">
+    <div style="max-width:900px; margin:0 auto;">
+      <h2 class="section-title">主な取引先</h2>
+      <p style="font-size:0.9rem; color:#888; margin-bottom:24px;">約60社のお取引先のうち、主要な企業をご紹介します。</p>
+      <ul class="partners-list">
+        <li>伊万里陶芸<br><span style="font-size:0.82rem; color:#888;">波佐見焼・伊万里焼・有田焼</span></li>
+        <li>㈱三井陶器<br><span style="font-size:0.82rem; color:#888;">美濃焼・瀬戸焼</span></li>
+        <li>松本陶器㈱<br><span style="font-size:0.82rem; color:#888;">瀬戸焼</span></li>
+        <li>伊野正峰㈱<br><span style="font-size:0.82rem; color:#888;">九谷焼</span></li>
+        <li>㈱パレ<br><span style="font-size:0.82rem; color:#888;">ちりめん細工など</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 事業の強み -->
   <section id="strengths">
-    <h2 class="section-title">主な取引先 / 事業の強み</h2>
-    <div class="two-col">
-      <div>
-        <h3 style="font-size:1rem; color:#5a3a1a; letter-spacing:0.1em; margin-bottom:16px;">主な取引先 <span style="font-size:0.82rem; font-weight:normal; color:#888;">（約60社のうち）</span></h3>
-        <ul class="partners-list">
-          <li>伊万里陶芸<br><span style="font-size:0.82rem; color:#888;">波佐見焼・伊万里焼・有田焼</span></li>
-          <li>㈱三井陶器<br><span style="font-size:0.82rem; color:#888;">美濃焼・瀬戸焼</span></li>
-          <li>松本陶器㈱<br><span style="font-size:0.82rem; color:#888;">瀬戸焼</span></li>
-          <li>伊野正峰㈱<br><span style="font-size:0.82rem; color:#888;">九谷焼</span></li>
-          <li>㈱パレ<br><span style="font-size:0.82rem; color:#888;">ちりめん細工など</span></li>
-        </ul>
-      </div>
-      <div>
-        <h3 style="font-size:1rem; color:#5a3a1a; letter-spacing:0.1em; margin-bottom:16px;">事業の強み</h3>
+    <div>
+        <h2 class="section-title">事業の強み</h2>
         <ul class="strengths-list">
           <li>
             <strong>1. オン・オフライン＆グローバルを繋ぐ「多角的な販売網」</strong><br>
@@ -586,7 +623,6 @@
             今後はSNSでの発信や展示会への積極的な参加など、自社のストーリーや商品の魅力を外に向けてオープンに発信していくフェーズに入っています。実店舗や自社ECという「ファンが帰ってこられる場所（基地）」があるからこそ、これらの認知拡大施策が点ではなく線で繋がり、熱量の高いファンやビジネスパートナーを巻き込んでいく発信力を持っています。
           </li>
         </ul>
-      </div>
     </div>
 
     <h2 class="section-title" style="margin-top:60px;">取扱商品構成比</h2>
