@@ -232,21 +232,25 @@
 
     /* 最新トピックス */
     #topics {
-      background: linear-gradient(135deg, #1a0f06 0%, #2c1a0e 100%);
+      background: #fdf6e8;
+      border-top: 4px solid #c9a96e;
+      border-bottom: 4px solid #c9a96e;
       padding: 70px 20px;
       position: relative;
       overflow: hidden;
     }
 
     #topics::before {
-      content: '';
+      content: 'NEWS';
       position: absolute;
-      top: -60px;
-      right: -60px;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(201,169,110,0.15) 0%, transparent 70%);
+      top: -10px;
+      right: 30px;
+      font-size: 8rem;
+      font-weight: bold;
+      color: rgba(201,169,110,0.08);
+      letter-spacing: 0.2em;
       pointer-events: none;
+      line-height: 1;
     }
 
     #topics .inner {
@@ -256,8 +260,8 @@
 
     .topics-label {
       display: inline-block;
-      background: #c9a96e;
-      color: #1a0f06;
+      background: #2c1a0e;
+      color: #c9a96e;
       font-size: 0.75rem;
       font-weight: bold;
       letter-spacing: 0.2em;
@@ -267,14 +271,16 @@
     }
 
     .topics-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(201,169,110,0.4);
-      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #e8d9bc;
+      border-left: 5px solid #c9a96e;
+      border-radius: 8px;
       padding: 40px;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 40px;
       align-items: center;
+      box-shadow: 0 4px 20px rgba(44,26,14,0.08);
     }
 
     .topics-badge {
@@ -290,15 +296,15 @@
     }
 
     .topics-date {
-      color: #c9a96e;
-      font-size: 1.4rem;
+      color: #c0392b;
+      font-size: 1.2rem;
       font-weight: bold;
       letter-spacing: 0.1em;
       margin-bottom: 10px;
     }
 
     .topics-title {
-      color: #f0e6d0;
+      color: #2c1a0e;
       font-size: 2rem;
       font-weight: bold;
       letter-spacing: 0.05em;
@@ -307,23 +313,23 @@
     }
 
     .topics-sub {
-      color: rgba(240,230,208,0.65);
+      color: #888;
       font-size: 0.9rem;
       letter-spacing: 0.1em;
       margin-bottom: 20px;
     }
 
     .topics-desc {
-      color: rgba(240,230,208,0.8);
+      color: #555;
       font-size: 0.9rem;
-      line-height: 1.8;
+      line-height: 1.9;
       margin-bottom: 24px;
     }
 
     .topics-btn {
       display: inline-block;
-      background: #c9a96e;
-      color: #1a0f06;
+      background: #2c1a0e;
+      color: #c9a96e;
       font-weight: bold;
       font-size: 0.92rem;
       letter-spacing: 0.1em;
@@ -334,7 +340,7 @@
     }
 
     .topics-btn:hover {
-      background: #e0c080;
+      background: #5a3a1a;
     }
 
     .topics-qr {
@@ -348,10 +354,11 @@
       border-radius: 8px;
       background: #fff;
       padding: 8px;
+      border: 1px solid #e8d9bc;
     }
 
     .topics-qr p {
-      color: rgba(240,230,208,0.6);
+      color: #999;
       font-size: 0.78rem;
       margin-top: 10px;
       letter-spacing: 0.05em;
