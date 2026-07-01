@@ -230,6 +230,148 @@
       color: #444;
     }
 
+    /* 最新トピックス */
+    #topics {
+      background: linear-gradient(135deg, #1a0f06 0%, #2c1a0e 100%);
+      padding: 70px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #topics::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(201,169,110,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    #topics .inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .topics-label {
+      display: inline-block;
+      background: #c9a96e;
+      color: #1a0f06;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      padding: 4px 14px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    .topics-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(201,169,110,0.4);
+      border-radius: 12px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .topics-badge {
+      display: inline-block;
+      background: #c0392b;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 14px;
+    }
+
+    .topics-date {
+      color: #c9a96e;
+      font-size: 1.4rem;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    .topics-title {
+      color: #f0e6d0;
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .topics-sub {
+      color: rgba(240,230,208,0.65);
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+
+    .topics-desc {
+      color: rgba(240,230,208,0.8);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .topics-btn {
+      display: inline-block;
+      background: #c9a96e;
+      color: #1a0f06;
+      font-weight: bold;
+      font-size: 0.92rem;
+      letter-spacing: 0.1em;
+      padding: 12px 28px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .topics-btn:hover {
+      background: #e0c080;
+    }
+
+    .topics-qr {
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .topics-qr img {
+      width: 160px;
+      height: 160px;
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+
+    .topics-qr p {
+      color: rgba(240,230,208,0.6);
+      font-size: 0.78rem;
+      margin-top: 10px;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 600px) {
+      .topics-card {
+        grid-template-columns: 1fr;
+        padding: 28px 20px;
+        gap: 24px;
+      }
+      .topics-title {
+        font-size: 1.4rem;
+      }
+      .topics-qr img {
+        width: 130px;
+        height: 130px;
+      }
+    }
+
     /* 事業内容カード内画像 */
     .card-images {
       display: grid;
@@ -504,6 +646,7 @@
 
   <header>
     <nav>
+      <a href="#topics">最新情報</a>
       <a href="#business">事業内容</a>
       <a href="#about">会社概要</a>
       <a href="#history">沿革</a>
@@ -520,6 +663,31 @@
       <h1>義恒</h1>
       <p>滋賀県近江八幡から、日本の良いものをお届けします</p>
       <p class="subtitle">ECサイト販売 ／ 八幡堀 古民家スペース 物品販売</p>
+    </div>
+  </div>
+
+  <!-- 最新トピックス -->
+  <div id="topics">
+    <div class="inner">
+      <div class="topics-label">LATEST TOPICS</div>
+      <div class="topics-card">
+        <div>
+          <div class="topics-badge">NEW</div>
+          <div class="topics-date">7/8（水）10:00 Makuake公開！</div>
+          <div class="topics-title">福合わせたぬき猫</div>
+          <div class="topics-sub">信楽焼たぬき × 招き猫　―　奇跡のハイブリッド誕生</div>
+          <div class="topics-desc">
+            信楽の名工と仕上げた、新しい縁起物。<br>
+            「福」と「縁起」を一体に宿した、よしつねの秘密基地初のオリジナル商品が<br>
+            クラウドファンディングサイト「Makuake」にていよいよ公開！
+          </div>
+          <a href="https://www.makuake.com/project/yoshitsune/" target="_blank" class="topics-btn">▶ Makuakeで応援・詳細を見る</a>
+        </div>
+        <div class="topics-qr">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://www.makuake.com/project/yoshitsune/" alt="QRコード">
+          <p>スマホでスキャン<br>して登録できます</p>
+        </div>
+      </div>
     </div>
   </div>
 
