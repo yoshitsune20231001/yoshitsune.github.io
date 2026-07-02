@@ -69,36 +69,40 @@
     header {
       background: #2c1a0e;
       color: #f0e6d0;
-      padding: 10px 20px;
+      padding: 8px 12px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      flex-direction: row;
+      justify-content: flex-start;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
     .header-logo {
-      height: 120px;
+      height: 52px;
       width: auto;
+      flex-shrink: 0;
       filter: invert(1);
     }
 
     nav {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
+      align-items: center;
+      flex: 1;
+      min-width: 0;
       gap: 0;
     }
 
     nav a {
       color: #f0e6d0;
       text-decoration: none;
-      padding: 4px 10px;
-      font-size: 0.82rem;
-      letter-spacing: 0.03em;
+      padding: 3px 7px;
+      font-size: 0.75rem;
+      letter-spacing: 0.02em;
       white-space: nowrap;
       transition: color 0.2s;
     }
