@@ -69,14 +69,21 @@
     header {
       background: #2c1a0e;
       color: #f0e6d0;
-      padding: 0 16px;
+      padding: 0 20px;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      height: 56px;
+      height: 60px;
       position: sticky;
       top: 0;
       z-index: 100;
+    }
+
+    .header-logo {
+      height: 44px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
     }
 
     nav {
@@ -652,6 +659,7 @@
 <body>
 
   <header>
+    <img src="義恒ロゴ.jpg" alt="義恒ロゴ" class="header-logo">
     <nav>
       <a href="#topics">最新情報</a>
       <a href="#business">事業内容</a>
