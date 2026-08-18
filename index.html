@@ -252,6 +252,70 @@
       overflow: hidden;
     }
 
+    .sns-bar {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 2;
+    }
+
+    .sns-bar.left { left: 16px; }
+    .sns-bar.right { right: 16px; }
+
+    .sns-bar a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(44,26,14,0.1);
+      border: 1px solid rgba(201,169,110,0.5);
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .sns-bar a:hover {
+      background: #c9a96e;
+      transform: scale(1.1);
+    }
+
+    .sns-bar a svg { width: 26px; height: 26px; fill: #5a3a1a; }
+    .sns-bar a:hover svg { fill: #fff; }
+
+    .sns-row {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .sns-row a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(44,26,14,0.1);
+      border: 1px solid rgba(201,169,110,0.5);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .sns-row a:hover { background: #c9a96e; }
+    .sns-row a svg { width: 26px; height: 26px; fill: #5a3a1a; }
+    .sns-row a:hover svg { fill: #fff; }
+
+    @media (max-width: 1050px) {
+      .sns-bar { display: none; }
+      .sns-row { display: flex; }
+    }
+
     #topics::before {
       content: 'NEWS';
       position: absolute;
@@ -696,12 +760,39 @@
 
   <!-- 最新トピックス -->
   <div id="topics">
+
+    <!-- SNS左（PC） -->
+    <div class="sns-bar left">
+      <a href="https://www.instagram.com/yoshitsune1001" target="_blank" title="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.333.014 7.053.072 5.775.131 4.602.445 3.635 1.412 2.668 2.379 2.354 3.552 2.295 4.83.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.059 1.277.373 2.45 1.34 3.417.967.967 2.14 1.281 3.417 1.34C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.277-.059 2.45-.373 3.417-1.34.967-.967 1.281-2.14 1.34-3.417.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.667-.072-4.947-.059-1.277-.373-2.45-1.34-3.417-.967-.967-2.14-1.281-3.417-1.34C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      </a>
+      <a href="https://www.youtube.com/@よしつねの秘密基地" target="_blank" title="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </a>
+      <a href="https://x.com/yoshitsune2023" target="_blank" title="X">
+        <svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+      </a>
+    </div>
+
+    <!-- SNS右（PC） -->
+    <div class="sns-bar right">
+      <a href="https://www.tiktok.com/@user7403129274832" target="_blank" title="TikTok">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+      </a>
+      <a href="https://note.com/yoshitsune1001" target="_blank" title="note">
+        <svg viewBox="0 0 24 24"><path d="M4 0h16a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4zm2.5 7a1 1 0 0 0 0 2h3v7a1 1 0 0 0 2 0v-7h3a1 1 0 0 0 0-2h-8z"/></svg>
+      </a>
+      <a href="https://www.facebook.com/profile.php?id=61561100234456" target="_blank" title="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+      </a>
+    </div>
+
     <div class="inner">
       <div class="topics-label">LATEST TOPICS</div>
       <div class="topics-card">
         <div>
           <div class="topics-badge">NEW</div>
-          <div class="topics-date">7/8（水）10:00 Makuake公開！</div>
+          <div class="topics-date">2026年7月8日(水) 10:00 Makuake公開！</div>
           <div class="topics-title">福合わせたぬき猫</div>
           <div class="topics-sub">信楽焼たぬき × 招き猫　―　奇跡のハイブリッド誕生</div>
           <div class="topics-desc">
@@ -734,6 +825,27 @@
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://www.giftshow.co.jp" alt="QRコード">
           <p>スマホでスキャン<br>して詳細を確認</p>
         </div>
+      </div>
+      <!-- SNS横並び（スマホ） -->
+      <div class="sns-row">
+        <a href="https://www.instagram.com/yoshitsune1001" target="_blank" title="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.333.014 7.053.072 5.775.131 4.602.445 3.635 1.412 2.668 2.379 2.354 3.552 2.295 4.83.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.059 1.277.373 2.45 1.34 3.417.967.967 2.14 1.281 3.417 1.34C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.277-.059 2.45-.373 3.417-1.34.967-.967 1.281-2.14 1.34-3.417.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.667-.072-4.947-.059-1.277-.373-2.45-1.34-3.417-.967-.967-2.14-1.281-3.417-1.34C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@よしつねの秘密基地" target="_blank" title="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+        <a href="https://x.com/yoshitsune2023" target="_blank" title="X">
+          <svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@user7403129274832" target="_blank" title="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+        </a>
+        <a href="https://note.com/yoshitsune1001" target="_blank" title="note">
+          <svg viewBox="0 0 24 24"><path d="M4 0h16a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4zm2.5 7a1 1 0 0 0 0 2h3v7a1 1 0 0 0 2 0v-7h3a1 1 0 0 0 0-2h-8z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=61561100234456" target="_blank" title="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+        </a>
       </div>
     </div>
   </div>
@@ -830,6 +942,10 @@
         <div class="timeline-item">
           <span class="timeline-year">R8.05</span>
           <span class="timeline-text">Shopeeシンガポール「yoshitsune」にて販売開始</span>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-year">R8.08</span>
+          <span class="timeline-text">WorldShopping BIZにて海外228国の海外販売開始</span>
         </div>
       </div>
     </div>
