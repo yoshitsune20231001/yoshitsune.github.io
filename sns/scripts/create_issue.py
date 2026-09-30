@@ -39,8 +39,8 @@ def main() -> None:
     for name, (color, desc) in LABELS.items():
         gh("POST", f"/repos/{repo}/labels", json={"name": name, "color": color, "description": desc})
 
-    raw = f"https://raw.githubusercontent.com/{repo}/{sha}/{out}"
-    blob = f"https://github.com/{repo}/blob/{sha}/{out}"
+    # 画像・動画は GitHub Releases、文章はリポジトリ
+    raw = blob = f"https://github.com/{repo}/releases/download/{post['release_tag']}"
     rows = []
     for k, p in zip("起承転結", post["panels"]):
         lines = " / ".join("{}「{}」".format(ln["speaker"], ln["text"]) for ln in p["lines"])
@@ -54,7 +54,9 @@ def main() -> None:
 
 ![4コマ]({raw}/manga.jpg)
 
-🎬 **リール動画**：[再生する（GitHub）]({blob}/reel.mp4)　／　[公開URL]({post['public_urls']['reel.mp4']})（反映まで数分かかります）
+🎬 **リール動画**（SNSごとにエンドカードが違います）：[インスタ用]({blob}/reel_instagram.mp4)　／　[YouTube用]({blob}/reel_youtube.mp4)　／　[X用]({blob}/reel_x.mp4)　／　[Threads用]({blob}/reel_threads.mp4)
+
+📍 今回の場所：{post.get('location', '')}
 
 | | 場面 | 台詞 |
 |---|---|---|
@@ -71,7 +73,8 @@ def main() -> None:
 - タイトルカード（縦）：[開く]({raw}/title_card.jpg)
 - note見出し（横長）：<br>![note見出し]({raw}/note_header.jpg)
 - インスタ・カルーセル：[表紙]({raw}/carousel_0_cover.jpg) → [①]({raw}/carousel_1.jpg) → [②]({raw}/carousel_2.jpg) → [③]({raw}/carousel_3.jpg) → [④]({raw}/carousel_4.jpg)
-- ファイル一式：[フォルダを開く](https://github.com/{repo}/tree/{sha}/{out})
+- 画像・動画一式：[ダウンロードページ](https://github.com/{repo}/releases/tag/{post['release_tag']})
+- 投稿文ファイル：[フォルダを開く](https://github.com/{repo}/tree/{sha}/{out})
 
 ---
 ### ✅ 確認のしかた

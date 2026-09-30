@@ -53,6 +53,8 @@ class Panel(BaseModel):
 class Script(BaseModel):
     title: str = Field(description="4コマのタイトル（例：百万両よりお団子。12文字以内）")
     theme: str
+    location: str = Field(description="今回の背景の場所（日本語。最近の回と違う場所）")
+    location_en: str = Field(description="今回の背景の場所の詳しい説明（英語。4コマ共通の舞台）")
     panels: list[Panel] = Field(description="ちょうど4コマ（起・承・転・結）")
     moral: str = Field(description="オチから導く、小さな福・気づきのひとこと（2行程度）")
     hook_line1: str = Field(description="リールのフック1行目（例：百万両あるのに、）15文字以内")
@@ -62,7 +64,9 @@ class Script(BaseModel):
     title_card_scene_en: str = Field(description="タイトルカード（縦長）の場面説明（英語）。2匹がこの回のキーアイテムを持って笑顔、季節と近江八幡らしい背景")
     note_header_scene_en: str = Field(description="note見出し（横長）の場面説明（英語）。タイトルカードと同じ雰囲気で横長の構図")
     x_post: str = Field(description="Xの本ポスト本文（見本と同じ型。台詞の抜粋＋2行のひとこと。リンク・ハッシュタグは含めない）")
-    x_reply: str = Field(description="Xのリプライ本文（見本と同じ型。第N話の案内とショップ誘導）")
+    x_reply: str = Field(description="Xのリプライ本文（見本と同じ型。第N話の案内とショップ誘導。URLは書かない＝後で自動で付く）")
+    threads_post: str = Field(description="Threadsの本投稿（Xより少し長め・会話調で、最後に問いかけを1つ。リンク・ハッシュタグは含めない。400文字以内）")
+    threads_reply: str = Field(description="Threadsのぶら下げ返信（第N話の案内とショップ誘導。URLは書かない＝後で自動で付く）")
     instagram_reel_caption: str = Field(description="インスタリールのキャプション（見本と同じ型。ハッシュタグは含めない）")
     instagram_post_caption: str = Field(description="インスタのカルーセル投稿キャプション（見本と同じ型。ハッシュタグは含めない）")
     youtube_title: str = Field(description="YouTubeショートのタイトル（見本と同じ型。『福合わせたぬき猫4コマ第N話 #shorts』で終わる）")
@@ -93,7 +97,8 @@ def load_examples(cfg: dict) -> str:
 
 def build_script_prompt(cfg: dict, today: dt.date, theme: str | None, history: list[dict], episode: int) -> str:
     ch = cfg["character"]
-    past = "\n".join(f"- 第{h.get('episode', '?')}話「{h['title']}」{h.get('theme', '')}" for h in history[-30:]) or "（まだありません）"
+    past = "\n".join(f"- 第{h.get('episode', '?')}話「{h['title']}」テーマ:{h.get('theme', '')} 場所:{h.get('location', '?')}" for h in history[-30:]) or "（まだありません）"
+    recent_places = "、".join(h.get("location", "") for h in history[-7:] if h.get("location")) or "なし"
     return f"""あなたは人気4コマ漫画の作家兼SNS担当です。「{ch['name']}」の4コマ漫画・第{episode}話の台本と、各SNSの投稿文を作ってください。
 
 # 今日の日付
@@ -109,6 +114,9 @@ def build_script_prompt(cfg: dict, today: dt.date, theme: str | None, history: l
 # お話のルール
 {cfg['story']['rules']}
 
+# 背景の場所（最近7回で使った場所「{recent_places}」は使わない）
+{' / '.join(cfg['locations'])}
+
 # 過去の回（ネタがかぶらないようにする。第11話・第12話はストック済みで内容は不明）
 {past}
 
@@ -120,7 +128,9 @@ def build_script_prompt(cfg: dict, today: dt.date, theme: str | None, history: l
 
 # 画像AI向けの指示（scene_en）
 主人公2匹は必ず "the TANUKI" と "the NEKO (boy cat)" と書き、見た目の細かい説明はしないでください（見本画像を別に渡します）。
-どのコマに誰が出るか・表情・しぐさ・小道具をはっきり書いてください。4コマとも同じ場所（背景）で、キャラクターは画面の下半分、吹き出しは上半分に入る構図にします。
+どのコマに誰が出るか・どんな大きな動きをしているか・表情・小道具・カメラの寄り引きをはっきり書いてください。
+2匹がただ並んで立っているコマは作らないでください（第10話は動きが少なかったので、もっと動かす）。
+4コマとも location_en の同じ舞台で、コマごとに角度や寄り引きを変えます。吹き出しが入る余白を上の方に残します。
 title_card_scene_en / note_header_scene_en は、2匹がこの回のキーアイテム（例：お団子）を持って笑顔でいる、季節に合った明るい場面にしてください。"""
 
 
@@ -144,7 +154,7 @@ def _common(cfg: dict) -> str:
     return (
         f"Art style: {cfg['art_style_en']}\n"
         f"Characters (keep designs IDENTICAL to the attached character sheets): {cfg['character']['appearance_en']}\n"
-        "Match the drawing style, colors and world of the attached sample 4-koma panel.\n"
+        "Match ONLY the drawing style and coloring of the attached sample 4-koma panel. Do NOT copy its background, composition or poses.\n"
         "Never draw Hikonyan or any other existing mascot, real person, brand or logo."
     )
 
@@ -155,7 +165,8 @@ def panel_prompt(cfg: dict, sc: Script, panel: Panel, idx: int) -> str:
              if idx == 0 else "")
     return (
         f"Square panel {idx + 1} of 4 of a Japanese 4-koma manga.\n{_common(cfg)}\n"
-        f"Scene: {panel.scene_en}\n{title}"
+        f"Location (same for all 4 panels): {sc.location_en}\n"
+        f"Scene: {panel.scene_en}\n{cfg['motion_rules_en']}\n{title}"
         f"Draw a small black circled number {'①②③④'[idx]} in the top-left corner.\n"
         "Draw white round speech bubbles with this exact Japanese dialogue (vertical-friendly line breaks, "
         "clear readable black text, tail pointing to the speaker):\n"
@@ -167,7 +178,8 @@ def panel_prompt(cfg: dict, sc: Script, panel: Panel, idx: int) -> str:
 def title_card_prompt(cfg: dict, sc: Script, episode: int) -> str:
     return (
         f"Vertical 9:16 title card illustration for a 4-koma manga episode.\n{_common(cfg)}\n"
-        f"Scene: {sc.title_card_scene_en}\n"
+        f"Location: {sc.location_en}\nScene: {sc.title_card_scene_en}\n"
+        "Characters in lively, dynamic poses (jumping, running or dancing), not just standing.\n"
         f"At the top, a large ornate wooden signboard with sakura/plum decorations that reads exactly "
         f"「第{episode}話」 (small) and 「{sc.title}」 (large, bold Japanese lettering, one keyword in red).\n"
         "Keep the signboard and both characters inside the central 85% width. No other text."
@@ -177,7 +189,8 @@ def title_card_prompt(cfg: dict, sc: Script, episode: int) -> str:
 def note_header_prompt(cfg: dict, sc: Script, episode: int) -> str:
     return (
         f"Wide horizontal banner illustration (about 2:1) for a blog header.\n{_common(cfg)}\n"
-        f"Scene: {sc.note_header_scene_en}\n"
+        f"Location: {sc.location_en}\nScene: {sc.note_header_scene_en}\n"
+        "Characters in lively, dynamic poses, not just standing.\n"
         f"In the upper center, a wide wooden signboard that reads exactly 「第{episode}話」 (small) and "
         f"「{sc.title}」 (large bold Japanese lettering, one keyword in red). The two characters on the left and right.\n"
         "Keep all important content inside the middle 70% of the height (top and bottom will be cropped). No other text."
@@ -214,7 +227,7 @@ def gen_image(cfg: dict, prompt: str, size: str, out: Path, extra_refs: list[Pat
 def mock_script() -> Script:
     return Script(
         title="秋の開店じゅんび",
-        theme="古民家のお店の日常",
+        theme="古民家のお店の日常", location="古民家のお店の店内", location_en="",
         panels=[
             Panel(scene_ja="朝、お店の前を掃除する", scene_en="", lines=[Line(speaker="たぬき", text="今日もいい天気！")]),
             Panel(scene_ja="落ち葉が舞い込む", scene_en="", lines=[Line(speaker="たぬき", text="落ち葉がいっぱい…"), Line(speaker="猫", text="秋だねえ")]),
@@ -225,6 +238,7 @@ def mock_script() -> Script:
         moral_short="秋も、福もいっぱい", closing_line="小さな秋に、小さな福を。",
         title_card_scene_en="", note_header_scene_en="",
         x_post="（テスト）X本ポスト", x_reply="（テスト）Xリプライ",
+        threads_post="（テスト）Threads本投稿", threads_reply="（テスト）Threads返信",
         instagram_reel_caption="（テスト）リール", instagram_post_caption="（テスト）カルーセル",
         youtube_title="（テスト）福合わせたぬき猫4コマ第13話 #shorts", youtube_description="（テスト）",
         youtube_tags=["福合わせたぬき猫"], youtube_pinned_comment="（テスト）",
@@ -256,11 +270,12 @@ def write_post_files(out: Path, sc: Script, ep: int, cfg: dict) -> None:
     t = sc.title
     tags = cfg["hashtags"]
     extra = [h for h in sc.extra_hashtags if h not in tags["youtube"]][:2]
+    links = "\n".join(cfg.get("reply_links", []))
     files = {
         f"X投稿文_{t}.txt": f"""{BAR}
 X投稿文｜{t} 第{ep}話（4コマ動画）
 ※二段構え：本ポスト＝動画＋フックのみ（リンク無し）／リプライ＝ショップリンク
-※動画＝reel.mp4（無音でOK）
+※動画＝reel_x.mp4（無音でOK）
 {BAR}
 
 【本ポスト】（動画を添付・リンクは入れない）
@@ -271,6 +286,23 @@ X投稿文｜{t} 第{ep}話（4コマ動画）
 
 【リプライ】（本ポストに自分でぶら下げる・ここにリンク）
 {sc.x_reply}
+{links}
+""",
+        f"Threads投稿文_{t}.txt": f"""{BAR}
+Threads投稿文｜{t} 第{ep}話（4コマ動画）
+※二段構え：本投稿＝動画＋会話のきっかけ（リンク無し）／返信＝ショップリンク
+※動画＝reel_threads.mp4（Instagramと同じ動画でもOK）
+{BAR}
+
+【本投稿】（動画を添付・リンクは入れない）
+{sc.threads_post}
+
+{' '.join(tags['threads'])}
+
+
+【返信】（本投稿に自分でぶら下げる・ここにリンク）
+{sc.threads_reply}
+{links}
 """,
         f"note記事_4コマ漫画_第{ep}話_{t}.txt": f"""【タイトル】
 {sc.note_title}
@@ -302,14 +334,14 @@ YouTube Shorts 投稿文｜{t} 第{ep}話
 {sc.youtube_pinned_comment}
 
 【設定メモ】
-- 動画：reel.mp4（無音・BGMはアプリで）
+- 動画：reel_youtube.mp4（無音・BGMはアプリで）
 - AI開示（改変/合成コンテンツ）：はい（AIイラストのため）
 - 子ども向けではない → 「いいえ、子ども向けではありません」
 - 再生リスト「福合わせたぬき猫 4コマ漫画」に追加
 """,
         f"インスタリール投稿文_{t}.txt": f"""{BAR}
 インスタリール投稿文｜第{ep}話「{t}」（たぬき猫本人視点）
-※動画：reel.mp4（無音・BGMはアプリで）
+※動画：reel_instagram.mp4（無音・BGMはアプリで）
 ※AIラベル：ON（AIイラスト）
 ※リールはキャプション途中省略。1行目にフックを置く
 {BAR}
@@ -370,6 +402,8 @@ def main() -> None:
         sys.exit("OPENAI_API_KEY が設定されていません（GitHub の Secrets に登録してください）")
 
     print("① 台本を作成中…")
+    if os.environ.get("REDO_ISSUE") and history:  # 作り直しは同じ話数で
+        history.pop()
     episode = next_episode(cfg, history)
     script = mock_script() if args.mock else make_script(cfg, today, args.theme, history, episode)
     print(f"   第{episode}話：{script.title}")
@@ -398,10 +432,8 @@ def main() -> None:
     data.update(
         date=today.isoformat(),
         dir=out.relative_to(ROOT).as_posix(),
-        public_urls={
-            name: f"{cfg['public_base_url']}/{out.relative_to(ROOT).as_posix()}/{name}"
-            for name in ["reel.mp4", "manga.jpg", "note_header.jpg", "title_card.jpg", "carousel_0_cover.jpg"] + [f"carousel_{i}.jpg" for i in range(1, 5)]
-        },
+        release_tag=f"ep{episode}-{out.name}",
+        media=sorted(p.name for p in out.iterdir() if p.suffix in (".jpg", ".mp4") and "raw" not in p.name),
         hashtags=cfg["hashtags"],
         status="承認待ち",
         mock=args.mock,
@@ -410,14 +442,15 @@ def main() -> None:
     write_post_files(out, script, episode, cfg)
 
     if not args.mock:
-        history.append({"episode": episode, "date": today.isoformat(), "title": script.title, "theme": script.theme, "dir": data["dir"]})
+        history.append({"episode": episode, "date": today.isoformat(), "title": script.title, "theme": script.theme,
+                        "location": script.location, "dir": data["dir"]})
         HISTORY.write_text(json.dumps(history[-200:], ensure_ascii=False, indent=2), encoding="utf-8")
     prune_old(cfg.get("keep_days", 30), today)
 
     print(f"④ 完了：{data['dir']}")
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-            f.write(f"dir={data['dir']}\n")
+            f.write(f"dir={data['dir']}\ntag={data['release_tag']}\nepisode={episode}\ntitle={script.title}\n")
 
 
 if __name__ == "__main__":

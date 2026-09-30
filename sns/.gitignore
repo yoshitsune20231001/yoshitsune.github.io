@@ -1,1 +1,5 @@
 __pycache__/
+# 画像・動画は GitHub Releases に置く（リポジトリを重くしないため）
+output/**/*.jpg
+output/**/*.png
+output/**/*.mp4

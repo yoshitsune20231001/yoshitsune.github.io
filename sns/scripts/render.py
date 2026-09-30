@@ -135,8 +135,9 @@ def slide_closing(s: dict, cfg: dict) -> Image.Image:
     return img
 
 
-def end_card() -> Image.Image:
-    path = ASSETS / "end_card.jpg"
+def end_card(path: Path) -> Image.Image:
+    if not path.exists():
+        path = ASSETS / "end_card.jpg"
     return fit_cover(Image.open(path), W, H) if path.exists() else cream()
 
 
@@ -168,45 +169,57 @@ def render_all(panels: list[Image.Image], title_card: Image.Image, note_art: Ima
     manga_grid(panels, s).save(out / "manga.jpg", quality=90)
 
     r = cfg["reel"]
-    frames = [(title_v, r["title_seconds"], True), (slide_hook(s), r["hook_seconds"], False)]
-    frames += [(slide_panel(p, s["episode"]), r["panel_seconds"], False) for p in panels]
-    frames += [(slide_closing(s, cfg), r["closing_seconds"], False), (end_card(), r["end_seconds"], False)]
-    build_reel(frames, out / "reel.mp4", r["fps"], ROOT / "sns/assets/bgm", r.get("bgm_volume", 0.35))
+    frames = [(title_v, r["title_seconds"], "title"), (slide_hook(s), r["hook_seconds"], "still")]
+    frames += [(slide_panel(p, s["episode"]), r["panel_seconds"], "zoom") for p in panels]
+    frames += [(slide_closing(s, cfg), r["closing_seconds"], "still")]
+    ends = {name: (end_card(ROOT / path), r["end_seconds"], "still") for name, path in r["platforms"].items()}
+    build_reels(frames, ends, out, r, ROOT / "sns/assets/bgm")
 
 
 # ---------------------------------------------------------------- 動画
 
-def build_reel(frames: list[tuple[Image.Image, float, bool]], out: Path, fps: int, bgm_dir: Path, bgm_volume: float) -> None:
+def _segment(ff: str, frame: Image.Image, sec: float, kind: str, fps: int, zoom: float, tmp: Path, name: str) -> Path:
+    png = tmp / f"{name}.png"
+    frame.save(png)
+    seg = tmp / f"{name}.mp4"
+    n = int(sec * fps)
+    if kind == "title":  # 暗いところからふわっと出て、ゆっくりズーム
+        vf = (f"scale=2160:3840,zoompan=z='1+0.04*on/{n}':d={n}:s={W}x{H}:fps={fps}"
+              f":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',fade=t=in:st=0:d=0.8,format=yuv420p")
+    elif kind == "zoom" and zoom > 0:  # コマにゆっくり寄る
+        vf = (f"scale=2160:3840,zoompan=z='1+{zoom}*on/{n}':d={n}:s={W}x{H}:fps={fps}"
+              f":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',fade=t=in:st=0:d=0.25,format=yuv420p")
+    else:
+        vf = f"fps={fps},fade=t=in:st=0:d=0.25,format=yuv420p"
+    subprocess.run([ff, "-y", "-loglevel", "error", "-loop", "1", "-framerate", str(fps), "-i", str(png),
+                    "-frames:v", str(n), "-vf", vf, "-c:v", "libx264", "-preset", "medium",
+                    "-crf", "25", "-maxrate", "2500k", "-bufsize", "5000k", str(seg)], check=True)
+    return seg
+
+
+def build_reels(frames: list, ends: dict, out: Path, r: dict, bgm_dir: Path) -> None:
+    """共通部分は1回だけ作り、エンドカードだけ差し替えてSNSごとの動画を作る。"""
     ff = ffmpeg_exe()
+    fps, zoom = r["fps"], r.get("panel_zoom", 0)
+    bgms = sorted(glob.glob(str(bgm_dir / "*.mp3")) + glob.glob(str(bgm_dir / "*.m4a")))
+    bgm = random.choice(bgms) if bgms else None
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
-        segs = []
-        for i, (frame, sec, is_title) in enumerate(frames):
-            png = tmp / f"f{i}.png"
-            frame.save(png)
-            seg = tmp / f"s{i}.mp4"
-            n = int(sec * fps)
-            if is_title:  # タイトルは暗いところからふわっと出て、ゆっくりズーム
-                vf = (f"scale=2160:3840,zoompan=z='1+0.04*on/{n}':d={n}:s={W}x{H}:fps={fps}"
-                      f":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',fade=t=in:st=0:d=0.8,format=yuv420p")
-            else:
-                vf = f"fps={fps},fade=t=in:st=0:d=0.25,format=yuv420p"
-            subprocess.run([ff, "-y", "-loglevel", "error", "-loop", "1", "-framerate", str(fps), "-i", str(png),
-                            "-frames:v", str(n), "-vf", vf, "-c:v", "libx264", "-preset", "medium",
-                            "-crf", "20", str(seg)], check=True)
-            segs.append(seg)
-        (tmp / "list.txt").write_text("".join(f"file '{s.as_posix()}'\n" for s in segs))
-        video = tmp / "video.mp4"
-        subprocess.run([ff, "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(tmp / "list.txt"),
-                        "-c", "copy", str(video)], check=True)
-        total = sum(sec for _, sec, _ in frames)
-        bgms = sorted(glob.glob(str(bgm_dir / "*.mp3")) + glob.glob(str(bgm_dir / "*.m4a")))
-        if bgms:
-            audio_in = ["-stream_loop", "-1", "-i", random.choice(bgms)]
-            af = f"volume={bgm_volume},afade=t=in:d=0.5,afade=t=out:st={total - 1.5:.2f}:d=1.5"
-        else:  # 無音（BGMはアプリで付ける運用）。投稿APIのため無音トラックは入れておく
-            audio_in = ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"]
-            af = "anull"
-        subprocess.run([ff, "-y", "-loglevel", "error", "-i", str(video), *audio_in, "-map", "0:v", "-map", "1:a",
-                        "-af", af, "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ar", "44100",
-                        "-t", f"{total:.2f}", "-movflags", "+faststart", str(out)], check=True)
+        common = [_segment(ff, f, sec, kind, fps, zoom, tmp, f"c{i}") for i, (f, sec, kind) in enumerate(frames)]
+        for name, (frame, sec, kind) in ends.items():
+            segs = common + [_segment(ff, frame, sec, kind, fps, zoom, tmp, f"end_{name}")]
+            lst = tmp / f"list_{name}.txt"
+            lst.write_text("".join(f"file '{p.as_posix()}'\n" for p in segs))
+            video = tmp / f"video_{name}.mp4"
+            subprocess.run([ff, "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst),
+                            "-c", "copy", str(video)], check=True)
+            total = sum(x[1] for x in frames) + sec
+            if bgm:
+                audio_in = ["-stream_loop", "-1", "-i", bgm]
+                af = f"volume={r.get('bgm_volume', 0.35)},afade=t=in:d=0.5,afade=t=out:st={total - 1.5:.2f}:d=1.5"
+            else:  # 無音（BGMはアプリで付ける運用）。投稿APIのため無音トラックは入れておく
+                audio_in = ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"]
+                af = "anull"
+            subprocess.run([ff, "-y", "-loglevel", "error", "-i", str(video), *audio_in, "-map", "0:v", "-map", "1:a",
+                            "-af", af, "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ar", "44100",
+                            "-t", f"{total:.2f}", "-movflags", "+faststart", str(out / f"reel_{name}.mp4")], check=True)

@@ -59,9 +59,37 @@ character:
 art_style_en: >-
   Richly detailed Japanese illustration with bold black ink outlines and warm hand-painted
   watercolor texture, vivid colors, cute chubby proportions, expressive faces.
-  Default setting: a traditional Omihachiman merchant-town street (old wooden shops, red paper
-  lanterns with 福, indigo noren with 福, red parasol, willow trees, stone pavement, a small
-  縁起物 chalkboard sign), adjusted to the season and story.
+
+# ---- 背景（毎回ちがう場所。最近使った場所は自動で避けます）----
+locations:
+  - 八幡堀の石畳と白壁の蔵（舟がゆっくり通る）
+  - 八幡堀を進む屋形船の上
+  - 西の湖・水郷のヨシ原と手こぎ舟
+  - 日牟禮八幡宮の鳥居と参道
+  - 八幡山ロープウェイのゴンドラの中と山頂からの琵琶湖
+  - 琵琶湖の湖岸・砂浜
+  - 近江八幡の古い町並み（新町通り）
+  - 古民家のお店「よしつねの秘密基地」の店内（陶器や雑貨の棚）
+  - 古民家の縁側と中庭
+  - 古民家の台所・土間
+  - 和菓子屋・甘味処の店先
+  - 信楽焼の窯元と工房（ろくろ・登り窯）
+  - 田んぼのあぜ道と里山
+  - 夏祭りの屋台と提灯の夜道
+  - 雪の積もった町並み
+  - 桜並木・紅葉の山道など季節の名所
+  - 駅のホームや電車の中
+  - 商店街・市場
+  - 雨の日の軒下
+  - 夜空と月が見える屋根の上
+
+# ---- 動き（毎回の絵づくりで必ず守る）----
+motion_rules_en: >-
+  Make the characters MOVE a lot: dynamic, exaggerated full-body poses and actions in every
+  panel (running, jumping, tripping, reaching, dancing, rowing, carrying things, falling over,
+  hugging, pointing). Use motion lines, flying sweat drops, sparkles and small props in motion.
+  Vary the camera between panels (wide shot, medium shot, close-up on faces, low angle,
+  over-the-shoulder). The two characters should interact physically, never just stand side by side.
 
 # ---- お話のルール ----
 story:
@@ -74,6 +102,8 @@ story:
     - 海外からのお客さんとの交流
   rules: >-
     起承転結の4コマで、4コマ目にクスッと笑えるオチ。
+    2匹がたくさん動く話にする（走る・跳ぶ・転ぶ・追いかける・運ぶ・踊る など、コマごとに違う動き）。
+    背景は毎回ちがう場所にする（下の場所リストから、または季節やお話に合う場所を選ぶ）。
     オチのあとに「大金より小さな幸せ」のような、小さな福や気づきにつながる余韻を残す。
     1コマの台詞は最大2つ、1つ20文字以内。
     宣伝くさくしない（商品名の連呼や「買ってね」は禁止）。
@@ -96,6 +126,12 @@ hashtags:
   x: ["#招き猫", "#信楽焼", "#縁起物"]
   instagram: ["#福合わせたぬき猫", "#招き猫", "#縁起物", "#4コマ漫画", "#よしつねの秘密基地"]
   youtube: ["#福合わせたぬき猫", "#信楽焼", "#招き猫", "#たぬき", "#縁起物", "#4コマ漫画", "#shorts"]
+  threads: ["#福合わせたぬき猫"]      # Threads はタグ1つ推奨
+
+# ぶら下げリプライ（X・Threads）に入れるリンク。本ポストにはリンクを入れない
+reply_links:
+  - "▼オンラインショップ https://yoshitsune20231001.stores.jp"
+  - "▼ご主人の物語（note） https://note.com/yoshitsune1001"
 
 # ---- リール動画（第10話と同じ構成）----
 reel:
@@ -103,8 +139,15 @@ reel:
   title_seconds: 2.75     # タイトルカード
   hook_seconds: 2.5       # フックの一文
   panel_seconds: 3.5      # 1コマあたり
+  panel_zoom: 0.05        # 1コマ表示中にゆっくり寄る量（0で静止）
   closing_seconds: 2.5    # 締め（ロゴ・販売中）
   end_seconds: 3.25       # エンドカード（いいね＆フォロー）
+  # SNSごとのエンドカード（無い場合は end_card.jpg を使う）
+  platforms:
+    instagram: sns/assets/reel/end_card_instagram.jpg
+    youtube: sns/assets/reel/end_card_youtube.jpg
+    x: sns/assets/reel/end_card_x.jpg
+    threads: sns/assets/reel/end_card_threads.jpg
   shop_line: オンラインショップで販売中
   shop_sub: プロフィールのリンクから
   # sns/assets/bgm/ に mp3 を置くとBGMが付きます（無ければ無音。今まで通りアプリでBGMを付けてOK）

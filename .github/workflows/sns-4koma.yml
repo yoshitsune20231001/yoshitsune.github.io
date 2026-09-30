@@ -44,7 +44,18 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           THEME: ${{ github.event.inputs.theme }}
+          REDO_ISSUE: ${{ github.event.issue.number }}
         run: python sns/scripts/generate.py ${{ github.event.inputs.mock == 'true' && '--mock' || '' }}
+
+      - name: 画像・動画を Releases に置く
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "${{ steps.gen.outputs.dir }}"
+          files=$(python -c "import json;print(' '.join(json.load(open('post.json'))['media']))")
+          gh release create "${{ steps.gen.outputs.tag }}" $files \
+            --title "第${{ steps.gen.outputs.episode }}話「${{ steps.gen.outputs.title }}」" \
+            --notes "福合わせたぬき猫 4コマの画像・動画です。" --prerelease
 
       - name: 保存（コミット）
         id: commit
