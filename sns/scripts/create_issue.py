@@ -46,7 +46,10 @@ def main() -> None:
         lines = " / ".join("{}「{}」".format(ln["speaker"], ln["text"]) for ln in p["lines"])
         rows.append(f"| {k} | {p['scene_ja']} | {lines} |")
     story = "\n".join(rows)
-    tags = " ".join(post["hashtags_all"])
+    files = sorted((ROOT / out).glob("*.txt"))
+    texts = "\n\n".join(
+        f"<details><summary>📄 {f.name}</summary>\n\n```\n{f.read_text(encoding='utf-8')}\n```\n</details>" for f in files
+    )
     body = f"""## 第{post['episode']}話「{post['title']}」
 
 ![4コマ]({raw}/manga.jpg)
@@ -58,35 +61,16 @@ def main() -> None:
 {story}
 
 ---
-### 📷 Instagram リール
-```
-{post['caption_instagram']}
+### 📝 投稿文（第10話と同じ形式）
+タップすると開きます。
 
-{tags}
-```
+{texts}
 
-### ▶️ YouTube ショート
-**タイトル**：{post['youtube_title']} #Shorts
-
-### 🧵 Threads
-```
-{post['caption_threads']}
-
-{tags}
-```
-
-### 𝕏
-```
-{post['caption_x']}
-{' '.join(post['hashtags_all'][:3])}
-```
-
-### 📝 note
-見出し画像（横長 1280×670）：
-
-![note見出し]({raw}/note_header.jpg)
-
-[記事の下書き（note.md）を開く]({blob}/note.md)
+---
+### 🖼 画像
+- note見出し（横長）：<br>![note見出し]({raw}/note_header.jpg)
+- インスタ・カルーセル：[表紙]({raw}/carousel_0_cover.jpg) → [①]({raw}/carousel_1.jpg) → [②]({raw}/carousel_2.jpg) → [③]({raw}/carousel_3.jpg) → [④]({raw}/carousel_4.jpg)
+- ファイル一式：[フォルダを開く](https://github.com/{repo}/tree/{sha}/{out})
 
 ---
 ### ✅ 確認のしかた

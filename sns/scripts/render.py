@@ -237,11 +237,42 @@ def note_header(panels: list[Image.Image], series: str, episode_label: str, titl
     return img
 
 
+def carousel_images(panels: list[Image.Image], script: dict, series: str, out_dir: Path) -> None:
+    """インスタのカルーセル用（4:5 = 1080x1350）。表紙＋1コマずつ。"""
+    cw, chh = 1080, 1350
+    cover = Image.new("RGB", (cw, chh), CREAM)
+    d = ImageDraw.Draw(cover)
+    art = panels[0].convert("RGB").resize((760, int(panels[0].height * 760 / panels[0].width)))  # オチを見せないよう1コマ目
+    art = art.crop((0, art.height - 760, 760, art.height))
+    cover.paste(art, ((cw - 760) // 2, 470))
+    d.rectangle(((cw - 760) // 2 - 4, 466, (cw + 760) // 2 + 3, 1233), outline=BROWN, width=8)
+    d.text((cw // 2, 120), series, font=font(46), fill=GOLD, anchor="mm")
+    for i, line in enumerate(wrap(script["title"], font(96), cw - 120)[:2]):
+        d.text((cw // 2, 250 + i * 118), line, font=font(96), fill=BROWN, anchor="mm")
+    d.text((cw // 2, 1295), "スワイプして読んでね →", font=font(36), fill=BROWN, anchor="mm")
+    cover.save(out_dir / "carousel_0_cover.jpg", quality=90)
+    for i, (p, s) in enumerate(zip(panels, script["panels"])):
+        img = Image.new("RGB", (cw, chh), CREAM)
+        pw = 840
+        art = panel_with_bubbles(p, s["lines"], pw)
+        ph = min(art.height, chh - 150)
+        art = art.crop((0, 0, pw, ph))
+        x, y = (cw - pw) // 2, 70
+        img.paste(art, (x, y))
+        dd = ImageDraw.Draw(img)
+        dd.rectangle((x - 4, y - 4, x + pw + 3, y + ph + 3), outline=BROWN, width=6)
+        dd.ellipse((x + 16, y + ph - 90, x + 90, y + ph - 16), fill=BROWN, outline=GOLD, width=4)
+        dd.text((x + 53, y + ph - 53), KI_SHO_TEN_KETSU[i], font=font(40), fill=CREAM, anchor="mm")
+        dd.text((cw // 2, chh - 40), f"{i + 1} / 4", font=font(32), fill=GOLD, anchor="mm")
+        img.save(out_dir / f"carousel_{i + 1}.jpg", quality=90)
+
+
 def render_all(panels: list[Image.Image], script: dict, cfg: dict, out_dir: Path) -> None:
     series = f"{cfg['character']['name']} 4コマ"
     episode_label = f"第{script['episode']}話"
     note_header(panels, series, episode_label, script["title"]).save(out_dir / "note_header.jpg", quality=90)
     series = f"{series}　{episode_label}"
+    carousel_images(panels, script, series, out_dir)
     vcfg = cfg["video"]
     manga_grid(panels, script, series).save(out_dir / "manga.jpg", quality=88)
     frames = [(title_frame(panels[0], series, script["title"]), vcfg["title_seconds"])]
@@ -249,5 +280,4 @@ def render_all(panels: list[Image.Image], script: dict, cfg: dict, out_dir: Path
         frame = reel_frame(p, s["lines"], i, script["title"])
         frames.append((frame, vcfg["panel_seconds"]))
     frames.append((end_frame(cfg["brand"]["name"], cfg["brand"]["shop"], cfg["story"]["ending_tag"]), vcfg["end_seconds"]))
-    frames[1][0].save(out_dir / "cover.jpg", quality=88)  # サムネ用
     build_reel(frames, out_dir / "reel.mp4", vcfg["fps"], ROOT / "sns/assets/bgm", vcfg["bgm_volume"])
