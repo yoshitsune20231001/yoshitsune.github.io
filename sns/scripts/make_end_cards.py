@@ -65,7 +65,7 @@ def main() -> None:
         out = ROOT / cfg["reel"]["platforms"][name]
         raw = out.with_name(out.stem + "_raw.jpg")
         img = generate.gen_image(cfg, prompt(cfg, name), cfg["openai"]["sizes"]["title_card"], raw)
-        render.fit_cover(img, render.W, render.H).save(out, quality=92)
+        render.fit_vertical(img).save(out, quality=92)
         raw.unlink()
         print(f"  → {out.relative_to(ROOT)}")
 
