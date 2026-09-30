@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   generate:
-    if: github.event_name != 'issues' || github.event.label.name == '作り直し'
+    if: github.event_name != 'issues' || github.event.label.name == '作り直し' || github.event.label.name == '絵だけ作り直し'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -45,6 +45,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           THEME: ${{ github.event.inputs.theme }}
           REDO_ISSUE: ${{ github.event.issue.number }}
+          REDO_MODE: ${{ github.event.label.name == '絵だけ作り直し' && 'images' || 'full' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python sns/scripts/generate.py ${{ github.event.inputs.mock == 'true' && '--mock' || '' }}
 
       - name: 画像・動画を Releases に置く

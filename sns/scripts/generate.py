@@ -80,6 +80,32 @@ class Script(BaseModel):
 
 # ---------------------------------------------------------------- 台本づくり
 
+# ---------------------------------------------------------------- 作り直し（確認Issueから）
+
+def fetch_redo(issue_number: str) -> dict:
+    """作り直すIssueから、前回の出力フォルダとコメントの指示を読む。"""
+    import re
+
+    import requests
+
+    repo = os.environ["GITHUB_REPOSITORY"]
+    headers = {"Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}", "Accept": "application/vnd.github+json"}
+    api = f"https://api.github.com/repos/{repo}/issues/{issue_number}"
+    issue = requests.get(api, headers=headers, timeout=30).json()
+    comments = requests.get(f"{api}/comments?per_page=100", headers=headers, timeout=30).json()
+    m = re.search(r"<!-- dir:(\S+) -->", issue.get("body") or "")
+    notes = [c["body"].strip() for c in comments
+             if c.get("user", {}).get("type") != "Bot" and "<!-- bot -->" not in c["body"]]
+    return {"dir": m.group(1) if m else None, "feedback": "\n".join(n for n in notes if n)}
+
+
+def previous_summary(post: dict) -> str:
+    lines = [f"タイトル「{post['title']}」 場所：{post.get('location', '')}"]
+    for k, p in zip("起承転結", post["panels"]):
+        lines.append(f"{k}：{p['scene_ja']} " + " / ".join("{}「{}」".format(x["speaker"], x["text"]) for x in p["lines"]))
+    return "\n".join(lines)
+
+
 def load_history() -> list[dict]:
     if HISTORY.exists():
         return json.loads(HISTORY.read_text(encoding="utf-8"))
@@ -117,6 +143,7 @@ def build_script_prompt(cfg: dict, today: dt.date, theme: str | None, history: l
 # 背景の場所（最近7回で使った場所「{recent_places}」は使わない）
 {' / '.join(cfg['locations'])}
 
+{cfg.get("_redo_section", "")}
 # 過去の回（ネタがかぶらないようにする。第11話・第12話はストック済みで内容は不明）
 {past}
 
@@ -156,6 +183,7 @@ def _common(cfg: dict) -> str:
         f"Characters (keep designs IDENTICAL to the attached character sheets): {cfg['character']['appearance_en']}\n"
         "Match ONLY the drawing style and coloring of the attached sample 4-koma panel. Do NOT copy its background, composition or poses.\n"
         "Never draw Hikonyan or any other existing mascot, real person, brand or logo."
+        + (f"\nIMPORTANT extra instructions from the owner (follow these first): {cfg['_feedback']}" if cfg.get("_feedback") else "")
     )
 
 
@@ -401,11 +429,31 @@ def main() -> None:
     if not args.mock and not os.environ.get("OPENAI_API_KEY"):
         sys.exit("OPENAI_API_KEY が設定されていません（GitHub の Secrets に登録してください）")
 
-    print("① 台本を作成中…")
-    if os.environ.get("REDO_ISSUE") and history:  # 作り直しは同じ話数で
-        history.pop()
-    episode = next_episode(cfg, history)
-    script = mock_script() if args.mock else make_script(cfg, today, args.theme, history, episode)
+    redo_issue = os.environ.get("REDO_ISSUE")
+    mode = os.environ.get("REDO_MODE", "full")  # full＝お話から / images＝絵だけ
+    prev = None
+    if redo_issue:
+        redo = fetch_redo(redo_issue)
+        cfg["_feedback"] = redo["feedback"]
+        if redo["dir"] and (ROOT / redo["dir"] / "post.json").exists():
+            prev = json.loads((ROOT / redo["dir"] / "post.json").read_text(encoding="utf-8"))
+            history = [h for h in history if h.get("dir") != redo["dir"]]  # 前回分は履歴から外す
+        print(f"作り直し（{'絵だけ' if mode == 'images' else 'お話から'}）指示：{redo['feedback'] or 'なし'}")
+
+    if prev and mode == "images":
+        print("① 台本は前回のまま使います")
+        episode = prev["episode"]
+        script = Script.model_validate(prev)
+    else:
+        print("① 台本を作成中…")
+        episode = prev["episode"] if prev else next_episode(cfg, history)
+        if prev:
+            cfg["_redo_section"] = (
+                "# 作り直し（最優先）\n前回の案は採用されませんでした。前回とは違うお話にしてください。\n"
+                f"前回の案：\n{previous_summary(prev)}\n"
+                f"ご主人からの修正指示：{cfg.get('_feedback') or '（特になし）'}\n"
+            )
+        script = mock_script() if args.mock else make_script(cfg, today, args.theme, history, episode)
     print(f"   第{episode}話：{script.title}")
 
     out = new_output_dir(today)
