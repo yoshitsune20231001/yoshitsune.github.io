@@ -1,0 +1,32 @@
+[
+ {
+  "role": "commander",
+  "label": "司令塔",
+  "name": "仮面の貴公子"
+ },
+ {
+  "role": "instagram",
+  "label": "インスタ",
+  "name": "奇跡のヒーロー"
+ },
+ {
+  "role": "youtube",
+  "label": "YouTube",
+  "name": "テキサスブロンコ"
+ },
+ {
+  "role": "x",
+  "label": "X",
+  "name": "F・コン"
+ },
+ {
+  "role": "tiktok",
+  "label": "TikTok",
+  "name": "メシア"
+ },
+ {
+  "role": "note",
+  "label": "note",
+  "name": "ゲルマン"
+ }
+]
