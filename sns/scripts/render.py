@@ -71,6 +71,19 @@ def fit_cover(img: Image.Image, w: int, h: int, anchor_y: float = 0.5) -> Image.
     return img.crop((x, y, x + w, y + h))
 
 
+def fit_vertical(img: Image.Image, w: int = W, h: int = H) -> Image.Image:
+    """縦長の絵を左右を切らずに 9:16 に収める（足りない上下は、ぼかした同じ絵で埋める）。"""
+    from PIL import ImageFilter
+
+    img = img.convert("RGB")
+    fg = img.resize((w, round(img.height * w / img.width)), Image.LANCZOS)
+    if fg.height >= h:
+        return fit_cover(img, w, h)
+    bg = fit_cover(img, w, h).filter(ImageFilter.GaussianBlur(28))
+    bg.paste(fg, (0, (h - fg.height) // 2))
+    return bg
+
+
 def cream(w: int = W, h: int = H) -> Image.Image:
     """クリームのグラデーション＋上下の金ライン（第10話と同じ地）。"""
     img = Image.new("RGB", (w, h))
@@ -162,7 +175,7 @@ def render_all(panels: list[Image.Image], title_card: Image.Image, note_art: Ima
     # 4コマ（1コマずつ・正方形）＝カルーセル①〜④、note本文用
     for i, p in enumerate(panels):
         fit_cover(p, 1080, 1080).save(out / f"carousel_{i + 1}.jpg", quality=92)
-    title_v = fit_cover(title_card, W, H)
+    title_v = fit_vertical(title_card)
     title_v.save(out / "title_card.jpg", quality=92)
     fit_cover(title_card, 1080, 1080, anchor_y=0.15).save(out / "carousel_0_cover.jpg", quality=92)
     fit_cover(note_art, 1280, 670).save(out / "note_header.jpg", quality=92)
