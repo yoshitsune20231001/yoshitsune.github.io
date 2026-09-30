@@ -1,0 +1,100 @@
+# ============================================================
+#  福合わせたぬき猫 4コマ漫画 自動生成 設定ファイル
+#  ここを書き換えると、毎日の4コマの内容・絵柄・動画が変わります
+# ============================================================
+
+# 公開URL（GitHub Pages）。Instagram / Threads 投稿時の動画置き場になります
+public_base_url: https://yoshitsune20231001.github.io/yoshitsune.github.io
+
+# 出力を何日分残すか（古いものは自動で削除。サイト容量対策）
+keep_days: 30
+
+openai:
+  text_model: gpt-5.5          # 台本づくり
+  image_model: gpt-image-2     # 絵づくり
+  image_quality: medium        # low / medium / high（high ほど綺麗で高い）
+  image_size: 1024x1536        # 縦長
+
+# ---- 主人公（2匹コンビ）----
+character:
+  name: 福合わせたぬき猫
+  # 見本画像（毎回AIに渡して、同じキャラに見えるようにする）
+  # ※ パソコンにある過去の4コマ画像を sns/character/ に入れたら差し替えます
+  reference_images:
+    - sns/character/tanukineko.png
+  # 絵のAI向けの見た目の説明（英語の方が安定します）
+  appearance_en: >-
+    Two lucky-charm characters who are always together as a duo:
+    (1) TANUKI: a chubby, round Shigaraki-ware style tanuki (Japanese raccoon dog),
+    beige body with brown fur, dark mask patches around gently smiling eyes,
+    woven straw hat, navy-blue cord necklace, holds a golden oval koban coin.
+    (2) NEKO: a round, chubby maneki-neko style cat, a boy (NOT a girl: no ribbons,
+    no eyelashes, no makeup, no skirt, no feminine features), same size and
+    same ceramic-figure-like softness as the tanuki, raising one paw to beckon.
+    Keep both designs identical to the reference image(s) in every panel.
+  personality: >-
+    たぬきと猫の2匹組。どちらも男の子（猫を女の子キャラにしない）。
+    たぬき：のんびり屋で食いしん坊、金運担当。口ぐせ「〜だぬ」。
+    猫：しっかり者でツッコミ役、良縁担当。口ぐせ「〜だにゃ」。
+    2匹あわせて「福合わせたぬき猫」。作り手のことは「ご主人」と呼ぶ。
+    近江八幡・八幡堀沿いの古民家のお店「よしつねの秘密基地」の看板キャラ。
+    右手で金運、左手で良縁を招くのが自慢。ドタバタするけど、最後はみんなを笑顔にする。
+  # 台詞の話し手の名前（吹き出しの上に小さく表示）
+  speakers: [たぬき, ねこ]
+  # 脇役（必要に応じて登場。実在の人物・他社キャラは出さない）
+  supporting_cast: >-
+    ご主人（顔ははっきり描かない後ろ姿や手元のみ）、お店に来るお客さん（国内・海外の観光客）、
+    近江八幡のカモや小鳥、お店に並ぶ陶器たち（信楽焼の置物など、しゃべることもある）。
+
+# 絵柄（全コマ共通）
+art_style_en: >-
+  Cute Japanese 4-koma manga panel, soft hand-drawn line art with warm watercolor
+  coloring, gentle pastel palette (cream, sakura pink, indigo, gold), clean simple
+  background, expressive chibi proportions, heartwarming and funny mood.
+
+# ---- お話のルール ----
+story:
+  themes:
+    - 季節の行事・天気（その日の日付に合わせる）
+    - 近江八幡の名所や名物（八幡堀、水郷、近江牛、赤こんにゃく、左義長まつり など）
+    - 古民家のお店の日常（開店準備、お客さんとのやりとり、商品の陳列）
+    - 縁起・開運ネタ（招き猫、たぬきの八相縁起、小判）
+    - 陶器や雑貨のうんちく（信楽焼、有田焼、九谷焼 など）
+    - 海外からのお客さんとの交流
+  rules: >-
+    起承転結の4コマで、4コマ目にオチ（くすっと笑える or ほっこり）。
+    1コマの台詞は最大2つ、1つ15文字以内。
+    宣伝くさくしない（商品名の連呼や「買ってね」は禁止）。
+    ひこにゃん・実在の人物・他社のキャラクターやロゴは絶対に登場させない。
+    （ひこにゃんは使用許可の申請前のため、絵にも台詞にも出さない）
+    政治・宗教・特定の人を傷つける内容は避ける。
+  ending_tag: 毎日更新！
+
+# ---- 投稿文 ----
+brand:
+  name: 義恒（よしつね）
+  shop: よしつねの秘密基地（近江八幡・八幡堀の古民家ショップ）
+  url: https://yoshitsune20231001.github.io/yoshitsune.github.io/
+hashtags_base:
+  - "#福合わせたぬき猫"
+  - "#4コマ漫画"
+  - "#信楽焼"
+  - "#招き猫"
+  - "#縁起物"
+  - "#近江八幡"
+  - "#よしつねの秘密基地"
+# 投稿文の口調（Instagram口調メモより）
+caption_style: >-
+  冒頭に【○○】の見出し＋ひとことフック。2行目は必ず「こんにちは、福合わせたぬき猫です🍂」。
+  1文は1〜2行で短く、段落ごとに空行。「おかげさまでーー」のような長音ダッシュで余韻。
+  強調は「」。絵文字は要所だけ（🍂🎉🙏💰🤝✨🍀🦝🐱📌👑😳）。
+  締めに「右手で金運💰左手で良縁🤝」と「📌 保存＆シェアで、いっしょに福を広げてね🍀」。
+
+# ---- 動画 ----
+video:
+  fps: 30
+  title_seconds: 2.0
+  panel_seconds: 4.0
+  end_seconds: 2.5
+  # sns/assets/bgm/ に mp3 を置くと、その中からランダムにBGMが付きます（無ければ無音）
+  bgm_volume: 0.35
