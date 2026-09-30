@@ -9,6 +9,10 @@ public_base_url: https://yoshitsune20231001.github.io/yoshitsune.github.io
 # 話数（パソコンに第12話までストックがあるので、自動生成は第13話から）
 episode_start: 13
 
+# 運営開始日と、何日前に作るか（1＝朝7時に作って翌日に投稿。確認・作り直しに丸1日使える）
+start_date: 2026-10-02
+lead_days: 1
+
 # 出力を何日分残すか（古いものは自動で削除。サイト容量対策）
 keep_days: 30
 

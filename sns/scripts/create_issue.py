@@ -52,7 +52,7 @@ def main() -> None:
         f"<details><summary>📄 {f.name}</summary>\n\n```\n{f.read_text(encoding='utf-8')}\n```\n</details>" for f in files
     )
     import datetime as dt
-    base = dt.date.fromisoformat(post["date"])
+    base = dt.date.fromisoformat(post.get("post_date", post["date"]))
     checks = "\n".join(
         f"- [ ] {x['sns']} ｜ {(base + dt.timedelta(days=1 if x['day'] == '翌日' else 0)).isoformat()} {x['time']}"
         for x in post.get("schedule", [])
@@ -107,7 +107,7 @@ def main() -> None:
 > ※ いまは「生成＋確認」まで。SNSへの自動投稿は、品質が安定してから追加します。
 """
     issue = gh("POST", f"/repos/{repo}/issues", json={
-        "title": f"【4コマ確認】第{post['episode']}話「{post['title']}」",
+        "title": f"【4コマ確認】第{post['episode']}話「{post['title']}」（{base.month}/{base.day}投稿）",
         "body": body,
         "labels": ["4コマ", "承認待ち"],
     })
