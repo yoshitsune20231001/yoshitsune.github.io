@@ -133,6 +133,17 @@ reply_links:
   - "▼オンラインショップ https://yoshitsune20231001.stores.jp"
   - "▼ご主人の物語（note） https://note.com/yoshitsune1001"
 
+# ---- 投稿時刻（日本時間）----
+# 生成は毎朝7時。確認・承認したものを、この時刻に投稿します（自動投稿は今後追加）
+# 2〜4週間後に各アプリの分析（インサイト）で反応の良い時間を見て調整してください
+schedule:
+  - {sns: YouTubeショート,      day: 当日, time: "18:00"}
+  - {sns: TikTok,               day: 当日, time: "19:00"}
+  - {sns: インスタ（リール）,    day: 当日, time: "20:00"}
+  - {sns: X,                    day: 当日, time: "21:00"}
+  - {sns: note,                 day: 翌日, time: "07:00"}
+  - {sns: インスタ（カルーセル）, day: 翌日, time: "12:00"}
+
 # ---- リール動画（第10話と同じ構成）----
 reel:
   fps: 30

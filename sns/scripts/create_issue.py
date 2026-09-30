@@ -50,6 +50,7 @@ def main() -> None:
     texts = "\n\n".join(
         f"<details><summary>📄 {f.name}</summary>\n\n```\n{f.read_text(encoding='utf-8')}\n```\n</details>" for f in files
     )
+    sched = "\n".join(f"| {x['sns']} | {x['day']} | {x['time']} |" for x in post.get("schedule", []))
     body = f"""## 第{post['episode']}話「{post['title']}」
 
 ![4コマ]({raw}/manga.jpg)
@@ -61,6 +62,12 @@ def main() -> None:
 | | 場面 | 台詞 |
 |---|---|---|
 {story}
+
+---
+### ⏰ 投稿予定
+| SNS | 日 | 時刻 |
+|---|---|---|
+{sched}
 
 ---
 ### 📝 投稿文（第10話と同じ形式）

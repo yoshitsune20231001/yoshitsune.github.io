@@ -435,6 +435,7 @@ def main() -> None:
         release_tag=f"ep{episode}-{out.name}",
         media=sorted(p.name for p in out.iterdir() if p.suffix in (".jpg", ".mp4") and "raw" not in p.name),
         hashtags=cfg["hashtags"],
+        schedule=cfg.get("schedule", []),
         status="承認待ち",
         mock=args.mock,
     )
