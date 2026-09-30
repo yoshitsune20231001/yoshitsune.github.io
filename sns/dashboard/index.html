@@ -215,7 +215,7 @@
   // 超人チーム（sns/assets/crew/crew.json があれば表示）
   const CREW_DIR = "../assets/crew/";
   let crew = null;
-  const ROLE_OF = (sns) => sns.startsWith("インスタ") ? "instagram" : sns.startsWith("YouTube") ? "youtube"
+  const ROLE_OF = (sns) => (sns.startsWith("インスタ") || sns === "Facebook" || sns === "ストーリーズ") ? "instagram" : sns.startsWith("YouTube") ? "youtube"
     : sns === "X" ? "x" : sns === "TikTok" ? "tiktok" : sns === "note" ? "note" : null;
   const member = (role) => crew && crew.find((m) => m.role === role);
   async function loadCrew() {
