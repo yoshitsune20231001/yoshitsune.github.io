@@ -84,6 +84,18 @@ def fit_vertical(img: Image.Image, w: int = W, h: int = H) -> Image.Image:
     return bg
 
 
+def story_image(title_v: Image.Image, s: dict) -> Image.Image:
+    """ストーリーズ用：タイトルカードの上下に帯を付け、下にスタンプを置く余白を空ける。"""
+    img = title_v.copy()
+    d = ImageDraw.Draw(img, "RGBA")
+    d.rectangle((0, 0, W, 230), fill=(44, 26, 14, 215))
+    d.text((W // 2, 115), s.get("story_text") or "新作4コマ公開！", font=font(72), fill=(250, 240, 220), anchor="mm")
+    d.rectangle((0, H - 470, W, H), fill=(250, 244, 228, 225))
+    d.text((W // 2, H - 400), f"第{s['episode']}話「{s['title']}」", font=font(50), fill=RED, anchor="mm")
+    d.text((W // 2, H - 330), "リールで見てね！", font=font(40, "Medium"), fill=INK, anchor="mm")
+    return img
+
+
 def cream(w: int = W, h: int = H) -> Image.Image:
     """クリームのグラデーション＋上下の金ライン（第10話と同じ地）。"""
     img = Image.new("RGB", (w, h))
@@ -177,6 +189,7 @@ def render_all(panels: list[Image.Image], title_card: Image.Image, note_art: Ima
         fit_cover(p, 1080, 1080).save(out / f"carousel_{i + 1}.jpg", quality=92)
     title_v = fit_vertical(title_card)
     title_v.save(out / "title_card.jpg", quality=92)
+    story_image(title_v, s).save(out / "story.jpg", quality=92)
     fit_cover(title_card, 1080, 1080, anchor_y=0.15).save(out / "carousel_0_cover.jpg", quality=92)
     fit_cover(note_art, 1280, 670).save(out / "note_header.jpg", quality=92)
     manga_grid(panels, s).save(out / "manga.jpg", quality=90)

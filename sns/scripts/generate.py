@@ -68,6 +68,8 @@ class Script(BaseModel):
     instagram_reel_caption: str = Field(description="インスタリールのキャプション（見本と同じ型。ハッシュタグは含めない）")
     instagram_post_caption: str = Field(description="インスタのカルーセル投稿キャプション（見本と同じ型。ハッシュタグは含めない）")
     tiktok_caption: str = Field(description="TikTokのキャプション（1行目に強いフック、台詞の抜粋、短いひとこと、『プロフィールのリンクから』。絵文字多め・テンポよく。ハッシュタグは含めない。200文字以内）")
+    facebook_post: str = Field(description="Facebookページの投稿文（インスタより少し説明的に、ていねいに。台詞の抜粋＋ひとこと＋『オンラインショップはこちら』の一文で終える。URLとハッシュタグは書かない＝後で自動で付く。400文字以内）")
+    story_text: str = Field(description="ストーリーズ画像に大きく入れる短い一言（例：新作4コマ公開！ 14文字以内）")
     tiktok_pinned_comment: str = Field(description="TikTokの固定コメント（視聴者が返信したくなる問いかけ＋ショップはプロフィールのリンクから）")
     youtube_title: str = Field(description="YouTubeショートのタイトル（見本と同じ型。『福合わせたぬき猫4コマ第N話 #shorts』で終わる）")
     youtube_description: str = Field(description="YouTube概要欄（見本と同じ型。ハッシュタグ行は含めない）")
@@ -267,6 +269,7 @@ def mock_script() -> Script:
         title_card_scene_en="", note_header_scene_en="",
         x_post="（テスト）X本ポスト", x_reply="（テスト）Xリプライ",
         instagram_reel_caption="（テスト）リール", instagram_post_caption="（テスト）カルーセル",
+        facebook_post="（テスト）Facebook", story_text="新作4コマ公開！",
         tiktok_caption="（テスト）TikTok", tiktok_pinned_comment="（テスト）固定コメント",
         youtube_title="（テスト）福合わせたぬき猫4コマ第13話 #shorts", youtube_description="（テスト）",
         youtube_tags=["福合わせたぬき猫"], youtube_pinned_comment="（テスト）",
@@ -380,6 +383,8 @@ TikTok投稿文｜第{ep}話「{t}」（4コマ動画）
 ※動画：reel_instagram.mp4（無音・BGMはアプリで）
 ※AIラベル：ON（AIイラスト）
 ※リールはキャプション途中省略。1行目にフックを置く
+※🛍️ 商品タグ：「{cfg.get('instagram_product_tag', '')}」を付ける（投稿画面の「商品をタグ付け」から）
+※Facebookにもシェア：ON（Facebook用の文章は「Facebook投稿文」を使う場合はOFFにして別投稿）
 {BAR}
 
 {sc.instagram_reel_caption}
@@ -390,6 +395,7 @@ TikTok投稿文｜第{ep}話「{t}」（4コマ動画）
 インスタ投稿文｜第{ep}話「{t}」（4コマ・カルーセル／たぬき猫本人視点）
 ※カルーセル順：表紙（carousel_0_cover.jpg）→①②③④（carousel_1〜4.jpg）
 ※AIラベル：ON（AIイラスト）
+※🛍️ 商品タグ：「{cfg.get('instagram_product_tag', '')}」を表紙（1枚目）と④枚目に付ける
 {BAR}
 
 {sc.instagram_post_caption}
@@ -397,6 +403,35 @@ TikTok投稿文｜第{ep}話「{t}」（4コマ動画）
 {' '.join(tags['instagram'])}
 """,
     }
+    files[f"Facebook投稿文_{t}.txt"] = f"""{BAR}
+Facebook投稿文｜第{ep}話「{t}」（4コマ動画）
+※動画：reel_instagram.mp4（インスタのリールと同じ動画でOK）
+※インスタから「Facebookにもシェア」で同時投稿する場合は、この文章に差し替えるか、そのままでもOK
+※AIラベル：ON（AIイラスト）
+{BAR}
+
+{sc.facebook_post}
+▼オンラインショップ
+{cfg.get('shop_url', '')}
+
+{' '.join(tags.get('facebook', []))}
+"""
+    files[f"ストーリーズ_{t}.txt"] = f"""{BAR}
+インスタ ストーリーズ｜第{ep}話「{t}」
+※画像：story.jpg（縦長。下の空いているところにスタンプを置く）
+{BAR}
+
+【手順】
+1. リール投稿のあと、リール画面の「紙飛行機」→「ストーリーズに追加」でリールをシェアする
+   （または story.jpg を使って新しいストーリーズを作る）
+2. スタンプを付ける
+   - 🛍️ 商品スタンプ：「{cfg.get('instagram_product_tag', '')}」
+   - 🔗 リンクスタンプ：{cfg.get('shop_url', '')}（表示名：「ショップを見る」）
+3. 保存しておきたい回は、ハイライト「4コマ漫画」に追加
+
+【画像に入っている一言】
+{sc.story_text}
+"""
     for name, text in files.items():
         (out / name).write_text(text, encoding="utf-8")
 
@@ -503,6 +538,7 @@ def main() -> None:
         release_tag=f"ep{episode}-{out.name}",
         media=sorted(p.name for p in out.iterdir() if p.suffix in (".jpg", ".mp4") and "raw" not in p.name),
         hashtags=cfg["hashtags"],
+        product_tag=cfg.get("instagram_product_tag", ""),
         schedule=cfg.get("schedule", []),
         status="承認待ち",
         mock=args.mock,

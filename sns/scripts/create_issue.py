@@ -76,6 +76,12 @@ def main() -> None:
 {checks}
 
 ---
+### 🛍️ インスタ・Facebook・ストーリーズ
+- **インスタ（リール・カルーセル）**：商品タグ「{post.get('product_tag', '')}」を付ける（カルーセルは表紙と④枚目）
+- **Facebook**：インスタの「Facebookにもシェア」をON、または下の「Facebook投稿文」で別投稿
+- **ストーリーズ**：リールを「ストーリーズに追加」でシェア（または [story.jpg]({raw}/story.jpg)）→ 商品スタンプ＋リンクスタンプ
+
+---
 ### 📝 投稿文（第10話と同じ形式）
 タップすると開きます。
 
@@ -84,6 +90,7 @@ def main() -> None:
 ---
 ### 🖼 画像
 - タイトルカード（縦）：[開く]({raw}/title_card.jpg)
+- ストーリーズ用（縦）：[開く]({raw}/story.jpg)
 - note見出し（横長）：<br>![note見出し]({raw}/note_header.jpg)
 - インスタ・カルーセル：[表紙]({raw}/carousel_0_cover.jpg) → [①]({raw}/carousel_1.jpg) → [②]({raw}/carousel_2.jpg) → [③]({raw}/carousel_3.jpg) → [④]({raw}/carousel_4.jpg)
 - 画像・動画一式：[ダウンロードページ](https://github.com/{repo}/releases/tag/{post['release_tag']})
