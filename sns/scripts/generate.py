@@ -71,7 +71,7 @@ def load_history() -> list[dict]:
 
 def build_script_prompt(cfg: dict, today: dt.date, theme: str | None, history: list[dict]) -> str:
     ch = cfg["character"]
-    past = "\n".join(f"- {h['date']}「{h['title']}」{h.get('theme', '')}" for h in history[-30:]) or "（まだありません）"
+    past = "\n".join(f"- 第{h.get('episode', '?')}話「{h['title']}」{h.get('theme', '')}" for h in history[-30:]) or "（まだありません）"
     return f"""あなたは人気4コマ漫画の作家です。SNS（Instagramリール・YouTubeショートなど）で毎日公開する4コマ漫画の台本を1本作ってください。
 
 # 今日の日付
@@ -198,6 +198,11 @@ def mock_panel(idx: int, out: Path) -> Image.Image:
 
 # ---------------------------------------------------------------- 本体
 
+def next_episode(cfg: dict, history: list[dict]) -> int:
+    done = [h["episode"] for h in history if h.get("episode")]
+    return max([cfg.get("episode_start", 1) - 1, *done]) + 1
+
+
 def new_output_dir(today: dt.date) -> Path:
     base = OUTPUT / today.isoformat()
     out, n = base, 2
@@ -237,7 +242,8 @@ def main() -> None:
 
     print("① 台本を作成中…")
     script = mock_script() if args.mock else make_script(cfg, today, args.theme, history)
-    print(f"   タイトル：{script.title}")
+    episode = next_episode(cfg, history)
+    print(f"   第{episode}話：{script.title}")
 
     out = new_output_dir(today)
     panels = []
@@ -248,6 +254,7 @@ def main() -> None:
 
     print("③ 吹き出し・4コマ画像・動画を作成中…")
     data = script.model_dump()
+    data["episode"] = episode
     render.render_all(panels, data, cfg, out)
 
     tags = list(dict.fromkeys(cfg["hashtags_base"] + script.hashtags))
@@ -257,16 +264,16 @@ def main() -> None:
         hashtags_all=tags,
         public_urls={
             name: f"{cfg['public_base_url']}/{out.relative_to(ROOT).as_posix()}/{name}"
-            for name in ["reel.mp4", "manga.jpg", "cover.jpg"]
+            for name in ["reel.mp4", "manga.jpg", "cover.jpg", "note_header.jpg"]
         },
         status="承認待ち",
         mock=args.mock,
     )
     (out / "post.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    (out / "note.md").write_text(f"# {script.title}\n\n![4コマ](manga.jpg)\n\n{script.note_article}\n\n{' '.join(tags)}\n", encoding="utf-8")
+    (out / "note.md").write_text(f"# 【4コマ漫画】福合わせたぬき猫 第{episode}話「{script.title}」\n\n![見出し画像](note_header.jpg)\n\n![4コマ](manga.jpg)\n\n{script.note_article}\n\n{' '.join(tags)}\n", encoding="utf-8")
 
     if not args.mock:
-        history.append({"date": today.isoformat(), "title": script.title, "theme": script.theme, "dir": data["dir"]})
+        history.append({"episode": episode, "date": today.isoformat(), "title": script.title, "theme": script.theme, "dir": data["dir"]})
         HISTORY.write_text(json.dumps(history[-200:], ensure_ascii=False, indent=2), encoding="utf-8")
     prune_old(cfg.get("keep_days", 30), today)
 

@@ -6,6 +6,9 @@
 # 公開URL（GitHub Pages）。Instagram / Threads 投稿時の動画置き場になります
 public_base_url: https://yoshitsune20231001.github.io/yoshitsune.github.io
 
+# 話数（パソコンに第12話までストックがあるので、自動生成は第13話から）
+episode_start: 13
+
 # 出力を何日分残すか（古いものは自動で削除。サイト容量対策）
 keep_days: 30
 

@@ -211,8 +211,37 @@ def build_reel(frames: list[tuple[Image.Image, float]], out: Path, fps: int, bgm
                         "-t", f"{total:.2f}", "-movflags", "+faststart", str(out)], check=True)
 
 
+def note_header(panels: list[Image.Image], series: str, episode_label: str, title: str) -> Image.Image:
+    """note の見出し画像（横長 1280x670）。左に4コマの絵、右にタイトル。"""
+    nw, nh = 1280, 670
+    img = Image.new("RGB", (nw, nh), CREAM)
+    # 左：1コマ目と4コマ目を並べる
+    pw, ph = 300, 450
+    for j, p in enumerate([panels[0], panels[-1]]):
+        art = p.convert("RGB").resize((pw, int(p.height * pw / p.width)))
+        art = art.crop((0, (art.height - ph) // 2, pw, (art.height - ph) // 2 + ph))
+        x, y = 50 + j * (pw + 24), (nh - ph) // 2 + (-18 if j == 0 else 18)
+        img.paste(art, (x, y))
+        ImageDraw.Draw(img).rectangle((x - 3, y - 3, x + pw + 2, y + ph + 2), outline=BROWN, width=6)
+    d = ImageDraw.Draw(img)
+    tx = 50 + 2 * pw + 24 + 50
+    tw = nw - tx - 50
+    d.text((tx, 150), series, font=font(38), fill=GOLD)
+    d.rounded_rectangle((tx, 215, tx + 190, 285), 35, fill=BROWN)
+    d.text((tx + 95, 250), episode_label, font=font(40), fill=CREAM, anchor="mm")
+    size = 76 if len(title) <= 7 else 60
+    for i, line in enumerate(wrap(title, font(size), tw)[:3]):
+        d.text((tx, 320 + i * int(size * 1.3)), line, font=font(size), fill=BROWN)
+    d.text((tx, nh - 80), "近江八幡・よしつねの秘密基地", font=font(28), fill=BROWN)
+    d.rectangle((0, nh - 16, nw, nh), fill=GOLD)
+    return img
+
+
 def render_all(panels: list[Image.Image], script: dict, cfg: dict, out_dir: Path) -> None:
     series = f"{cfg['character']['name']} 4コマ"
+    episode_label = f"第{script['episode']}話"
+    note_header(panels, series, episode_label, script["title"]).save(out_dir / "note_header.jpg", quality=90)
+    series = f"{series}　{episode_label}"
     vcfg = cfg["video"]
     manga_grid(panels, script, series).save(out_dir / "manga.jpg", quality=88)
     frames = [(title_frame(panels[0], series, script["title"]), vcfg["title_seconds"])]

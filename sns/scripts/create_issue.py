@@ -47,7 +47,7 @@ def main() -> None:
         rows.append(f"| {k} | {p['scene_ja']} | {lines} |")
     story = "\n".join(rows)
     tags = " ".join(post["hashtags_all"])
-    body = f"""## 今日の4コマ「{post['title']}」
+    body = f"""## 第{post['episode']}話「{post['title']}」
 
 ![4コマ]({raw}/manga.jpg)
 
@@ -81,8 +81,12 @@ def main() -> None:
 {' '.join(post['hashtags_all'][:3])}
 ```
 
-### 📝 note（下書き）
-[note.md を開く]({blob}/note.md)
+### 📝 note
+見出し画像（横長 1280×670）：
+
+![note見出し]({raw}/note_header.jpg)
+
+[記事の下書き（note.md）を開く]({blob}/note.md)
 
 ---
 ### ✅ 確認のしかた
@@ -93,7 +97,7 @@ def main() -> None:
 > ※ いまは「生成＋確認」まで。SNSへの自動投稿は、品質が安定してから追加します。
 """
     issue = gh("POST", f"/repos/{repo}/issues", json={
-        "title": f"【4コマ確認】{post['date']}「{post['title']}」",
+        "title": f"【4コマ確認】第{post['episode']}話「{post['title']}」",
         "body": body,
         "labels": ["4コマ", "承認待ち"],
     })
