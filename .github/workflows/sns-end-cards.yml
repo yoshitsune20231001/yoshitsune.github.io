@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       platforms:
-        description: "作るSNS（空欄なら全部：instagram youtube x）"
+        description: "作るSNS（空欄なら全部：instagram youtube x tiktok）"
         required: false
 
 permissions:
@@ -56,9 +56,9 @@ jobs:
           raw="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${SHA}/sns/assets/reel"
           body="## 新しいエンドカード
 
-          | Instagram | YouTube | X |
-          |---|---|---|
-          | <img src=\"${raw}/end_card_instagram.jpg\" width=\"200\"> | <img src=\"${raw}/end_card_youtube.jpg\" width=\"200\"> | <img src=\"${raw}/end_card_x.jpg\" width=\"200\"> |
+          | Instagram | YouTube | X | TikTok |
+          |---|---|---|---|
+          | <img src=\"${raw}/end_card_instagram.jpg\" width=\"200\"> | <img src=\"${raw}/end_card_youtube.jpg\" width=\"200\"> | <img src=\"${raw}/end_card_x.jpg\" width=\"200\"> | <img src=\"${raw}/end_card_tiktok.jpg\" width=\"200\"> |
 
           気に入らないものがあれば、Actions の「エンドカード作成」をもう一度実行してください（SNS名を入れるとそれだけ作り直せます）。"
           gh issue create --title "【確認】SNSごとのエンドカード" --body "$body"

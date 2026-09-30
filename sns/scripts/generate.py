@@ -67,6 +67,8 @@ class Script(BaseModel):
     x_reply: str = Field(description="Xのリプライ本文（見本と同じ型。第N話の案内とショップ誘導。URLは書かない＝後で自動で付く）")
     instagram_reel_caption: str = Field(description="インスタリールのキャプション（見本と同じ型。ハッシュタグは含めない）")
     instagram_post_caption: str = Field(description="インスタのカルーセル投稿キャプション（見本と同じ型。ハッシュタグは含めない）")
+    tiktok_caption: str = Field(description="TikTokのキャプション（1行目に強いフック、台詞の抜粋、短いひとこと、『プロフィールのリンクから』。絵文字多め・テンポよく。ハッシュタグは含めない。200文字以内）")
+    tiktok_pinned_comment: str = Field(description="TikTokの固定コメント（視聴者が返信したくなる問いかけ＋ショップはプロフィールのリンクから）")
     youtube_title: str = Field(description="YouTubeショートのタイトル（見本と同じ型。『福合わせたぬき猫4コマ第N話 #shorts』で終わる）")
     youtube_description: str = Field(description="YouTube概要欄（見本と同じ型。ハッシュタグ行は含めない）")
     youtube_tags: list[str] = Field(description="YouTubeのタグ（10個前後。#は付けない）")
@@ -237,6 +239,7 @@ def mock_script() -> Script:
         title_card_scene_en="", note_header_scene_en="",
         x_post="（テスト）X本ポスト", x_reply="（テスト）Xリプライ",
         instagram_reel_caption="（テスト）リール", instagram_post_caption="（テスト）カルーセル",
+        tiktok_caption="（テスト）TikTok", tiktok_pinned_comment="（テスト）固定コメント",
         youtube_title="（テスト）福合わせたぬき猫4コマ第13話 #shorts", youtube_description="（テスト）",
         youtube_tags=["福合わせたぬき猫"], youtube_pinned_comment="（テスト）",
         note_title="（テスト）note", note_body="（テスト）〔①コマ目の画像〕", extra_hashtags=["#秋"],
@@ -319,6 +322,22 @@ YouTube Shorts 投稿文｜{t} 第{ep}話
 - AI開示（改変/合成コンテンツ）：はい（AIイラストのため）
 - 子ども向けではない → 「いいえ、子ども向けではありません」
 - 再生リスト「福合わせたぬき猫 4コマ漫画」に追加
+""",
+        f"TikTok投稿文_{t}.txt": f"""{BAR}
+TikTok投稿文｜第{ep}話「{t}」（4コマ動画）
+※動画：reel_tiktok.mp4（無音・BGMはアプリで人気曲を付ける）
+※AI生成コンテンツのラベル：ON（AIイラスト）
+※キャプションのリンクは押せないので「プロフィールのリンクから」へ誘導
+{BAR}
+
+【キャプション】
+{sc.tiktok_caption}
+
+{' '.join(tags['tiktok'])}
+
+
+【固定コメント】※投稿後に自分でコメントし、ピン留め（固定）する
+{sc.tiktok_pinned_comment}
 """,
         f"インスタリール投稿文_{t}.txt": f"""{BAR}
 インスタリール投稿文｜第{ep}話「{t}」（たぬき猫本人視点）

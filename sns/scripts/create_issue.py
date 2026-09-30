@@ -54,7 +54,7 @@ def main() -> None:
 
 ![4コマ]({raw}/manga.jpg)
 
-🎬 **リール動画**（SNSごとにエンドカードが違います）：[インスタ用]({blob}/reel_instagram.mp4)　／　[YouTube用]({blob}/reel_youtube.mp4)　／　[X用]({blob}/reel_x.mp4)
+🎬 **リール動画**（SNSごとにエンドカードが違います）：[インスタ用]({blob}/reel_instagram.mp4)　／　[YouTube用]({blob}/reel_youtube.mp4)　／　[X用]({blob}/reel_x.mp4)　／　[TikTok用]({blob}/reel_tiktok.mp4)
 
 📍 今回の場所：{post.get('location', '')}
 

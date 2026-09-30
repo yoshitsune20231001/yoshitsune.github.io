@@ -1,7 +1,7 @@
 """リール最後の「見てくれてありがとう」エンドカードを、SNSごとにAIで作り直す（最初に1回だけ実行）。
 
   python sns/scripts/make_end_cards.py              # 全SNS
-  python sns/scripts/make_end_cards.py youtube x    # 指定したSNSだけ
+  python sns/scripts/make_end_cards.py tiktok x    # 指定したSNSだけ
 """
 from __future__ import annotations
 
@@ -26,6 +26,11 @@ DESIGNS = {
         "Clean white and bright red background with sparkles, a big red rounded button shape behind the bottom text.",
         "「最後まで見てくれてありがとう！」",
         "「高評価👍＆チャンネル登録 よろしくね！」",
+    ),
+    "tiktok": (
+        "Black background with neon cyan and hot pink glow accents and sparkles, energetic and trendy.",
+        "「最後まで見てくれてありがとう！」",
+        "「いいね♥・保存・フォロー よろしくね！」",
     ),
     "x": (
         "Stylish black background with white and gold sparkles, simple and modern.",

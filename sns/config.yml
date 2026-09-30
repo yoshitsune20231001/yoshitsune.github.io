@@ -126,6 +126,7 @@ hashtags:
   x: ["#招き猫", "#信楽焼", "#縁起物"]
   instagram: ["#福合わせたぬき猫", "#招き猫", "#縁起物", "#4コマ漫画", "#よしつねの秘密基地"]
   youtube: ["#福合わせたぬき猫", "#信楽焼", "#招き猫", "#たぬき", "#縁起物", "#4コマ漫画", "#shorts"]
+  tiktok: ["#福合わせたぬき猫", "#信楽焼", "#招き猫", "#たぬき", "#縁起物", "#4コマ漫画", "#開運", "#おすすめにのりたい", "#fyp", "#japan", "#luckycat"]
 
 # ぶら下げリプライ（X）に入れるリンク。本ポストにはリンクを入れない
 reply_links:
@@ -146,6 +147,7 @@ reel:
     instagram: sns/assets/reel/end_card_instagram.jpg
     youtube: sns/assets/reel/end_card_youtube.jpg
     x: sns/assets/reel/end_card_x.jpg
+    tiktok: sns/assets/reel/end_card_tiktok.jpg
   shop_line: オンラインショップで販売中
   shop_sub: プロフィールのリンクから
   # sns/assets/bgm/ に mp3 を置くとBGMが付きます（無ければ無音。今まで通りアプリでBGMを付けてOK）
