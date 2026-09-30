@@ -65,8 +65,6 @@ class Script(BaseModel):
     note_header_scene_en: str = Field(description="note見出し（横長）の場面説明（英語）。タイトルカードと同じ雰囲気で横長の構図")
     x_post: str = Field(description="Xの本ポスト本文（見本と同じ型。台詞の抜粋＋2行のひとこと。リンク・ハッシュタグは含めない）")
     x_reply: str = Field(description="Xのリプライ本文（見本と同じ型。第N話の案内とショップ誘導。URLは書かない＝後で自動で付く）")
-    threads_post: str = Field(description="Threadsの本投稿（Xより少し長め・会話調で、最後に問いかけを1つ。リンク・ハッシュタグは含めない。400文字以内）")
-    threads_reply: str = Field(description="Threadsのぶら下げ返信（第N話の案内とショップ誘導。URLは書かない＝後で自動で付く）")
     instagram_reel_caption: str = Field(description="インスタリールのキャプション（見本と同じ型。ハッシュタグは含めない）")
     instagram_post_caption: str = Field(description="インスタのカルーセル投稿キャプション（見本と同じ型。ハッシュタグは含めない）")
     youtube_title: str = Field(description="YouTubeショートのタイトル（見本と同じ型。『福合わせたぬき猫4コマ第N話 #shorts』で終わる）")
@@ -238,7 +236,6 @@ def mock_script() -> Script:
         moral_short="秋も、福もいっぱい", closing_line="小さな秋に、小さな福を。",
         title_card_scene_en="", note_header_scene_en="",
         x_post="（テスト）X本ポスト", x_reply="（テスト）Xリプライ",
-        threads_post="（テスト）Threads本投稿", threads_reply="（テスト）Threads返信",
         instagram_reel_caption="（テスト）リール", instagram_post_caption="（テスト）カルーセル",
         youtube_title="（テスト）福合わせたぬき猫4コマ第13話 #shorts", youtube_description="（テスト）",
         youtube_tags=["福合わせたぬき猫"], youtube_pinned_comment="（テスト）",
@@ -286,22 +283,6 @@ X投稿文｜{t} 第{ep}話（4コマ動画）
 
 【リプライ】（本ポストに自分でぶら下げる・ここにリンク）
 {sc.x_reply}
-{links}
-""",
-        f"Threads投稿文_{t}.txt": f"""{BAR}
-Threads投稿文｜{t} 第{ep}話（4コマ動画）
-※二段構え：本投稿＝動画＋会話のきっかけ（リンク無し）／返信＝ショップリンク
-※動画＝reel_threads.mp4（Instagramと同じ動画でもOK）
-{BAR}
-
-【本投稿】（動画を添付・リンクは入れない）
-{sc.threads_post}
-
-{' '.join(tags['threads'])}
-
-
-【返信】（本投稿に自分でぶら下げる・ここにリンク）
-{sc.threads_reply}
 {links}
 """,
         f"note記事_4コマ漫画_第{ep}話_{t}.txt": f"""【タイトル】

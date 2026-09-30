@@ -3,7 +3,7 @@
 #  ここを書き換えると、毎日の4コマの内容・絵柄・動画が変わります
 # ============================================================
 
-# 公開URL（GitHub Pages）。Instagram / Threads 投稿時の動画置き場になります
+# 公開URL（GitHub Pages）。Instagram 投稿時の動画置き場になります
 public_base_url: https://yoshitsune20231001.github.io/yoshitsune.github.io
 
 # 話数（パソコンに第12話までストックがあるので、自動生成は第13話から）
@@ -126,9 +126,8 @@ hashtags:
   x: ["#招き猫", "#信楽焼", "#縁起物"]
   instagram: ["#福合わせたぬき猫", "#招き猫", "#縁起物", "#4コマ漫画", "#よしつねの秘密基地"]
   youtube: ["#福合わせたぬき猫", "#信楽焼", "#招き猫", "#たぬき", "#縁起物", "#4コマ漫画", "#shorts"]
-  threads: ["#福合わせたぬき猫"]      # Threads はタグ1つ推奨
 
-# ぶら下げリプライ（X・Threads）に入れるリンク。本ポストにはリンクを入れない
+# ぶら下げリプライ（X）に入れるリンク。本ポストにはリンクを入れない
 reply_links:
   - "▼オンラインショップ https://yoshitsune20231001.stores.jp"
   - "▼ご主人の物語（note） https://note.com/yoshitsune1001"
@@ -147,7 +146,6 @@ reel:
     instagram: sns/assets/reel/end_card_instagram.jpg
     youtube: sns/assets/reel/end_card_youtube.jpg
     x: sns/assets/reel/end_card_x.jpg
-    threads: sns/assets/reel/end_card_threads.jpg
   shop_line: オンラインショップで販売中
   shop_sub: プロフィールのリンクから
   # sns/assets/bgm/ に mp3 を置くとBGMが付きます（無ければ無音。今まで通りアプリでBGMを付けてOK）

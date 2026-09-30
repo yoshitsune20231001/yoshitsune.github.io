@@ -144,7 +144,7 @@ def end_card(path: Path) -> Image.Image:
 # ---------------------------------------------------------------- 静止画
 
 def manga_grid(panels: list[Image.Image], s: dict) -> Image.Image:
-    """X・Threads・note用の4コマまとめ（2x2、左上→右上→左下→右下）。"""
+    """X・note用の4コマまとめ（2x2、左上→右上→左下→右下）。"""
     size, gap, head = 520, 20, 110
     gw = size * 2 + gap * 3 + 14 * 2
     img = cream(gw, head + (size + 14) * 2 + gap * 3 + 50)

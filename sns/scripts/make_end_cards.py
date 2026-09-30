@@ -32,11 +32,6 @@ DESIGNS = {
         "「最後まで見てくれてありがとう！」",
         "「いいね♥・リポスト・フォロー よろしくね！」",
     ),
-    "threads": (
-        "Minimal off-white background with soft black line accents and small sparkles.",
-        "「見てくれてありがとう！」",
-        "「いいね♥＆フォロー よろしくね！」",
-    ),
 }
 
 
