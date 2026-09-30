@@ -86,6 +86,28 @@
   .member .nm { font-weight: bold; font-size: .85rem; padding: 6px 6px 0; }
   .member .lb { color: var(--sub); font-size: .72rem; }
   .member .say { margin: 6px 8px 10px; }
+  /* 動き */
+  .pic { position: relative; }
+  .pic img, #hq-img { transform-origin: 50% 90%; cursor: pointer; }
+  .pop { position: absolute; left: 50%; top: 8px; transform: translate(-50%, 0) scale(.6); opacity: 0;
+    background: #fff; color: #2c1a0e; border: 2px solid #2c1a0e; border-radius: 12px; padding: 4px 9px;
+    font-size: .75rem; font-weight: bold; white-space: nowrap; pointer-events: none;
+    transition: opacity .2s, transform .2s; z-index: 2; box-shadow: 0 2px 0 rgba(0,0,0,.2); }
+  .pop.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  @keyframes hop { 0%,100% { transform: translateY(0); } 30% { transform: translateY(-14%) scaleY(1.04); } 55% { transform: translateY(0) scaleY(.94); } 70% { transform: translateY(-4%); } }
+  @keyframes sway { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
+  @keyframes spin { 0% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
+  @keyframes pound { 0%,100% { transform: scale(1); } 20% { transform: scale(1.08) rotate(-3deg); } 40% { transform: scale(.97) rotate(2deg); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-3px) rotate(-1deg); } 40%,80% { transform: translateX(3px) rotate(1deg); } }
+  @keyframes party { 0%,100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-10%) rotate(-5deg); } 50% { transform: translateY(0); } 75% { transform: translateY(-10%) rotate(5deg); } }
+  @keyframes doze { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg) translateY(2%); } }
+  .a-hop { animation: hop .8s ease; } .a-sway { animation: sway 1s ease; } .a-spin { animation: spin .9s ease; }
+  .a-pound { animation: pound .9s ease; }
+  .member.late .pic img { animation: shake .45s linear infinite; }
+  .member.done .pic img { animation: party 1.6s ease-in-out infinite; }
+  .member.idle .pic img { animation: doze 4s ease-in-out infinite; }
+  .member .pic img.a-hop, .member .pic img.a-sway, .member .pic img.a-spin { animation-iteration-count: 1; }
+  @media (prefers-reduced-motion: reduce) { .pic img, #hq-img { animation: none !important; } }
   .row .face { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; vertical-align: middle; margin-right: 8px; }
   footer { max-width: 960px; margin: 0 auto; padding: 0 16px 32px; color: var(--sub); font-size: .8rem; }
   footer a { color: var(--blue); }
@@ -246,9 +268,13 @@
         else if (mine.length && mine.every((p) => p.done)) { text = "任務完了！"; cls = "b-done"; }
         else if (mine.length) { const n = mine.find((p) => !p.done); text = `${n.time} 出動予定`; cls = "b-wait"; }
         else { text = "待機中"; cls = "b-wait"; }
-        const card = el("div", "member" + (mine.length || lateMine.length ? "" : " idle"));
+        const state = lateMine.length ? " late" : (mine.length && mine.every((p) => p.done)) ? " done" : mine.length ? "" : " idle";
+        const card = el("div", "member" + state);
+        card.dataset.role = m.role;
+        const pic = el("div", "pic");
         const img = el("img"); img.src = CREW_DIR + m.role + ".jpg"; img.alt = m.name; img.loading = "lazy";
-        card.append(img, el("div", "nm", m.name), el("div", "lb", `${m.label}担当`), el("div", `say badge ${cls}`, text));
+        pic.append(img, el("div", "pop"));
+        card.append(pic, el("div", "nm", m.name), el("div", "lb", `${m.label}担当`), el("div", `say badge ${cls}`, text));
         grid.append(card);
       }
       grid.classList.add("on"); $("crew-h").style.display = "";
@@ -349,6 +375,56 @@
     for (const x of $("filters").querySelectorAll("button")) x.setAttribute("aria-pressed", String(x === b));
     render();
   });
+  // ---- キャラをランダムに動かす・しゃべらせる ----
+  const CHATTER = {
+    commander: ["全員、配置につけ！", "今日も福を届けるぞ！", "報告を待っている！", "気を抜くな！"],
+    instagram: ["映えてるかな？", "いいね、いっぱい来い！", "保存してね〜！", "今日のカルーセル自信作！"],
+    youtube: ["再生数、伸ばすぜ！", "高評価たのむ！", "ショートで勝負だ！", "チャンネル登録よろしく！"],
+    x: ["……（ポスト準備中）", "リプライもぶら下げた", "拡散、狙い撃ち", "静かに、確実に"],
+    tiktok: ["ノってこうぜ！", "バズの予感！", "音源はあれでいく！", "踊りながら投稿！"],
+    note: ["記事、書き上げたぞ", "朝7時に公開だ", "ご主人の物語を届ける", "一字一句、心を込めて"],
+  };
+  const STATE_LINES = {
+    late: ["急げ急げ！", "やばい、遅れてる！", "今すぐ投稿する！"],
+    done: ["任務完了！", "やったー！", "バッチリ！"],
+    idle: ["zzz…", "今日は非番…", "出番まだかな"],
+  };
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function animate(img, cls) {
+    if (reduceMotion || !img) return;
+    img.classList.remove("a-hop", "a-sway", "a-spin", "a-pound");
+    void img.offsetWidth;  // 同じ動きを連続で出せるように
+    img.classList.add(cls);
+    img.addEventListener("animationend", () => img.classList.remove(cls), { once: true });
+  }
+  function speak(card, text) {
+    const pop = card.querySelector(".pop"); if (!pop) return;
+    pop.textContent = text; pop.classList.add("show");
+    clearTimeout(pop._t); pop._t = setTimeout(() => pop.classList.remove("show"), 2200);
+  }
+  function lineFor(card) {
+    const role = card.dataset.role;
+    for (const s of ["late", "done", "idle"]) if (card.classList.contains(s) && Math.random() < 0.6) return pick(STATE_LINES[s]);
+    return pick(CHATTER[role] || ["…"]);
+  }
+  function tick() {
+    const cards = [...document.querySelectorAll(".member")];
+    if (cards.length) {
+      const c = pick(cards);
+      if (!c.classList.contains("late") && !c.classList.contains("done")) animate(c.querySelector("img"), pick(["a-hop", "a-sway", "a-spin"]));
+      if (Math.random() < 0.5) speak(c, lineFor(c));
+    }
+    if (Math.random() < 0.25 && $("hq").classList.contains("on")) animate($("hq-img"), "a-pound");
+  }
+  setInterval(tick, 2600);
+  document.addEventListener("click", (ev) => {
+    const card = ev.target.closest(".member");
+    if (card) { animate(card.querySelector("img"), "a-hop"); speak(card, lineFor(card)); }
+    if (ev.target.id === "hq-img") { animate(ev.target, "a-pound"); $("hq-say").textContent = pick(CHATTER.commander); }
+  });
+
   $("reload").addEventListener("click", load);
   setInterval(() => episodes.length && render(), 60000);  // 「遅れ」表示を1分ごとに更新
   load();
