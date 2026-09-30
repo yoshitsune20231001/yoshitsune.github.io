@@ -68,6 +68,7 @@ def main() -> None:
 
 ---
 ### 🖼 画像
+- タイトルカード（縦）：[開く]({raw}/title_card.jpg)
 - note見出し（横長）：<br>![note見出し]({raw}/note_header.jpg)
 - インスタ・カルーセル：[表紙]({raw}/carousel_0_cover.jpg) → [①]({raw}/carousel_1.jpg) → [②]({raw}/carousel_2.jpg) → [③]({raw}/carousel_3.jpg) → [④]({raw}/carousel_4.jpg)
 - ファイル一式：[フォルダを開く](https://github.com/{repo}/tree/{sha}/{out})

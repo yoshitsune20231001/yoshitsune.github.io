@@ -16,25 +16,29 @@ openai:
   text_model: gpt-5.5          # 台本づくり
   image_model: gpt-image-2     # 絵づくり
   image_quality: medium        # low / medium / high（high ほど綺麗で高い）
-  image_size: 1024x1536        # 縦長
+  sizes:
+    panel: 1024x1024           # 4コマ（正方形）
+    title_card: 1024x1536      # タイトルカード（縦）→ 9:16 に切り抜き
+    note_header: 1536x1024     # note見出し（横）→ 1280x670 に切り抜き
 
 # ---- 主人公（2匹コンビ）----
 character:
   name: 福合わせたぬき猫
-  # 見本画像（毎回AIに渡して、同じキャラに見えるようにする）
-  # ※ パソコンにある過去の4コマ画像を sns/character/ に入れたら差し替えます
+  # 見本画像（毎回AIに渡して、同じキャラ・同じ絵柄にする）
   reference_images:
-    - sns/character/tanukineko.png
+    - sns/character/たぬき_キャラクターシート.png
+    - sns/character/猫_キャラクターシート.png
+    - sns/character/reference/第10話/百万両_1コマずつ_1.png
   # 絵のAI向けの見た目の説明（英語の方が安定します）
   appearance_en: >-
-    Two lucky-charm characters who are always together as a duo:
-    (1) TANUKI: a chubby, round Shigaraki-ware style tanuki (Japanese raccoon dog),
-    beige body with brown fur, dark mask patches around gently smiling eyes,
-    woven straw hat, navy-blue cord necklace, holds a golden oval koban coin.
-    (2) NEKO: a round, chubby maneki-neko style cat, a boy (NOT a girl: no ribbons,
-    no eyelashes, no makeup, no skirt, no feminine features), same size and
-    same ceramic-figure-like softness as the tanuki, raising one paw to beckon.
-    Keep both designs identical to the reference image(s) in every panel.
+    Two chubby ceramic-figurine-like lucky charm characters, always together as a duo, both BOYS.
+    (1) TANUKI: dark brown/black fur with orange-brown face markings, big round eyes, cream belly,
+    woven straw kasa hat behind the head, red rope necklace with a golden bell, a big golden oval
+    koban on the belly reading 百万両, a wooden tag reading 通 hanging on one side and a white sake
+    bottle marked 八 on the other.
+    (2) NEKO: orange tabby maneki-neko cat with dark stripes/spots, cream face and belly, same straw
+    hat, red rope necklace with bell, golden 百万両 koban, 通 tag and 八 sake bottle, raising a paw.
+    The cat is a boy: no eyelashes, no ribbons, no makeup, no feminine features.
   personality: >-
     信楽焼のたぬきと招き猫の2匹組。どちらも男の子（猫を女の子キャラにしない）。
     たぬき：のんびり屋で食いしん坊のボケ役。お腹に小判「百万両」を下げている。
@@ -53,9 +57,11 @@ character:
 
 # 絵柄（全コマ共通）
 art_style_en: >-
-  Cute Japanese 4-koma manga panel, soft hand-drawn line art with warm watercolor
-  coloring, gentle pastel palette (cream, sakura pink, indigo, gold), clean simple
-  background, expressive chibi proportions, heartwarming and funny mood.
+  Richly detailed Japanese illustration with bold black ink outlines and warm hand-painted
+  watercolor texture, vivid colors, cute chubby proportions, expressive faces.
+  Default setting: a traditional Omihachiman merchant-town street (old wooden shops, red paper
+  lanterns with 福, indigo noren with 福, red parasol, willow trees, stone pavement, a small
+  縁起物 chalkboard sign), adjusted to the season and story.
 
 # ---- お話のルール ----
 story:
@@ -91,11 +97,15 @@ hashtags:
   instagram: ["#福合わせたぬき猫", "#招き猫", "#縁起物", "#4コマ漫画", "#よしつねの秘密基地"]
   youtube: ["#福合わせたぬき猫", "#信楽焼", "#招き猫", "#たぬき", "#縁起物", "#4コマ漫画", "#shorts"]
 
-# ---- 動画 ----
-video:
+# ---- リール動画（第10話と同じ構成）----
+reel:
   fps: 30
-  title_seconds: 2.0
-  panel_seconds: 4.0
-  end_seconds: 2.5
-  # sns/assets/bgm/ に mp3 を置くと、その中からランダムにBGMが付きます（無ければ無音）
+  title_seconds: 2.75     # タイトルカード
+  hook_seconds: 2.5       # フックの一文
+  panel_seconds: 3.5      # 1コマあたり
+  closing_seconds: 2.5    # 締め（ロゴ・販売中）
+  end_seconds: 3.25       # エンドカード（いいね＆フォロー）
+  shop_line: オンラインショップで販売中
+  shop_sub: プロフィールのリンクから
+  # sns/assets/bgm/ に mp3 を置くとBGMが付きます（無ければ無音。今まで通りアプリでBGMを付けてOK）
   bgm_volume: 0.35

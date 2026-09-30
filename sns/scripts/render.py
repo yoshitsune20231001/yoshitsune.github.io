@@ -1,4 +1,12 @@
-"""4コマの絵に吹き出しを入れ、4コマ画像（2x2）とリール動画（縦長スライド）を作る。"""
+"""AIが描いた絵から、第10話と同じ形式のリール動画・4コマまとめ画像・カルーセル・note見出しを作る。
+
+リールの構成（約25秒・1080x1920）
+  1. タイトルカード（AIの縦長イラスト）         2.75秒
+  2. フック（「百万両あるのに、／買うのは…お団子!?」） 2.5秒
+  3. 4コマを1コマずつ（クリーム地・金枠）        3.5秒 x 4
+  4. 締め（第N話・ロゴ・販売中）                2.5秒
+  5. エンドカード（いいね＆フォロー）            3.25秒
+"""
 from __future__ import annotations
 
 import glob
@@ -9,31 +17,38 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[2]
+ASSETS = ROOT / "sns/assets/reel"
 
-CREAM = (253, 246, 232)
-BROWN = (44, 26, 14)
-GOLD = (201, 169, 110)
-WHITE = (255, 255, 255)
-
-W, H = 1080, 1920  # リール・ショートの縦長サイズ
-KI_SHO_TEN_KETSU = ["起", "承", "転", "結"]
+# 第10話のリールから取った色
+BG_TOP = (249, 242, 224)
+BG_BOTTOM = (240, 229, 206)
+GOLD = (199, 161, 72)
+INK = (84, 66, 50)       # 見出しの文字
+GRAY = (110, 100, 90)
+RED = (178, 40, 34)
+W, H = 1080, 1920
 
 _FONT_CANDIDATES = [
     os.environ.get("SNS_FONT", ""),
-    str(ROOT / "sns/assets/fonts/ZenMaruGothic-Bold.ttf"),
+    str(ROOT / "sns/assets/fonts/NotoSansJP-VF.ttf"),
     "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
     "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
     "C:/Windows/Fonts/meiryob.ttc",
 ]
 
 
-def font(size: int) -> ImageFont.FreeTypeFont:
+def font(size: int, weight: str = "Bold") -> ImageFont.FreeTypeFont:
     for path in _FONT_CANDIDATES:
         if path and os.path.exists(path):
-            return ImageFont.truetype(path, size)
+            f = ImageFont.truetype(path, size)
+            try:  # 可変フォントなら太さを指定
+                f.set_variation_by_name(weight)
+            except (OSError, ValueError):
+                pass
+            return f
     raise FileNotFoundError("日本語フォントが見つかりません（SNS_FONT で指定してください）")
 
 
@@ -46,238 +61,152 @@ def ffmpeg_exe() -> str:
     return imageio_ffmpeg.get_ffmpeg_exe()
 
 
-# ---------------------------------------------------------------- 吹き出し
-
-def wrap(text: str, fnt: ImageFont.FreeTypeFont, max_w: int) -> list[str]:
-    """日本語を1文字ずつ詰めて折り返す（句読点が行頭に来ないよう調整）。"""
-    lines, cur = [], ""
-    for ch in text:
-        if fnt.getlength(cur + ch) <= max_w or not cur:
-            cur += ch
-        elif ch in "、。！？!?」』）ー…〜":
-            cur += ch
-        else:
-            lines.append(cur)
-            cur = ch
-    if cur:
-        lines.append(cur)
-    return lines
+def fit_cover(img: Image.Image, w: int, h: int, anchor_y: float = 0.5) -> Image.Image:
+    """縦横比を保って拡大し、はみ出た分を切り落とす（anchor_y=0 で上寄せ）。"""
+    img = img.convert("RGB")
+    scale = max(w / img.width, h / img.height)
+    img = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
+    x = (img.width - w) // 2
+    y = int((img.height - h) * anchor_y)
+    return img.crop((x, y, x + w, y + h))
 
 
-def draw_bubble(img: Image.Image, text: str, speaker: str, box_x: int, box_y: int,
-                max_w: int, size: int, align_right: bool) -> int:
-    """吹き出しを描いて、その下端のyを返す。"""
+def cream(w: int = W, h: int = H) -> Image.Image:
+    """クリームのグラデーション＋上下の金ライン（第10話と同じ地）。"""
+    img = Image.new("RGB", (w, h))
     d = ImageDraw.Draw(img)
-    fnt = font(size)
-    sfnt = font(int(size * 0.5))
-    lines = wrap(text, fnt, max_w - size)
-    line_h = int(size * 1.3)
-    pad = int(size * 0.55)
-    text_w = max(fnt.getlength(line) for line in lines)
-    bw = int(text_w + pad * 2)
-    bh = int(line_h * len(lines) + pad * 2 - (line_h - size))
-    x0 = box_x + max_w - bw if align_right else box_x
-    y0 = box_y + (int(size * 0.55) if speaker else 0)
-    r = int(size * 0.8)
-    # 影 → 本体
-    d.rounded_rectangle((x0 + 5, y0 + 6, x0 + bw + 5, y0 + bh + 6), r, fill=(0, 0, 0, 60))
-    d.rounded_rectangle((x0, y0, x0 + bw, y0 + bh), r, fill=WHITE, outline=BROWN, width=max(3, size // 14))
-    # しっぽ（下向き）
-    tx = x0 + (bw * 3 // 4 if align_right else bw // 4)
-    tail = [(tx - size // 3, y0 + bh - 3), (tx + size // 3, y0 + bh - 3), (tx + (size // 4 if align_right else -size // 4), y0 + bh + size // 2)]
-    d.polygon(tail, fill=WHITE)
-    d.line([tail[0], tail[2], tail[1]], fill=BROWN, width=max(3, size // 14))
-    if speaker:
-        sx = x0 + bw - sfnt.getlength(speaker) - pad // 2 if align_right else x0 + pad // 2
-        d.text((sx, y0 - int(size * 0.6)), speaker, font=sfnt, fill=BROWN, stroke_width=4, stroke_fill=WHITE)
+    for y in range(h):
+        t = y / h
+        d.line([(0, y), (w, y)], fill=tuple(round(a + (b - a) * t) for a, b in zip(BG_TOP, BG_BOTTOM)))
+    d.rectangle((0, 0, w, 7), fill=GOLD)
+    d.rectangle((0, h - 8, w, h), fill=GOLD)
+    return img
+
+
+def framed(panel: Image.Image, size: int) -> Image.Image:
+    """コマに金の細枠を付ける。"""
+    pad = 7
+    out = Image.new("RGB", (size + pad * 2, size + pad * 2), GOLD)
+    ImageDraw.Draw(out).rectangle((3, 3, size + pad * 2 - 4, size + pad * 2 - 4), outline=(250, 244, 228), width=2)
+    out.paste(panel.convert("RGB").resize((size, size), Image.LANCZOS), (pad, pad))
+    return out
+
+
+def centered(d: ImageDraw.ImageDraw, y: int, text: str, size: int, fill, weight: str = "Bold") -> None:
+    d.text((W // 2, y), text, font=font(size, weight), fill=fill, anchor="mm")
+
+
+# ---------------------------------------------------------------- リールの各画面
+
+def slide_hook(s: dict) -> Image.Image:
+    img = cream()
+    d = ImageDraw.Draw(img)
+    d.text((80, 470), f"福合わせたぬき猫の4コマ・第{s['episode']}話「{s['title']}」", font=font(34, "Medium"), fill=INK)
+    centered(d, 680, s["hook_line1"], 56, INK, "Medium")
+    lines = s["hook_line2"].split("\n")[:3]
     for i, line in enumerate(lines):
-        d.text((x0 + pad, y0 + pad + i * line_h), line, font=fnt, fill=BROWN)
-    return y0 + bh + size // 2
+        centered(d, 820 + i * 140, line, 88, RED)
+    centered(d, 820 + len(lines) * 140 + 120, f"— {s['moral_short']} —", 38, GRAY, "Medium")
+    return img
 
 
-def panel_with_bubbles(panel: Image.Image, lines: list[dict], width: int) -> Image.Image:
-    """絵を width 幅にして、上部に台詞の吹き出しを重ねる。"""
-    h = int(panel.height * width / panel.width)
-    img = panel.convert("RGBA").resize((width, h), Image.LANCZOS)
-    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    size = max(24, width // 17)
-    margin = width // 22
-    y = margin
-    for i, line in enumerate(lines[:2]):
-        y = draw_bubble(overlay, line["text"], line.get("speaker", ""), margin, y,
-                        int(width * 0.78), size, align_right=(i % 2 == 1))
-    return Image.alpha_composite(img, overlay).convert("RGB")
+def slide_panel(panel: Image.Image, episode: int) -> Image.Image:
+    img = cream()
+    d = ImageDraw.Draw(img)
+    centered(d, 375, f"福合わせたぬき猫の4コマ　｜　第{episode}話", 38, INK, "Medium")
+    f = framed(panel, 1000)
+    img.paste(f, ((W - f.width) // 2, 520))
+    return img
+
+
+def slide_closing(s: dict, cfg: dict) -> Image.Image:
+    img = cream()
+    d = ImageDraw.Draw(img)
+    centered(d, 330, f"第{s['episode']}話「{s['title']}」", 60, RED)
+    logo = ASSETS / "logo_stamp.png"
+    if logo.exists():
+        stamp = Image.open(logo).convert("RGB").resize((420, 420), Image.LANCZOS)
+        mask = Image.new("L", stamp.size, 0)
+        ImageDraw.Draw(mask).ellipse((2, 2, 417, 417), fill=255)
+        img.paste(stamp, ((W - 420) // 2, 520), mask)
+    centered(d, 1120, s["closing_line"], 50, INK, "Medium")
+    centered(d, 1265, cfg["reel"]["shop_line"], 52, RED)
+    centered(d, 1355, cfg["reel"]["shop_sub"], 34, GRAY, "Medium")
+    return img
+
+
+def end_card() -> Image.Image:
+    path = ASSETS / "end_card.jpg"
+    return fit_cover(Image.open(path), W, H) if path.exists() else cream()
 
 
 # ---------------------------------------------------------------- 静止画
 
-def reel_frame(panel: Image.Image, lines: list[dict], idx: int, title: str) -> Image.Image:
-    frame = Image.new("RGB", (W, H), CREAM)
-    d = ImageDraw.Draw(frame)
-    d.text((W // 2, 95), title, font=font(54), fill=BROWN, anchor="mm")
-    pw = 1000
-    art = panel_with_bubbles(panel, lines, pw)
-    top = 170
-    frame.paste(art, ((W - pw) // 2, top))
-    d.rectangle(((W - pw) // 2 - 4, top - 4, (W + pw) // 2 + 3, top + art.height + 3), outline=BROWN, width=6)
-    # コマ番号バッジ（起承転結）
-    cx, cy = (W - pw) // 2 + 60, top + art.height - 60
-    d.ellipse((cx - 48, cy - 48, cx + 48, cy + 48), fill=BROWN, outline=GOLD, width=5)
-    d.text((cx, cy), KI_SHO_TEN_KETSU[idx], font=font(50), fill=CREAM, anchor="mm")
-    d.text((W // 2, top + art.height + 70), f"{idx + 1} / 4", font=font(36), fill=GOLD, anchor="mm")
-    return frame
-
-
-def title_frame(first_panel: Image.Image, series: str, title: str) -> Image.Image:
-    bg = first_panel.convert("RGB").resize((W, int(first_panel.height * W / first_panel.width)))
-    bg = bg.crop((0, 0, W, min(H, bg.height))).resize((W, H)).filter(ImageFilter.GaussianBlur(18))
-    frame = Image.blend(bg, Image.new("RGB", (W, H), CREAM), 0.55)
-    d = ImageDraw.Draw(frame)
-    d.text((W // 2, H // 2 - 170), series, font=font(58), fill=GOLD, anchor="mm", stroke_width=6, stroke_fill=WHITE)
-    for i, line in enumerate(wrap(title, font(96), W - 160)):
-        d.text((W // 2, H // 2 + i * 120), line, font=font(96), fill=BROWN, anchor="mm", stroke_width=8, stroke_fill=WHITE)
-    return frame
-
-
-def end_frame(brand: str, shop: str, tag: str) -> Image.Image:
-    frame = Image.new("RGB", (W, H), BROWN)
-    d = ImageDraw.Draw(frame)
-    d.text((W // 2, H // 2 - 180), tag, font=font(60), fill=GOLD, anchor="mm")
-    d.text((W // 2, H // 2), brand, font=font(84), fill=CREAM, anchor="mm")
-    shop_lines = [x.strip("）") for x in shop.split("（")]
-    for i, line in enumerate(shop_lines):
-        d.text((W // 2, H // 2 + 130 + i * 62), line, font=font(44), fill=CREAM, anchor="mm")
-    d.text((W // 2, H // 2 + 330), "右手で金運　左手で良縁", font=font(50), fill=GOLD, anchor="mm")
-    return frame
-
-
-def manga_grid(panels: list[Image.Image], script: dict, series: str) -> Image.Image:
-    """X・Threads・note 用の4コマ画像（2x2、読む順は 左上→右上→左下→右下）。"""
-    pw, gap, head = 520, 16, 120
-    ph = int(panels[0].height * pw / panels[0].width)
-    gw = pw * 2 + gap * 3
-    gh = head + ph * 2 + gap * 3 + 60
-    img = Image.new("RGB", (gw, gh), CREAM)
+def manga_grid(panels: list[Image.Image], s: dict) -> Image.Image:
+    """X・Threads・note用の4コマまとめ（2x2、左上→右上→左下→右下）。"""
+    size, gap, head = 520, 20, 110
+    gw = size * 2 + gap * 3 + 14 * 2
+    img = cream(gw, head + (size + 14) * 2 + gap * 3 + 50)
     d = ImageDraw.Draw(img)
-    d.text((gw // 2, 42), series, font=font(30), fill=GOLD, anchor="mm")
-    d.text((gw // 2, 86), script["title"], font=font(44), fill=BROWN, anchor="mm")
-    for i, (p, s) in enumerate(zip(panels, script["panels"])):
-        x = gap + (i % 2) * (pw + gap)
-        y = head + gap + (i // 2) * (ph + gap)
-        img.paste(panel_with_bubbles(p, s["lines"], pw), (x, y))
-        d.rectangle((x - 2, y - 2, x + pw + 1, y + ph + 1), outline=BROWN, width=4)
-        d.ellipse((x + 10, y + ph - 58, x + 58, y + ph - 10), fill=BROWN)
-        d.text((x + 34, y + ph - 34), KI_SHO_TEN_KETSU[i], font=font(28), fill=CREAM, anchor="mm")
-    d.text((gw // 2, gh - 32), "義恒（よしつね）｜よしつねの秘密基地", font=font(24), fill=BROWN, anchor="mm")
+    d.text((gw // 2, 60), f"福合わせたぬき猫の4コマ　第{s['episode']}話「{s['title']}」", font=font(36), fill=INK, anchor="mm")
+    for i, p in enumerate(panels):
+        f = framed(p, size)
+        img.paste(f, (gap + (i % 2) * (f.width + gap), head + (i // 2) * (f.height + gap)))
+    d.text((gw // 2, img.height - 38), "よしつねの秘密基地", font=font(24), fill=GRAY, anchor="mm")
     return img
+
+
+def render_all(panels: list[Image.Image], title_card: Image.Image, note_art: Image.Image,
+               s: dict, cfg: dict, out: Path) -> None:
+    # 4コマ（1コマずつ・正方形）＝カルーセル①〜④、note本文用
+    for i, p in enumerate(panels):
+        fit_cover(p, 1080, 1080).save(out / f"carousel_{i + 1}.jpg", quality=92)
+    title_v = fit_cover(title_card, W, H)
+    title_v.save(out / "title_card.jpg", quality=92)
+    fit_cover(title_card, 1080, 1080, anchor_y=0.15).save(out / "carousel_0_cover.jpg", quality=92)
+    fit_cover(note_art, 1280, 670).save(out / "note_header.jpg", quality=92)
+    manga_grid(panels, s).save(out / "manga.jpg", quality=90)
+
+    r = cfg["reel"]
+    frames = [(title_v, r["title_seconds"], True), (slide_hook(s), r["hook_seconds"], False)]
+    frames += [(slide_panel(p, s["episode"]), r["panel_seconds"], False) for p in panels]
+    frames += [(slide_closing(s, cfg), r["closing_seconds"], False), (end_card(), r["end_seconds"], False)]
+    build_reel(frames, out / "reel.mp4", r["fps"], ROOT / "sns/assets/bgm", r.get("bgm_volume", 0.35))
 
 
 # ---------------------------------------------------------------- 動画
 
-def build_reel(frames: list[tuple[Image.Image, float]], out: Path, fps: int, bgm_dir: Path, bgm_volume: float) -> None:
+def build_reel(frames: list[tuple[Image.Image, float, bool]], out: Path, fps: int, bgm_dir: Path, bgm_volume: float) -> None:
     ff = ffmpeg_exe()
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
-        seg_list = []
-        for i, (frame, sec) in enumerate(frames):
+        segs = []
+        for i, (frame, sec, is_title) in enumerate(frames):
             png = tmp / f"f{i}.png"
             frame.save(png)
             seg = tmp / f"s{i}.mp4"
             n = int(sec * fps)
-            fade = 0.3
-            vf = (
-                f"scale=2160:3840,zoompan=z='1+0.035*on/{n}':d={n}:s={W}x{H}:fps={fps}"
-                f":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',"
-                f"fade=t=in:st=0:d={fade},fade=t=out:st={sec - fade:.2f}:d={fade},format=yuv420p"
-            )
+            if is_title:  # タイトルは暗いところからふわっと出て、ゆっくりズーム
+                vf = (f"scale=2160:3840,zoompan=z='1+0.04*on/{n}':d={n}:s={W}x{H}:fps={fps}"
+                      f":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',fade=t=in:st=0:d=0.8,format=yuv420p")
+            else:
+                vf = f"fps={fps},fade=t=in:st=0:d=0.25,format=yuv420p"
             subprocess.run([ff, "-y", "-loglevel", "error", "-loop", "1", "-framerate", str(fps), "-i", str(png),
                             "-frames:v", str(n), "-vf", vf, "-c:v", "libx264", "-preset", "medium",
-                            "-crf", "24", str(seg)], check=True)
-            seg_list.append(seg)
-        (tmp / "list.txt").write_text("".join(f"file '{s.as_posix()}'\n" for s in seg_list))
-        silent = tmp / "video.mp4"
+                            "-crf", "20", str(seg)], check=True)
+            segs.append(seg)
+        (tmp / "list.txt").write_text("".join(f"file '{s.as_posix()}'\n" for s in segs))
+        video = tmp / "video.mp4"
         subprocess.run([ff, "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(tmp / "list.txt"),
-                        "-c", "copy", str(silent)], check=True)
-        total = sum(sec for _, sec in frames)
+                        "-c", "copy", str(video)], check=True)
+        total = sum(sec for _, sec, _ in frames)
         bgms = sorted(glob.glob(str(bgm_dir / "*.mp3")) + glob.glob(str(bgm_dir / "*.m4a")))
         if bgms:
             audio_in = ["-stream_loop", "-1", "-i", random.choice(bgms)]
             af = f"volume={bgm_volume},afade=t=in:d=0.5,afade=t=out:st={total - 1.5:.2f}:d=1.5"
-        else:  # Instagram は音声トラック付きが無難なので無音を入れる
+        else:  # 無音（BGMはアプリで付ける運用）。投稿APIのため無音トラックは入れておく
             audio_in = ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"]
             af = "anull"
-        subprocess.run([ff, "-y", "-loglevel", "error", "-i", str(silent), *audio_in, "-map", "0:v", "-map", "1:a",
+        subprocess.run([ff, "-y", "-loglevel", "error", "-i", str(video), *audio_in, "-map", "0:v", "-map", "1:a",
                         "-af", af, "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ar", "44100",
                         "-t", f"{total:.2f}", "-movflags", "+faststart", str(out)], check=True)
-
-
-def note_header(panels: list[Image.Image], series: str, episode_label: str, title: str) -> Image.Image:
-    """note の見出し画像（横長 1280x670）。左に4コマの絵、右にタイトル。"""
-    nw, nh = 1280, 670
-    img = Image.new("RGB", (nw, nh), CREAM)
-    # 左：1コマ目と4コマ目を並べる
-    pw, ph = 300, 450
-    for j, p in enumerate([panels[0], panels[-1]]):
-        art = p.convert("RGB").resize((pw, int(p.height * pw / p.width)))
-        art = art.crop((0, (art.height - ph) // 2, pw, (art.height - ph) // 2 + ph))
-        x, y = 50 + j * (pw + 24), (nh - ph) // 2 + (-18 if j == 0 else 18)
-        img.paste(art, (x, y))
-        ImageDraw.Draw(img).rectangle((x - 3, y - 3, x + pw + 2, y + ph + 2), outline=BROWN, width=6)
-    d = ImageDraw.Draw(img)
-    tx = 50 + 2 * pw + 24 + 50
-    tw = nw - tx - 50
-    d.text((tx, 150), series, font=font(38), fill=GOLD)
-    d.rounded_rectangle((tx, 215, tx + 190, 285), 35, fill=BROWN)
-    d.text((tx + 95, 250), episode_label, font=font(40), fill=CREAM, anchor="mm")
-    size = 76 if len(title) <= 7 else 60
-    for i, line in enumerate(wrap(title, font(size), tw)[:3]):
-        d.text((tx, 320 + i * int(size * 1.3)), line, font=font(size), fill=BROWN)
-    d.text((tx, nh - 80), "近江八幡・よしつねの秘密基地", font=font(28), fill=BROWN)
-    d.rectangle((0, nh - 16, nw, nh), fill=GOLD)
-    return img
-
-
-def carousel_images(panels: list[Image.Image], script: dict, series: str, out_dir: Path) -> None:
-    """インスタのカルーセル用（4:5 = 1080x1350）。表紙＋1コマずつ。"""
-    cw, chh = 1080, 1350
-    cover = Image.new("RGB", (cw, chh), CREAM)
-    d = ImageDraw.Draw(cover)
-    art = panels[0].convert("RGB").resize((760, int(panels[0].height * 760 / panels[0].width)))  # オチを見せないよう1コマ目
-    art = art.crop((0, art.height - 760, 760, art.height))
-    cover.paste(art, ((cw - 760) // 2, 470))
-    d.rectangle(((cw - 760) // 2 - 4, 466, (cw + 760) // 2 + 3, 1233), outline=BROWN, width=8)
-    d.text((cw // 2, 120), series, font=font(46), fill=GOLD, anchor="mm")
-    for i, line in enumerate(wrap(script["title"], font(96), cw - 120)[:2]):
-        d.text((cw // 2, 250 + i * 118), line, font=font(96), fill=BROWN, anchor="mm")
-    d.text((cw // 2, 1295), "スワイプして読んでね →", font=font(36), fill=BROWN, anchor="mm")
-    cover.save(out_dir / "carousel_0_cover.jpg", quality=90)
-    for i, (p, s) in enumerate(zip(panels, script["panels"])):
-        img = Image.new("RGB", (cw, chh), CREAM)
-        pw = 840
-        art = panel_with_bubbles(p, s["lines"], pw)
-        ph = min(art.height, chh - 150)
-        art = art.crop((0, 0, pw, ph))
-        x, y = (cw - pw) // 2, 70
-        img.paste(art, (x, y))
-        dd = ImageDraw.Draw(img)
-        dd.rectangle((x - 4, y - 4, x + pw + 3, y + ph + 3), outline=BROWN, width=6)
-        dd.ellipse((x + 16, y + ph - 90, x + 90, y + ph - 16), fill=BROWN, outline=GOLD, width=4)
-        dd.text((x + 53, y + ph - 53), KI_SHO_TEN_KETSU[i], font=font(40), fill=CREAM, anchor="mm")
-        dd.text((cw // 2, chh - 40), f"{i + 1} / 4", font=font(32), fill=GOLD, anchor="mm")
-        img.save(out_dir / f"carousel_{i + 1}.jpg", quality=90)
-
-
-def render_all(panels: list[Image.Image], script: dict, cfg: dict, out_dir: Path) -> None:
-    series = f"{cfg['character']['name']} 4コマ"
-    episode_label = f"第{script['episode']}話"
-    note_header(panels, series, episode_label, script["title"]).save(out_dir / "note_header.jpg", quality=90)
-    series = f"{series}　{episode_label}"
-    carousel_images(panels, script, series, out_dir)
-    vcfg = cfg["video"]
-    manga_grid(panels, script, series).save(out_dir / "manga.jpg", quality=88)
-    frames = [(title_frame(panels[0], series, script["title"]), vcfg["title_seconds"])]
-    for i, (p, s) in enumerate(zip(panels, script["panels"])):
-        frame = reel_frame(p, s["lines"], i, script["title"])
-        frames.append((frame, vcfg["panel_seconds"]))
-    frames.append((end_frame(cfg["brand"]["name"], cfg["brand"]["shop"], cfg["story"]["ending_tag"]), vcfg["end_seconds"]))
-    build_reel(frames, out_dir / "reel.mp4", vcfg["fps"], ROOT / "sns/assets/bgm", vcfg["bgm_volume"])

@@ -1,8 +1,9 @@
 """毎日の4コマ漫画を生成する。
 
   1. ChatGPT（OpenAI）が台本（起承転結・台詞・投稿文）を作る
-  2. OpenAI の画像生成で、見本画像をもとに4コマ分の絵を描く
-  3. 吹き出しを入れて、4コマ画像とリール動画を作る
+  2. OpenAI の画像生成で、キャラクターシートと第10話の絵を見本に
+     タイトルカード（縦）・4コマ（正方形・吹き出し入り）・note見出し（横）を描く
+  3. 第10話と同じ構成のリール動画・カルーセル・4コマまとめ画像を作る
   4. sns/output/<日付>/ に保存し、sns/history.json に記録する
 
 使い方:
@@ -24,7 +25,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import yaml
-from PIL import Image, ImageDraw
+from PIL import Image
 from pydantic import BaseModel, Field
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -45,7 +46,7 @@ class Line(BaseModel):
 
 class Panel(BaseModel):
     scene_ja: str = Field(description="このコマで何が起きているか（日本語で1〜2文）")
-    scene_en: str = Field(description="画像AI向けの場面説明（英語）。登場キャラの位置・表情・動き・背景。文字や看板の文字は含めない")
+    scene_en: str = Field(description="画像AI向けの場面説明（英語）。登場キャラの位置・表情・動き・背景・小道具。台詞は含めない（別に渡す）")
     lines: list[Line] = Field(description="台詞（0〜2個）")
 
 
@@ -54,6 +55,12 @@ class Script(BaseModel):
     theme: str
     panels: list[Panel] = Field(description="ちょうど4コマ（起・承・転・結）")
     moral: str = Field(description="オチから導く、小さな福・気づきのひとこと（2行程度）")
+    hook_line1: str = Field(description="リールのフック1行目（例：百万両あるのに、）15文字以内")
+    hook_line2: str = Field(description="リールのフック（赤字の大きい文字）。改行\\nで2行まで、1行8文字以内（例：買うのは…\\nお団子!?）")
+    moral_short: str = Field(description="フック画面の下に添える短い言葉（例：大金より、小さな幸せ）12文字以内")
+    closing_line: str = Field(description="リール締め画面のひとこと（例：大金より、小さな幸せを。）15文字以内")
+    title_card_scene_en: str = Field(description="タイトルカード（縦長）の場面説明（英語）。2匹がこの回のキーアイテムを持って笑顔、季節と近江八幡らしい背景")
+    note_header_scene_en: str = Field(description="note見出し（横長）の場面説明（英語）。タイトルカードと同じ雰囲気で横長の構図")
     x_post: str = Field(description="Xの本ポスト本文（見本と同じ型。台詞の抜粋＋2行のひとこと。リンク・ハッシュタグは含めない）")
     x_reply: str = Field(description="Xのリプライ本文（見本と同じ型。第N話の案内とショップ誘導）")
     instagram_reel_caption: str = Field(description="インスタリールのキャプション（見本と同じ型。ハッシュタグは含めない）")
@@ -113,7 +120,8 @@ def build_script_prompt(cfg: dict, today: dt.date, theme: str | None, history: l
 
 # 画像AI向けの指示（scene_en）
 主人公2匹は必ず "the TANUKI" と "the NEKO (boy cat)" と書き、見た目の細かい説明はしないでください（見本画像を別に渡します）。
-どのコマに誰が出るかをはっきり書き、各コマの上から4分の1は吹き出しを入れるので、キャラクターは画面の中央〜下に配置してください。"""
+どのコマに誰が出るか・表情・しぐさ・小道具をはっきり書いてください。4コマとも同じ場所（背景）で、キャラクターは画面の下半分、吹き出しは上半分に入る構図にします。
+title_card_scene_en / note_header_scene_en は、2匹がこの回のキーアイテム（例：お団子）を持って笑顔でいる、季節に合った明るい場面にしてください。"""
 
 
 def make_script(cfg: dict, today: dt.date, theme: str | None, history: list[dict], episode: int) -> Script:
@@ -132,50 +140,73 @@ def make_script(cfg: dict, today: dt.date, theme: str | None, history: list[dict
 
 # ---------------------------------------------------------------- 絵づくり
 
-def build_image_prompt(cfg: dict, panel: Panel, idx: int) -> str:
-    ch = cfg["character"]
+def _common(cfg: dict) -> str:
     return (
-        f"Panel {idx + 1} of a 4-koma manga (vertical single panel, no border).\n"
         f"Art style: {cfg['art_style_en']}\n"
-        f"Main characters (use the attached reference image(s) and keep the designs identical): {ch['appearance_en']}\n"
-        f"Scene: {panel.scene_en}\n"
-        "Composition: keep the top quarter of the image as simple, calm background with no important "
-        "objects (speech bubbles will be added there later). Characters in the middle and lower part.\n"
-        "IMPORTANT: absolutely no text, letters, speech bubbles, captions, signatures or watermarks in the image. "
-        "Do not draw Hikonyan or any other existing mascot, real person, brand or logo."
+        f"Characters (keep designs IDENTICAL to the attached character sheets): {cfg['character']['appearance_en']}\n"
+        "Match the drawing style, colors and world of the attached sample 4-koma panel.\n"
+        "Never draw Hikonyan or any other existing mascot, real person, brand or logo."
     )
 
 
-def make_panel_image(cfg: dict, panel: Panel, idx: int, out: Path) -> Image.Image:
+def panel_prompt(cfg: dict, sc: Script, panel: Panel, idx: int) -> str:
+    lines = "\n".join(f'- {ln.speaker}: 「{ln.text}」' for ln in panel.lines) or "- (no dialogue)"
+    title = (f'Put a wooden title banner at the top reading exactly 「{sc.title}」 in bold Japanese brush lettering.\n'
+             if idx == 0 else "")
+    return (
+        f"Square panel {idx + 1} of 4 of a Japanese 4-koma manga.\n{_common(cfg)}\n"
+        f"Scene: {panel.scene_en}\n{title}"
+        f"Draw a small black circled number {'①②③④'[idx]} in the top-left corner.\n"
+        "Draw white round speech bubbles with this exact Japanese dialogue (vertical-friendly line breaks, "
+        "clear readable black text, tail pointing to the speaker):\n"
+        f"{lines}\n"
+        "Keep the same background location and character designs as the other panels. No other text."
+    )
+
+
+def title_card_prompt(cfg: dict, sc: Script, episode: int) -> str:
+    return (
+        f"Vertical 9:16 title card illustration for a 4-koma manga episode.\n{_common(cfg)}\n"
+        f"Scene: {sc.title_card_scene_en}\n"
+        f"At the top, a large ornate wooden signboard with sakura/plum decorations that reads exactly "
+        f"「第{episode}話」 (small) and 「{sc.title}」 (large, bold Japanese lettering, one keyword in red).\n"
+        "Keep the signboard and both characters inside the central 85% width. No other text."
+    )
+
+
+def note_header_prompt(cfg: dict, sc: Script, episode: int) -> str:
+    return (
+        f"Wide horizontal banner illustration (about 2:1) for a blog header.\n{_common(cfg)}\n"
+        f"Scene: {sc.note_header_scene_en}\n"
+        f"In the upper center, a wide wooden signboard that reads exactly 「第{episode}話」 (small) and "
+        f"「{sc.title}」 (large bold Japanese lettering, one keyword in red). The two characters on the left and right.\n"
+        "Keep all important content inside the middle 70% of the height (top and bottom will be cropped). No other text."
+    )
+
+
+def gen_image(cfg: dict, prompt: str, size: str, out: Path, extra_refs: list[Path] = ()) -> Image.Image:
     from openai import OpenAI
 
     client = OpenAI()
     ocfg = cfg["openai"]
-    refs = [ROOT / p for p in cfg["character"]["reference_images"]]
+    refs = [ROOT / p for p in cfg["character"]["reference_images"]] + list(extra_refs)
     last_err = None
     for attempt in range(3):
         files = [open(p, "rb") for p in refs]
         try:
-            result = client.images.edit(
-                model=ocfg["image_model"],
-                image=files,
-                prompt=build_image_prompt(cfg, panel, idx),
-                size=ocfg["image_size"],
-                quality=ocfg["image_quality"],
-            )
-            out.write_bytes(base64.b64decode(result.data[0].b64_json))
-            img = Image.open(out).convert("RGB")
-            img.save(out.with_suffix(".jpg"), quality=88)
-            out.unlink()
+            result = client.images.edit(model=ocfg["image_model"], image=files, prompt=prompt,
+                                        size=size, quality=ocfg["image_quality"])
+            img = Image.open(__import__("io").BytesIO(base64.b64decode(result.data[0].b64_json))).convert("RGB")
+            img.save(out, quality=92)
             return img
         except Exception as e:  # noqa: BLE001  一時的なエラーは待って再試行
             last_err = e
-            print(f"コマ{idx + 1}の画像生成に失敗（{attempt + 1}回目）: {e}", file=sys.stderr)
+            print(f"{out.name} の生成に失敗（{attempt + 1}回目）: {e}", file=sys.stderr)
             time.sleep(10 * (attempt + 1))
         finally:
             for f in files:
                 f.close()
-    raise RuntimeError(f"コマ{idx + 1}の画像を生成できませんでした: {last_err}")
+    raise RuntimeError(f"{out.name} を生成できませんでした: {last_err}")
 
 
 # ---------------------------------------------------------------- テスト用
@@ -190,7 +221,9 @@ def mock_script() -> Script:
             Panel(scene_ja="右手で招くと、落ち葉がさらに集まる", scene_en="", lines=[Line(speaker="猫", text="えいっ、招きパワー！")]),
             Panel(scene_ja="落ち葉の山の上で満足げ", scene_en="", lines=[Line(speaker="たぬき", text="福じゃなくて葉っぱが来た！")]),
         ],
-        moral="（テスト）",
+        moral="（テスト）", hook_line1="福を招いたつもりが、", hook_line2="集まったのは…\n落ち葉!?",
+        moral_short="秋も、福もいっぱい", closing_line="小さな秋に、小さな福を。",
+        title_card_scene_en="", note_header_scene_en="",
         x_post="（テスト）X本ポスト", x_reply="（テスト）Xリプライ",
         instagram_reel_caption="（テスト）リール", instagram_post_caption="（テスト）カルーセル",
         youtube_title="（テスト）福合わせたぬき猫4コマ第13話 #shorts", youtube_description="（テスト）",
@@ -199,17 +232,13 @@ def mock_script() -> Script:
     )
 
 
-def mock_panel(idx: int, out: Path) -> Image.Image:
-    colors = [(236, 214, 180), (214, 226, 200), (226, 206, 214), (206, 218, 236)]
-    img = Image.new("RGB", (1024, 1536), colors[idx])
-    d = ImageDraw.Draw(img)
-    d.ellipse((312, 700, 712, 1200), fill=(170, 130, 90), outline=(60, 40, 20), width=8)
-    d.text((512, 1300), f"MOCK PANEL {idx + 1}", fill=(60, 40, 20), anchor="mm", font=render.font(60))
-    ref = Image.open(ROOT / cfg_global["character"]["reference_images"][0]).convert("RGB")
-    ref.thumbnail((360, 520))
-    img.paste(ref, (512 - ref.width // 2, 950 - ref.height // 2))
-    img.save(out.with_suffix(".jpg"), quality=88)
-    return img
+def mock_images(out: Path) -> tuple[list[Image.Image], Image.Image, Image.Image]:
+    """AIの代わりに第10話の絵を使う（料金ゼロの動作テスト用）。"""
+    ref = ROOT / "sns/character/reference/第10話"
+    panels = [Image.open(ref / f"百万両_1コマずつ_{i}.png").convert("RGB") for i in range(1, 5)]
+    for i, p in enumerate(panels):
+        p.save(out / f"panel{i + 1}.jpg", quality=92)
+    return panels, Image.open(ref / "タイトルカード_縦.png").convert("RGB"), Image.open(ref / "note見出し_横.png").convert("RGB")
 
 
 # ---------------------------------------------------------------- 本体
@@ -328,13 +357,12 @@ def prune_old(keep_days: int, today: dt.date) -> None:
 
 
 def main() -> None:
-    global cfg_global
     ap = argparse.ArgumentParser()
     ap.add_argument("--mock", action="store_true", help="APIを使わずに動作テスト")
     ap.add_argument("--theme", default=os.environ.get("THEME") or None)
     args = ap.parse_args()
 
-    cfg = cfg_global = yaml.safe_load((ROOT / "sns/config.yml").read_text(encoding="utf-8"))
+    cfg = yaml.safe_load((ROOT / "sns/config.yml").read_text(encoding="utf-8"))
     today = dt.datetime.now(JST).date()
     history = load_history()
 
@@ -347,23 +375,32 @@ def main() -> None:
     print(f"   第{episode}話：{script.title}")
 
     out = new_output_dir(today)
-    panels = []
-    for i, p in enumerate(script.panels):
-        print(f"② コマ{i + 1}の絵を生成中…")
-        path = out / f"panel{i + 1}.png"
-        panels.append(mock_panel(i, path) if args.mock else make_panel_image(cfg, p, i, path))
+    if args.mock:
+        panels, title_card, note_art = mock_images(out)
+    else:
+        sizes = cfg["openai"]["sizes"]
+        print("② タイトルカードを生成中…")
+        title_card = gen_image(cfg, title_card_prompt(cfg, script, episode), sizes["title_card"], out / "title_card_raw.jpg")
+        panels = []
+        for i, p in enumerate(script.panels):
+            print(f"② コマ{i + 1}の絵を生成中…")
+            # 2コマ目以降は1コマ目も見本にして、背景とキャラをそろえる
+            extra = [out / "panel1.jpg"] if i > 0 else []
+            panels.append(gen_image(cfg, panel_prompt(cfg, script, p, i), sizes["panel"], out / f"panel{i + 1}.jpg", extra))
+        print("② note見出しを生成中…")
+        note_art = gen_image(cfg, note_header_prompt(cfg, script, episode), sizes["note_header"], out / "note_header_raw.jpg")
 
     print("③ 吹き出し・4コマ画像・動画を作成中…")
     data = script.model_dump()
     data["episode"] = episode
-    render.render_all(panels, data, cfg, out)
+    render.render_all(panels, title_card, note_art, data, cfg, out)
 
     data.update(
         date=today.isoformat(),
         dir=out.relative_to(ROOT).as_posix(),
         public_urls={
             name: f"{cfg['public_base_url']}/{out.relative_to(ROOT).as_posix()}/{name}"
-            for name in ["reel.mp4", "manga.jpg", "note_header.jpg"] + [f"carousel_{i}.jpg" for i in range(1, 5)] + ["carousel_0_cover.jpg"]
+            for name in ["reel.mp4", "manga.jpg", "note_header.jpg", "title_card.jpg", "carousel_0_cover.jpg"] + [f"carousel_{i}.jpg" for i in range(1, 5)]
         },
         hashtags=cfg["hashtags"],
         status="承認待ち",
@@ -382,8 +419,6 @@ def main() -> None:
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
             f.write(f"dir={data['dir']}\n")
 
-
-cfg_global: dict = {}
 
 if __name__ == "__main__":
     main()
