@@ -127,7 +127,7 @@ def build_script_prompt(cfg: dict, today: dt.date, theme: str | None, history: l
     recent_places = "、".join(h.get("location", "") for h in history[-7:] if h.get("location")) or "なし"
     return f"""あなたは人気4コマ漫画の作家兼SNS担当です。「{ch['name']}」の4コマ漫画・第{episode}話の台本と、各SNSの投稿文を作ってください。
 
-# 今日の日付
+# 投稿日（季節や行事はこの日に合わせる）
 {today.strftime('%Y年%m月%d日')}（{'月火水木金土日'[today.weekday()]}曜日）
 
 # キャラクター
@@ -285,6 +285,14 @@ def mock_images(out: Path) -> tuple[list[Image.Image], Image.Image, Image.Image]
 
 # ---------------------------------------------------------------- 本体
 
+def next_post_date(cfg: dict, history: list[dict], today: dt.date) -> dt.date:
+    """投稿日＝「開始日」「今日＋lead_days」「予定済みの最後の日の翌日」のうち一番遅い日。"""
+    start = dt.date.fromisoformat(str(cfg.get("start_date", today)))
+    lead = today + dt.timedelta(days=int(cfg.get("lead_days", 1)))
+    booked = [dt.date.fromisoformat(h.get("post_date", h["date"])) for h in history]
+    return max([start, lead] + [d + dt.timedelta(days=1) for d in booked])
+
+
 def next_episode(cfg: dict, history: list[dict]) -> int:
     done = [h["episode"] for h in history if h.get("episode")]
     return max([cfg.get("episode_start", 1) - 1, *done]) + 1
@@ -440,6 +448,17 @@ def main() -> None:
             history = [h for h in history if h.get("dir") != redo["dir"]]  # 前回分は履歴から外す
         print(f"作り直し（{'絵だけ' if mode == 'images' else 'お話から'}）指示：{redo['feedback'] or 'なし'}")
 
+    if prev:
+        post_date = dt.date.fromisoformat(prev.get("post_date", prev["date"]))
+    else:
+        post_date = next_post_date(cfg, history, today)
+        target = today + dt.timedelta(days=int(cfg.get("lead_days", 1)))
+        # 毎朝の自動実行：明日の分がもう予定済みなら作らない（作りすぎ防止）
+        if os.environ.get("EVENT_NAME") == "schedule" and post_date > max(target, dt.date.fromisoformat(str(cfg.get("start_date", target)))):
+            print(f"{target} の分はもう予定済みです（次に空いているのは {post_date}）。今回は作りません。")
+            return
+    print(f"投稿日：{post_date}")
+
     if prev and mode == "images":
         print("① 台本は前回のまま使います")
         episode = prev["episode"]
@@ -453,7 +472,7 @@ def main() -> None:
                 f"前回の案：\n{previous_summary(prev)}\n"
                 f"ご主人からの修正指示：{cfg.get('_feedback') or '（特になし）'}\n"
             )
-        script = mock_script() if args.mock else make_script(cfg, today, args.theme, history, episode)
+        script = mock_script() if args.mock else make_script(cfg, post_date, args.theme, history, episode)
     print(f"   第{episode}話：{script.title}")
 
     out = new_output_dir(today)
@@ -479,6 +498,7 @@ def main() -> None:
 
     data.update(
         date=today.isoformat(),
+        post_date=post_date.isoformat(),
         dir=out.relative_to(ROOT).as_posix(),
         release_tag=f"ep{episode}-{out.name}",
         media=sorted(p.name for p in out.iterdir() if p.suffix in (".jpg", ".mp4") and "raw" not in p.name),
@@ -491,7 +511,7 @@ def main() -> None:
     write_post_files(out, script, episode, cfg)
 
     if not args.mock:
-        history.append({"episode": episode, "date": today.isoformat(), "title": script.title, "theme": script.theme,
+        history.append({"episode": episode, "date": today.isoformat(), "post_date": post_date.isoformat(), "title": script.title, "theme": script.theme,
                         "location": script.location, "dir": data["dir"]})
         HISTORY.write_text(json.dumps(history[-200:], ensure_ascii=False, indent=2), encoding="utf-8")
     prune_old(cfg.get("keep_days", 30), today)

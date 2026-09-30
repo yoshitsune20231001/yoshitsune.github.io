@@ -47,9 +47,11 @@ jobs:
           REDO_ISSUE: ${{ github.event.issue.number }}
           REDO_MODE: ${{ github.event.label.name == '絵だけ作り直し' && 'images' || 'full' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
         run: python sns/scripts/generate.py ${{ github.event.inputs.mock == 'true' && '--mock' || '' }}
 
       - name: 画像・動画を Releases に置く
+        if: steps.gen.outputs.dir != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -60,6 +62,7 @@ jobs:
             --notes "福合わせたぬき猫 4コマの画像・動画です。" --prerelease
 
       - name: 保存（コミット）
+        if: steps.gen.outputs.dir != ''
         id: commit
         run: |
           git config user.name "sns-bot"
@@ -73,6 +76,7 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: 確認用のIssueを作成
+        if: steps.gen.outputs.dir != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUT_DIR: ${{ steps.gen.outputs.dir }}
