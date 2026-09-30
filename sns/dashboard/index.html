@@ -67,6 +67,26 @@
   .links { display: flex; gap: 12px; font-size: .8rem; }
   .links a { color: var(--blue); }
   .error { background: var(--orange-bg); color: var(--orange); padding: 12px 14px; border-radius: 12px; font-size: .9rem; }
+  /* 超人チーム */
+  .hq { display: none; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px; gap: 14px; align-items: center; margin-top: 18px; }
+  .hq.on { display: flex; }
+  .hq img { width: 110px; height: 110px; border-radius: 12px; object-fit: cover; flex-shrink: 0;
+    border: 3px solid var(--gold); }
+  .hq .who { color: var(--sub); font-size: .75rem; }
+  .bubble { position: relative; background: var(--bg); border: 2px solid var(--ink); border-radius: 14px;
+    padding: 10px 14px; font-weight: bold; font-size: 1rem; }
+  .bubble::before { content: ""; position: absolute; left: -12px; top: 22px; border: 6px solid transparent;
+    border-right-color: var(--ink); }
+  .crew { display: none; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .crew.on { display: grid; }
+  .member { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; text-align: center; }
+  .member img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+  .member.idle img { filter: grayscale(.7); opacity: .7; }
+  .member .nm { font-weight: bold; font-size: .85rem; padding: 6px 6px 0; }
+  .member .lb { color: var(--sub); font-size: .72rem; }
+  .member .say { margin: 6px 8px 10px; }
+  .row .face { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; vertical-align: middle; margin-right: 8px; }
   footer { max-width: 960px; margin: 0 auto; padding: 0 16px 32px; color: var(--sub); font-size: .8rem; }
   footer a { color: var(--blue); }
 </style>
@@ -81,6 +101,14 @@
 </header>
 <main>
   <div id="error"></div>
+
+  <div class="hq" id="hq">
+    <img id="hq-img" alt="">
+    <div><div class="who" id="hq-who"></div><div class="bubble" id="hq-say">…</div></div>
+  </div>
+
+  <h2 id="crew-h" style="display:none">本日の出勤メンバー</h2>
+  <div class="crew" id="crew"></div>
 
   <h2>いまの状況</h2>
   <div class="tiles">
@@ -162,6 +190,19 @@
     return [p.time, "b-wait"];
   }
 
+  // 超人チーム（sns/assets/crew/crew.json があれば表示）
+  const CREW_DIR = "../assets/crew/";
+  let crew = null;
+  const ROLE_OF = (sns) => sns.startsWith("インスタ") ? "instagram" : sns.startsWith("YouTube") ? "youtube"
+    : sns === "X" ? "x" : sns === "TikTok" ? "tiktok" : sns === "note" ? "note" : null;
+  const member = (role) => crew && crew.find((m) => m.role === role);
+  async function loadCrew() {
+    try {
+      const r = await fetch(CREW_DIR + "crew.json", { cache: "no-cache" });
+      if (r.ok) crew = await r.json();
+    } catch (_) { crew = null; }
+  }
+
   let episodes = [];
   let filter = "active";
 
@@ -177,6 +218,41 @@
     $("k-today").textContent = `${todays.filter((p) => p.done).length} / ${todays.length}`;
     $("k-late").textContent = active.flatMap((e) => e.posts).filter((p) => !p.done && p.at <= now).length;
     $("k-week").textContent = active.flatMap((e) => e.posts).filter((p) => p.done && p.day >= weekAgo && p.day <= today).length;
+
+    // 超人チーム
+    if (crew) {
+      const cmd = member("commander");
+      const late = active.flatMap((e) => e.posts.map((p) => ({ ...p, e }))).filter((p) => !p.done && p.at <= now);
+      const pending = episodes.filter((e) => e.status === "pending").length;
+      const nextP = todays.slice().sort((a, b) => a.at.localeCompare(b.at)).find((p) => !p.done && p.at > now);
+      let say;
+      if (pending) say = `確認待ちが${pending}件あるぞ！まずは確認だ！`;
+      else if (late.length) say = `${member(ROLE_OF(late[0].sns))?.name || late[0].sns}（${late[0].sns}）、遅れているぞ！急げ！`;
+      else if (todays.length && todays.every((p) => p.done)) say = "本日の任務完了！よくやった！";
+      else if (nextP) say = `次の出動は${nextP.time}、${member(ROLE_OF(nextP.sns))?.name || ""}（${nextP.sns}）だ！`;
+      else say = "本日は待機だ。明日の4コマに備えよ！";
+      if (cmd) {
+        $("hq-img").src = CREW_DIR + "commander.jpg"; $("hq-img").alt = cmd.name;
+        $("hq-who").textContent = `${cmd.label}・${cmd.name}`;
+        $("hq-say").textContent = say;
+        $("hq").classList.add("on");
+      }
+      const grid = $("crew"); grid.replaceChildren();
+      for (const m of crew.filter((x) => x.role !== "commander")) {
+        const mine = todays.filter((p) => ROLE_OF(p.sns) === m.role);
+        const lateMine = late.filter((p) => ROLE_OF(p.sns) === m.role);
+        let text, cls;
+        if (lateMine.length) { text = "急げ！遅れてる！"; cls = "b-late"; }
+        else if (mine.length && mine.every((p) => p.done)) { text = "任務完了！"; cls = "b-done"; }
+        else if (mine.length) { const n = mine.find((p) => !p.done); text = `${n.time} 出動予定`; cls = "b-wait"; }
+        else { text = "待機中"; cls = "b-wait"; }
+        const card = el("div", "member" + (mine.length || lateMine.length ? "" : " idle"));
+        const img = el("img"); img.src = CREW_DIR + m.role + ".jpg"; img.alt = m.name; img.loading = "lazy";
+        card.append(img, el("div", "nm", m.name), el("div", "lb", `${m.label}担当`), el("div", `say badge ${cls}`, text));
+        grid.append(card);
+      }
+      grid.classList.add("on"); $("crew-h").style.display = "";
+    }
 
     // 今日の予定
     const box = $("today");
@@ -197,7 +273,11 @@
       const row = el("div", "row");
       const [label, cls] = postState(p, now, p.e);
       const mid = el("div");
-      mid.append(el("div", null, p.sns), el("div", "ep", `第${p.e.ep}話「${p.e.title}」${p.e.status === "pending" ? "・確認待ち" : ""}`));
+      const sm = member(ROLE_OF(p.sns));
+      const snsLine = el("div");
+      if (sm) { const f = el("img", "face"); f.src = CREW_DIR + sm.role + ".jpg"; f.alt = ""; snsLine.append(f); }
+      snsLine.append(sm ? `${p.sns}（${sm.name}）` : p.sns);
+      mid.append(snsLine, el("div", "ep", `第${p.e.ep}話「${p.e.title}」${p.e.status === "pending" ? "・確認待ち" : ""}`));
       const t = el("time", null, p.time);
       const b = el("a", `badge ${cls}`, label === p.time ? "予定" : label);
       b.href = p.e.url; b.target = "_blank"; b.rel = "noopener";
@@ -254,7 +334,7 @@
       const res = await fetch(API, { headers: { Accept: "application/vnd.github+json" } });
       if (res.status === 403 || res.status === 429) throw new Error("GitHubの読み込み回数の上限に達しました。しばらく（最大1時間）待ってから「更新」を押してください。");
       if (!res.ok) throw new Error(`読み込みに失敗しました（${res.status}）`);
-      const items = (await res.json()).filter((it) => !it.pull_request);
+      const [items] = await Promise.all([res.json().then((a) => a.filter((it) => !it.pull_request)), crew ? null : loadCrew()]);
       episodes = items.map(parseIssue);
       render();
     } catch (err) {

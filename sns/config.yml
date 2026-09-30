@@ -163,3 +163,57 @@ reel:
   shop_sub: プロフィールのリンクから
   # sns/assets/bgm/ に mp3 を置くとBGMが付きます（無ければ無音。今まで通りアプリでBGMを付けてOK）
   bgm_volume: 0.35
+
+# ---- ダッシュボードの「超人チーム」（SNSごとの担当キャラ）----
+# 元ネタのキャラの特徴（おでこの文字・仮面の形・記章など）は入れない、オリジナルのデザイン
+crew:
+  - role: commander
+    label: 司令塔
+    name: 仮面の貴公子
+    animal: TANUKI
+    look_en: >-
+      wearing a silver knight's great helm with a CROSS-shaped eye slit (square, flat-topped),
+      a small gold koban ornament and a red tassel on top, navy-blue cape with a gold 福 crest,
+      navy and gold armor accents, arms folded in a calm, commanding pose
+  - role: instagram
+    label: インスタ
+    name: 奇跡のヒーロー
+    animal: NEKO
+    look_en: >-
+      wearing a luchador-style wrestling mask in an orange-to-pink-to-purple gradient with a round
+      camera-lens emblem on the forehead (no letters), a flowing cape lined with hearts and sparkles,
+      wrestling trunks and boots in matching gradient, raising a fist in a victory pump while holding
+      a smartphone in the other paw
+  - role: youtube
+    label: YouTube
+    name: テキサスブロンコ
+    animal: TANUKI
+    look_en: >-
+      wearing a red and white wrestling mask with a white play-button triangle on the forehead
+      (no letters), a cowboy hat hanging on his back, red bandana, red boxing-style gloves and red
+      boots, gold koban belt buckle, crouching low in a fiery fighting stance
+  - role: x
+    label: X
+    name: F・コン
+    animal: NEKO
+    look_en: >-
+      wearing a matte black ninja-style hood mask with a white X-shaped visor over the eyes, black
+      and white bodysuit with small gold accents, short black cape, crouching quietly and aiming a
+      smartphone from which white speech-bubble icons fly out; cool and mysterious
+  - role: tiktok
+    label: TikTok
+    name: メシア
+    animal: TANUKI
+    look_en: >-
+      wearing a black wrestling mask with glowing neon cyan and hot-pink lines, headphones around
+      the neck, streetwear hoodie and sneakers, leaping into a dance-kick while holding a smartphone
+      high, music notes flying, glowing neon dance floor below
+  - role: note
+    label: note
+    name: ゲルマン
+    animal: NEKO
+    look_en: >-
+      wearing a brown hunting cap (flat cap), round glasses and a beige trench coat, a notepad in the
+      chest pocket, holding a big fountain pen, a bundle of manuscript paper under one arm, one paw
+      cupped by the mouth as if announcing news, sheets of paper fluttering around; white, black and
+      green color accents
