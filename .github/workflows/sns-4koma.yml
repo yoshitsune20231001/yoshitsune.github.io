@@ -1,0 +1,81 @@
+name: 福合わせたぬき猫 4コマ生成
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # 毎朝 7:00（日本時間）
+  workflow_dispatch:        # 「Run workflow」ボタンで今すぐ作る
+    inputs:
+      theme:
+        description: "テーマ（空欄ならおまかせ）"
+        required: false
+      mock:
+        description: "テストモード（AIを使わない・料金ゼロ）"
+        type: boolean
+        default: false
+  issues:
+    types: [labeled]        # 「作り直し」ラベルで作り直す
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: sns-4koma
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: github.event_name != 'issues' || github.event.label.name == '作り直し' || github.event.label.name == '絵だけ作り直し'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: sns/scripts/requirements.txt
+
+      - run: pip install -r sns/scripts/requirements.txt
+
+      - name: 4コマを生成
+        id: gen
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          THEME: ${{ github.event.inputs.theme }}
+          REDO_ISSUE: ${{ github.event.issue.number }}
+          REDO_MODE: ${{ github.event.label.name == '絵だけ作り直し' && 'images' || 'full' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python sns/scripts/generate.py ${{ github.event.inputs.mock == 'true' && '--mock' || '' }}
+
+      - name: 画像・動画を Releases に置く
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "${{ steps.gen.outputs.dir }}"
+          files=$(python -c "import json;print(' '.join(json.load(open('post.json'))['media']))")
+          gh release create "${{ steps.gen.outputs.tag }}" $files \
+            --title "第${{ steps.gen.outputs.episode }}話「${{ steps.gen.outputs.title }}」" \
+            --notes "福合わせたぬき猫 4コマの画像・動画です。" --prerelease
+
+      - name: 保存（コミット）
+        id: commit
+        run: |
+          git config user.name "sns-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sns/output sns/history.json 2>/dev/null || git add sns/output
+          git commit -m "4コマ生成: ${{ steps.gen.outputs.dir }}"
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep $((i * 5))
+          done
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: 確認用のIssueを作成
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUT_DIR: ${{ steps.gen.outputs.dir }}
+          COMMIT_SHA: ${{ steps.commit.outputs.sha }}
+          REDO_ISSUE: ${{ github.event.issue.number }}
+        run: python sns/scripts/create_issue.py

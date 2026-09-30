@@ -1,0 +1,165 @@
+# ============================================================
+#  福合わせたぬき猫 4コマ漫画 自動生成 設定ファイル
+#  ここを書き換えると、毎日の4コマの内容・絵柄・動画が変わります
+# ============================================================
+
+# 公開URL（GitHub Pages）。Instagram 投稿時の動画置き場になります
+public_base_url: https://yoshitsune20231001.github.io/yoshitsune.github.io
+
+# 話数（パソコンに第12話までストックがあるので、自動生成は第13話から）
+episode_start: 13
+
+# 出力を何日分残すか（古いものは自動で削除。サイト容量対策）
+keep_days: 30
+
+openai:
+  text_model: gpt-5.5          # 台本づくり
+  image_model: gpt-image-2     # 絵づくり
+  image_quality: medium        # low / medium / high（high ほど綺麗で高い）
+  sizes:
+    panel: 1024x1024           # 4コマ（正方形）
+    title_card: 1024x1536      # タイトルカード（縦）→ 9:16 に切り抜き
+    note_header: 1536x1024     # note見出し（横）→ 1280x670 に切り抜き
+
+# ---- 主人公（2匹コンビ）----
+character:
+  name: 福合わせたぬき猫
+  # 見本画像（毎回AIに渡して、同じキャラ・同じ絵柄にする）
+  reference_images:
+    - sns/character/たぬき_キャラクターシート.png
+    - sns/character/猫_キャラクターシート.png
+    - sns/character/reference/第10話/百万両_1コマずつ_1.png
+  # 絵のAI向けの見た目の説明（英語の方が安定します）
+  appearance_en: >-
+    Two chubby ceramic-figurine-like lucky charm characters, always together as a duo, both BOYS.
+    (1) TANUKI: dark brown/black fur with orange-brown face markings, big round eyes, cream belly,
+    woven straw kasa hat behind the head, red rope necklace with a golden bell, a big golden oval
+    koban on the belly reading 百万両, a wooden tag reading 通 hanging on one side and a white sake
+    bottle marked 八 on the other.
+    (2) NEKO: orange tabby maneki-neko cat with dark stripes/spots, cream face and belly, same straw
+    hat, red rope necklace with bell, golden 百万両 koban, 通 tag and 八 sake bottle, raising a paw.
+    The cat is a boy: no eyelashes, no ribbons, no makeup, no feminine features.
+  personality: >-
+    信楽焼のたぬきと招き猫の2匹組。どちらも男の子（猫を女の子キャラにしない）。
+    たぬき：のんびり屋で食いしん坊のボケ役。お腹に小判「百万両」を下げている。
+    猫：素朴な質問やツッコミをする役。
+    台詞は普通の話し言葉（「〜だぬ」「〜にゃ」などの語尾は付けない）。
+    2匹あわせて「福合わせたぬき猫」（たぬきの八相縁起と招き猫の招き、お互いの福を合わせ持つ）。
+    作り手のことは「ご主人」と呼ぶ。
+    近江八幡・八幡堀沿いの古民家のお店「よしつねの秘密基地」の看板キャラ。
+    右手で金運、左手で良縁を招くのが自慢。ドタバタするけど、最後はみんなを笑顔にする。
+  # 台詞の話し手の名前（吹き出しの上に小さく表示）
+  speakers: [たぬき, 猫]
+  # 脇役（必要に応じて登場。実在の人物・他社キャラは出さない）
+  supporting_cast: >-
+    ご主人（顔ははっきり描かない後ろ姿や手元のみ）、お店に来るお客さん（国内・海外の観光客）、
+    近江八幡のカモや小鳥、お店に並ぶ陶器たち（信楽焼の置物など、しゃべることもある）。
+
+# 絵柄（全コマ共通）
+art_style_en: >-
+  Richly detailed Japanese illustration with bold black ink outlines and warm hand-painted
+  watercolor texture, vivid colors, cute chubby proportions, expressive faces.
+
+# ---- 背景（毎回ちがう場所。最近使った場所は自動で避けます）----
+locations:
+  - 八幡堀の石畳と白壁の蔵（舟がゆっくり通る）
+  - 八幡堀を進む屋形船の上
+  - 西の湖・水郷のヨシ原と手こぎ舟
+  - 日牟禮八幡宮の鳥居と参道
+  - 八幡山ロープウェイのゴンドラの中と山頂からの琵琶湖
+  - 琵琶湖の湖岸・砂浜
+  - 近江八幡の古い町並み（新町通り）
+  - 古民家のお店「よしつねの秘密基地」の店内（陶器や雑貨の棚）
+  - 古民家の縁側と中庭
+  - 古民家の台所・土間
+  - 和菓子屋・甘味処の店先
+  - 信楽焼の窯元と工房（ろくろ・登り窯）
+  - 田んぼのあぜ道と里山
+  - 夏祭りの屋台と提灯の夜道
+  - 雪の積もった町並み
+  - 桜並木・紅葉の山道など季節の名所
+  - 駅のホームや電車の中
+  - 商店街・市場
+  - 雨の日の軒下
+  - 夜空と月が見える屋根の上
+
+# ---- 動き（毎回の絵づくりで必ず守る）----
+motion_rules_en: >-
+  Make the characters MOVE a lot: dynamic, exaggerated full-body poses and actions in every
+  panel (running, jumping, tripping, reaching, dancing, rowing, carrying things, falling over,
+  hugging, pointing). Use motion lines, flying sweat drops, sparkles and small props in motion.
+  Vary the camera between panels (wide shot, medium shot, close-up on faces, low angle,
+  over-the-shoulder). The two characters should interact physically, never just stand side by side.
+
+# ---- お話のルール ----
+story:
+  themes:
+    - 季節の行事・天気（その日の日付に合わせる）
+    - 近江八幡の名所や名物（八幡堀、水郷、近江牛、赤こんにゃく、左義長まつり など）
+    - 古民家のお店の日常（開店準備、お客さんとのやりとり、商品の陳列）
+    - 縁起・開運ネタ（招き猫、たぬきの八相縁起、小判）
+    - 陶器や雑貨のうんちく（信楽焼、有田焼、九谷焼 など）
+    - 海外からのお客さんとの交流
+  rules: >-
+    起承転結の4コマで、4コマ目にクスッと笑えるオチ。
+    2匹がたくさん動く話にする（走る・跳ぶ・転ぶ・追いかける・運ぶ・踊る など、コマごとに違う動き）。
+    背景は毎回ちがう場所にする（下の場所リストから、または季節やお話に合う場所を選ぶ）。
+    オチのあとに「大金より小さな幸せ」のような、小さな福や気づきにつながる余韻を残す。
+    1コマの台詞は最大2つ、1つ20文字以内。
+    宣伝くさくしない（商品名の連呼や「買ってね」は禁止）。
+    ひこにゃん・実在の人物・他社のキャラクターやロゴは絶対に登場させない。
+    （ひこにゃんは使用許可の申請前のため、絵にも台詞にも出さない）
+    政治・宗教・特定の人を傷つける内容は避ける。
+  ending_tag: 毎日更新！
+
+# ---- 投稿文 ----
+brand:
+  name: 義恒（よしつね）
+  shop: よしつねの秘密基地（近江八幡・八幡堀の古民家ショップ）
+  url: https://yoshitsune20231001.github.io/yoshitsune.github.io/
+# 過去の回の投稿文（見本）。このフォルダの .txt と同じ形式で毎回作ります
+examples:
+  - sns/character/reference/第10話
+
+# SNSごとの固定ハッシュタグ（第10話の投稿文より）
+hashtags:
+  x: ["#招き猫", "#信楽焼", "#縁起物"]
+  instagram: ["#福合わせたぬき猫", "#招き猫", "#縁起物", "#4コマ漫画", "#よしつねの秘密基地"]
+  youtube: ["#福合わせたぬき猫", "#信楽焼", "#招き猫", "#たぬき", "#縁起物", "#4コマ漫画", "#shorts"]
+  tiktok: ["#福合わせたぬき猫", "#信楽焼", "#招き猫", "#たぬき", "#縁起物", "#4コマ漫画", "#開運", "#おすすめにのりたい", "#fyp", "#japan", "#luckycat"]
+
+# ぶら下げリプライ（X）に入れるリンク。本ポストにはリンクを入れない
+reply_links:
+  - "▼オンラインショップ https://yoshitsune20231001.stores.jp"
+  - "▼ご主人の物語（note） https://note.com/yoshitsune1001"
+
+# ---- 投稿時刻（日本時間）----
+# 生成は毎朝7時。確認・承認したものを、この時刻に投稿します（自動投稿は今後追加）
+# 2〜4週間後に各アプリの分析（インサイト）で反応の良い時間を見て調整してください
+schedule:
+  - {sns: YouTubeショート,      day: 当日, time: "18:00"}
+  - {sns: TikTok,               day: 当日, time: "19:00"}
+  - {sns: インスタ（リール）,    day: 当日, time: "20:00"}
+  - {sns: X,                    day: 当日, time: "21:00"}
+  - {sns: note,                 day: 翌日, time: "07:00"}
+  - {sns: インスタ（カルーセル）, day: 翌日, time: "12:00"}
+
+# ---- リール動画（第10話と同じ構成）----
+reel:
+  fps: 30
+  title_seconds: 2.75     # タイトルカード
+  hook_seconds: 2.5       # フックの一文
+  panel_seconds: 3.5      # 1コマあたり
+  panel_zoom: 0.05        # 1コマ表示中にゆっくり寄る量（0で静止）
+  closing_seconds: 2.5    # 締め（ロゴ・販売中）
+  end_seconds: 3.25       # エンドカード（いいね＆フォロー）
+  # SNSごとのエンドカード（無い場合は end_card.jpg を使う）
+  platforms:
+    instagram: sns/assets/reel/end_card_instagram.jpg
+    youtube: sns/assets/reel/end_card_youtube.jpg
+    x: sns/assets/reel/end_card_x.jpg
+    tiktok: sns/assets/reel/end_card_tiktok.jpg
+  shop_line: オンラインショップで販売中
+  shop_sub: プロフィールのリンクから
+  # sns/assets/bgm/ に mp3 を置くとBGMが付きます（無ければ無音。今まで通りアプリでBGMを付けてOK）
+  bgm_volume: 0.35
