@@ -51,8 +51,15 @@ def main() -> None:
     texts = "\n\n".join(
         f"<details><summary>📄 {f.name}</summary>\n\n```\n{f.read_text(encoding='utf-8')}\n```\n</details>" for f in files
     )
-    sched = "\n".join(f"| {x['sns']} | {x['day']} | {x['time']} |" for x in post.get("schedule", []))
+    import datetime as dt
+    base = dt.date.fromisoformat(post["date"])
+    checks = "\n".join(
+        f"- [ ] {x['sns']} ｜ {(base + dt.timedelta(days=1 if x['day'] == '翌日' else 0)).isoformat()} {x['time']}"
+        for x in post.get("schedule", [])
+    )
+    dashboard = f"https://{repo.split('/')[0]}.github.io/{repo.split('/')[1]}/sns/dashboard/"
     body = f"""## 第{post['episode']}話「{post['title']}」
+📊 [ダッシュボードで全体を見る]({dashboard})
 
 ![4コマ]({raw}/manga.jpg)
 
@@ -65,10 +72,8 @@ def main() -> None:
 {story}
 
 ---
-### ⏰ 投稿予定
-| SNS | 日 | 時刻 |
-|---|---|---|
-{sched}
+### 📮 投稿チェック（投稿したらチェックを入れてください。ダッシュボードに反映されます）
+{checks}
 
 ---
 ### 📝 投稿文（第10話と同じ形式）
@@ -96,6 +101,8 @@ def main() -> None:
 （5〜10分で新しい確認Issueが届き、このIssueは自動で閉じます）
 
 <!-- dir:{out} -->
+<!-- tag:{post['release_tag']} -->
+<!-- episode:{post['episode']} -->
 
 > ※ いまは「生成＋確認」まで。SNSへの自動投稿は、品質が安定してから追加します。
 """

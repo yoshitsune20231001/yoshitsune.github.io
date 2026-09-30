@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>4コマ投稿ダッシュボード</title>
+<style>
+  :root {
+    --bg: #faf6ee; --card: #ffffff; --ink: #2c1a0e; --sub: #7a6a5a; --line: #eadfcc;
+    --gold: #c7a148; --red: #b2281f; --green: #2e7d4f; --green-bg: #e3f3e8;
+    --orange: #c2610c; --orange-bg: #fdebd8; --gray-bg: #f1ece3; --blue: #2d5a9e; --blue-bg: #e4ecf8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1c1712; --card: #26201a; --ink: #f3ebdd; --sub: #b3a590; --line: #3a3128;
+      --gold: #d9b560; --red: #ef6b5f; --green: #6fcf97; --green-bg: #1f3a2a;
+      --orange: #f2a15b; --orange-bg: #3d2a17; --gray-bg: #322a22; --blue: #8fb3ea; --blue-bg: #1f2b40;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif; line-height: 1.5; }
+  header { border-top: 6px solid var(--gold); padding: 20px 16px 8px; max-width: 960px; margin: 0 auto;
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+  h1 { font-size: 1.25rem; margin: 0; }
+  h1 small { display: block; color: var(--sub); font-size: .8rem; font-weight: normal; }
+  main { max-width: 960px; margin: 0 auto; padding: 0 16px 48px; }
+  h2 { font-size: 1rem; margin: 28px 0 10px; }
+  button, .btn { font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    border-radius: 999px; padding: 6px 14px; cursor: pointer; text-decoration: none; font-size: .85rem; }
+  button:hover, .btn:hover { border-color: var(--gold); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .tile b { display: block; font-size: 1.6rem; line-height: 1.2; }
+  .tile span { color: var(--sub); font-size: .8rem; }
+  .today { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .today .next { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: .9rem; }
+  .today .next b { color: var(--red); }
+  .row { display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: center;
+    padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: .9rem; }
+  .row:last-child { border-bottom: none; }
+  .row time { font-variant-numeric: tabular-nums; font-weight: bold; }
+  .row .ep { color: var(--sub); font-size: .8rem; }
+  .empty { padding: 14px; color: var(--sub); font-size: .9rem; }
+  .badge { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: .75rem; font-weight: bold; white-space: nowrap; }
+  .b-done { background: var(--green-bg); color: var(--green); }
+  .b-late { background: var(--orange-bg); color: var(--orange); }
+  .b-wait { background: var(--gray-bg); color: var(--sub); }
+  .b-pending { background: var(--orange-bg); color: var(--orange); }
+  .b-ok { background: var(--green-bg); color: var(--green); }
+  .b-redo { background: var(--blue-bg); color: var(--blue); }
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+    display: flex; flex-direction: column; }
+  .card.dim { opacity: .55; }
+  .thumb { aspect-ratio: 1 / 1; background: var(--gray-bg); display: block; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .card .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .card h3 { margin: 0; font-size: .95rem; }
+  .card .meta { color: var(--sub); font-size: .75rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font-size: .72rem; border-radius: 6px; padding: 2px 7px; }
+  .links { display: flex; gap: 12px; font-size: .8rem; }
+  .links a { color: var(--blue); }
+  .error { background: var(--orange-bg); color: var(--orange); padding: 12px 14px; border-radius: 12px; font-size: .9rem; }
+  footer { max-width: 960px; margin: 0 auto; padding: 0 16px 32px; color: var(--sub); font-size: .8rem; }
+  footer a { color: var(--blue); }
+</style>
+</head>
+<body>
+<header>
+  <h1>福合わせたぬき猫 4コマ 投稿ダッシュボード<small id="updated">読み込み中…</small></h1>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <a class="btn" id="run-link" target="_blank" rel="noopener">＋ 今すぐ作る</a>
+    <button id="reload" type="button">更新</button>
+  </div>
+</header>
+<main>
+  <div id="error"></div>
+
+  <h2>いまの状況</h2>
+  <div class="tiles">
+    <div class="tile"><b id="k-pending">–</b><span>確認待ち</span></div>
+    <div class="tile"><b id="k-today">–</b><span>今日の投稿（済 / 予定）</span></div>
+    <div class="tile"><b id="k-late">–</b><span>時間を過ぎた未投稿</span></div>
+    <div class="tile"><b id="k-week">–</b><span>この7日の投稿数</span></div>
+  </div>
+
+  <h2>今日の投稿予定</h2>
+  <div class="today" id="today"><div class="empty">読み込み中…</div></div>
+
+  <h2>各話の進み具合</h2>
+  <div class="filters" id="filters">
+    <button type="button" data-f="active" aria-pressed="true">進行中</button>
+    <button type="button" data-f="pending" aria-pressed="false">確認待ち</button>
+    <button type="button" data-f="ok" aria-pressed="false">承認済み</button>
+    <button type="button" data-f="all" aria-pressed="false">すべて</button>
+  </div>
+  <div class="cards" id="cards"></div>
+</main>
+<footer>
+  データは GitHub の確認ページ（Issue）から毎回読み込んでいます。投稿したら、確認ページの「投稿チェック」にチェックを入れてください。
+  ／ <a id="issues-link" target="_blank" rel="noopener">確認ページの一覧</a>
+</footer>
+
+<script>
+(() => {
+  // リポジトリ名はページのURLから決める（例: yoshitsune20231001.github.io/yoshitsune.github.io）
+  const owner = location.hostname.endsWith(".github.io") ? location.hostname.split(".")[0] : "yoshitsune20231001";
+  const repoName = location.hostname.endsWith(".github.io") && location.pathname.split("/")[1]
+    ? location.pathname.split("/")[1] : "yoshitsune.github.io";
+  const REPO = `${owner}/${repoName}`;
+  const API = `https://api.github.com/repos/${REPO}/issues?labels=${encodeURIComponent("4コマ")}&state=all&per_page=60&sort=created&direction=desc`;
+
+  document.getElementById("run-link").href = `https://github.com/${REPO}/actions/workflows/sns-4koma.yml`;
+  document.getElementById("issues-link").href = `https://github.com/${REPO}/issues?q=label%3A4%E3%82%B3%E3%83%9E`;
+
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  // 日本時間の「いま」を、比較しやすい "YYYY-MM-DD HH:MM" 文字列で
+  function nowJST() {
+    const p = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+    return p.replace("T", " ").slice(0, 16);
+  }
+  const fmtDay = (ymd) => { const [y, m, d] = ymd.split("-").map(Number); const w = "日月火水木金土"[new Date(y, m - 1, d).getDay()]; return `${m}/${d}(${w})`; };
+
+  function parseIssue(it) {
+    const body = it.body || "";
+    const labels = it.labels.map((l) => l.name);
+    const m = it.title.match(/第(\d+)話「(.+?)」/);
+    const tag = (body.match(/<!-- tag:(\S+) -->/) || [])[1];
+    const posts = [...body.matchAll(/^- \[( |x|X)\] (.+?) ｜ (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})\s*$/gm)]
+      .map((x) => ({ done: x[1] !== " ", sns: x[2].trim(), at: `${x[3]} ${x[4]}`, day: x[3], time: x[4] }));
+    let status;
+    if (it.state === "closed") {
+      if (labels.includes("作り直し") || labels.includes("絵だけ作り直し")) status = "redone";
+      else if (it.state_reason === "not_planned") status = "skipped";
+      else status = "closed";
+    } else if (labels.includes("作り直し") || labels.includes("絵だけ作り直し")) status = "redoing";
+    else if (labels.includes("承認")) status = "ok";
+    else status = "pending";
+    return { num: it.number, url: it.html_url, ep: m ? Number(m[1]) : null, title: m ? m[2] : it.title,
+      created: it.created_at, tag, posts, status };
+  }
+
+  const STATUS = {
+    pending: ["確認待ち", "b-pending"], ok: ["承認済み", "b-ok"], redoing: ["作り直し中", "b-redo"],
+    redone: ["作り直した", "b-wait"], skipped: ["見送り", "b-wait"], closed: ["完了", "b-done"],
+  };
+  const live = (e) => ["pending", "ok", "redoing"].includes(e.status) || (e.status === "closed" && e.posts.some((p) => !p.done));
+
+  function postState(p, now, e) {
+    if (p.done) return ["済", "b-done"];
+    if (e.status === "skipped" || e.status === "redone") return ["—", "b-wait"];
+    if (p.at <= now) return ["遅れ", "b-late"];
+    return [p.time, "b-wait"];
+  }
+
+  let episodes = [];
+  let filter = "active";
+
+  function render() {
+    const now = nowJST();
+    const today = now.slice(0, 10);
+    const weekAgo = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+    const active = episodes.filter((e) => !["redone", "skipped"].includes(e.status));
+
+    // 数字のタイル
+    $("k-pending").textContent = episodes.filter((e) => e.status === "pending").length;
+    const todays = active.flatMap((e) => e.posts.filter((p) => p.day === today).map((p) => ({ ...p, e })));
+    $("k-today").textContent = `${todays.filter((p) => p.done).length} / ${todays.length}`;
+    $("k-late").textContent = active.flatMap((e) => e.posts).filter((p) => !p.done && p.at <= now).length;
+    $("k-week").textContent = active.flatMap((e) => e.posts).filter((p) => p.done && p.day >= weekAgo && p.day <= today).length;
+
+    // 今日の予定
+    const box = $("today");
+    box.replaceChildren();
+    todays.sort((a, b) => a.at.localeCompare(b.at));
+    const next = todays.find((p) => !p.done && p.at > now);
+    const nextLine = el("div", "next");
+    if (next) {
+      const [h, m] = next.time.split(":").map(Number);
+      const mins = h * 60 + m - (Number(now.slice(11, 13)) * 60 + Number(now.slice(14, 16)));
+      nextLine.append("次の投稿：", el("b", null, `${next.time} ${next.sns}`), `（あと${Math.floor(mins / 60)}時間${mins % 60}分）`);
+    } else {
+      nextLine.textContent = todays.length ? "今日の予定はこれで最後です" : "";
+    }
+    if (nextLine.textContent) box.append(nextLine);
+    if (!todays.length) box.append(el("div", "empty", `今日（${fmtDay(today)}）の投稿予定はありません`));
+    for (const p of todays) {
+      const row = el("div", "row");
+      const [label, cls] = postState(p, now, p.e);
+      const mid = el("div");
+      mid.append(el("div", null, p.sns), el("div", "ep", `第${p.e.ep}話「${p.e.title}」${p.e.status === "pending" ? "・確認待ち" : ""}`));
+      const t = el("time", null, p.time);
+      const b = el("a", `badge ${cls}`, label === p.time ? "予定" : label);
+      b.href = p.e.url; b.target = "_blank"; b.rel = "noopener";
+      row.append(t, mid, b);
+      box.append(row);
+    }
+
+    // 各話カード
+    const cards = $("cards");
+    cards.replaceChildren();
+    const shown = episodes.filter((e) =>
+      filter === "all" ? true : filter === "active" ? live(e) : e.status === filter);
+    if (!shown.length) cards.append(el("div", "empty", "該当する回はありません"));
+    for (const e of shown) {
+      const card = el("article", "card" + (["redone", "skipped"].includes(e.status) ? " dim" : ""));
+      const thumb = el("a", "thumb"); thumb.href = e.url; thumb.target = "_blank"; thumb.rel = "noopener";
+      if (e.tag) {
+        const img = el("img"); img.loading = "lazy"; img.alt = `第${e.ep}話の4コマ`;
+        img.src = `https://github.com/${REPO}/releases/download/${e.tag}/carousel_1.jpg`;
+        img.onerror = () => img.remove();
+        thumb.append(img);
+      }
+      const body = el("div", "body");
+      const top = el("div", "top");
+      const [sLabel, sCls] = STATUS[e.status];
+      top.append(el("h3", null, `第${e.ep ?? "?"}話「${e.title}」`), el("span", `badge ${sCls}`, sLabel));
+      const created = new Date(e.created);
+      body.append(top, el("div", "meta", `作成：${created.getMonth() + 1}/${created.getDate()} ${String(created.getHours()).padStart(2, "0")}:${String(created.getMinutes()).padStart(2, "0")}`));
+      const chips = el("div", "chips");
+      const now2 = nowJST();
+      for (const p of e.posts) {
+        const [label, cls] = postState(p, now2, e);
+        const c = el("span", `chip ${cls}`, `${p.sns} ${label === p.time ? fmtDay(p.day) + " " + p.time : label}`);
+        chips.append(c);
+      }
+      if (!e.posts.length) chips.append(el("span", "chip b-wait", "投稿チェックなし"));
+      const links = el("div", "links");
+      const a1 = el("a", null, "確認ページ"); a1.href = e.url; a1.target = "_blank"; a1.rel = "noopener";
+      links.append(a1);
+      if (e.tag) {
+        const a2 = el("a", null, "画像・動画"); a2.href = `https://github.com/${REPO}/releases/tag/${e.tag}`;
+        a2.target = "_blank"; a2.rel = "noopener"; links.append(a2);
+      }
+      body.append(chips, links);
+      card.append(thumb, body);
+      cards.append(card);
+    }
+    $("updated").textContent = `最終更新：${now}（日本時間）`;
+  }
+
+  async function load() {
+    $("error").replaceChildren();
+    try {
+      const res = await fetch(API, { headers: { Accept: "application/vnd.github+json" } });
+      if (res.status === 403 || res.status === 429) throw new Error("GitHubの読み込み回数の上限に達しました。しばらく（最大1時間）待ってから「更新」を押してください。");
+      if (!res.ok) throw new Error(`読み込みに失敗しました（${res.status}）`);
+      const items = (await res.json()).filter((it) => !it.pull_request);
+      episodes = items.map(parseIssue);
+      render();
+    } catch (err) {
+      $("error").append(el("div", "error", err.message || String(err)));
+      $("updated").textContent = "読み込めませんでした";
+    }
+  }
+
+  $("filters").addEventListener("click", (ev) => {
+    const b = ev.target.closest("button[data-f]"); if (!b) return;
+    filter = b.dataset.f;
+    for (const x of $("filters").querySelectorAll("button")) x.setAttribute("aria-pressed", String(x === b));
+    render();
+  });
+  $("reload").addEventListener("click", load);
+  setInterval(() => episodes.length && render(), 60000);  // 「遅れ」表示を1分ごとに更新
+  load();
+})();
+</script>
+</body>
+</html>
