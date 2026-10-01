@@ -101,6 +101,35 @@ def fetch_redo(issue_number: str) -> dict:
     return {"dir": m.group(1) if m else None, "feedback": "\n".join(n for n in notes if n)}
 
 
+def redo_targets(feedback: str) -> set | None:
+    """コメントから「3コマ目」「タイトル」「note見出し」などの作り直し対象を読み取る（無ければ None＝全部）。"""
+    import re
+
+    nums = {"1": 1, "2": 2, "3": 3, "4": 4, "１": 1, "２": 2, "３": 3, "４": 4, "①": 1, "②": 2, "③": 3, "④": 4}
+    t: set = set()
+    for m in re.findall(r"([1-4１-４])\s*(?:コマ|こま)|([①-④])", feedback or ""):
+        t.add(nums[m[0] or m[1]])
+    if re.search(r"タイトル|表紙", feedback or ""):
+        t.add("title")
+    if re.search(r"note|ノート|見出し", feedback or ""):
+        t.add("note")
+    return t or None
+
+
+def reuse_image(prev: dict, name: str, out: Path) -> Image.Image:
+    """前回の回の画像（GitHub Releases）をダウンロードして使う。"""
+    import io
+
+    import requests
+
+    url = f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/releases/download/{prev['release_tag']}/{name}"
+    r = requests.get(url, timeout=60)
+    r.raise_for_status()
+    img = Image.open(io.BytesIO(r.content)).convert("RGB")
+    img.save(out, quality=92)
+    return img
+
+
 def previous_summary(post: dict) -> str:
     lines = [f"タイトル「{post['title']}」 場所：{post.get('location', '')}"]
     for k, p in zip("起承転結", post["panels"]):
@@ -190,7 +219,8 @@ def _common(cfg: dict) -> str:
 
 
 def panel_prompt(cfg: dict, sc: Script, panel: Panel, idx: int) -> str:
-    lines = "\n".join(f'- {ln.speaker}: 「{ln.text}」' for ln in panel.lines) or "- (no dialogue)"
+    who = {"たぬき": "the TANUKI", "猫": "the NEKO", "ご主人": "the owner's hand"}
+    lines = "\n".join(f'- bubble from {who.get(ln.speaker, ln.speaker)}: {ln.text}' for ln in panel.lines) or "- (no dialogue)"
     title = (f'Put a wooden title banner at the top reading exactly 「{sc.title}」 in bold Japanese brush lettering.\n'
              if idx == 0 else "")
     return (
@@ -199,7 +229,8 @@ def panel_prompt(cfg: dict, sc: Script, panel: Panel, idx: int) -> str:
         f"Scene: {panel.scene_en}\n{cfg['motion_rules_en']}\n{title}"
         f"Draw a small black circled number {'①②③④'[idx]} in the top-left corner.\n"
         "Draw white round speech bubbles with this exact Japanese dialogue (vertical-friendly line breaks, "
-        "clear readable black text, tail pointing to the speaker):\n"
+        "clear readable black text, tail pointing to the speaker). Write ONLY the Japanese words after the colon "
+        "inside each bubble; never write the speaker's name, a colon or quotation marks in the bubble:\n"
         f"{lines}\n"
         "If a line is spoken by ご主人 (the owner), point that bubble's tail to the owner's hand/sleeve; never draw the owner's face.\n"
         "Keep the same background location and character designs as the other panels. No other text."
@@ -516,16 +547,29 @@ def main() -> None:
         panels, title_card, note_art = mock_images(out)
     else:
         sizes = cfg["openai"]["sizes"]
-        print("② タイトルカードを生成中…")
-        title_card = gen_image(cfg, title_card_prompt(cfg, script, episode), sizes["title_card"], out / "title_card_raw.jpg")
+        # 「絵だけ作り直し」でコメントに「3コマ目」などとあれば、その絵だけ描き直して残りは前回のものを使う
+        only = redo_targets(cfg.get("_feedback", "")) if (prev and mode == "images") else None
+        keep = (lambda name: only is not None and name not in only)
+        if keep("title"):
+            title_card = reuse_image(prev, "title_card.jpg", out / "title_card_raw.jpg")
+        else:
+            print("② タイトルカードを生成中…")
+            title_card = gen_image(cfg, title_card_prompt(cfg, script, episode), sizes["title_card"], out / "title_card_raw.jpg")
         panels = []
         for i, p in enumerate(script.panels):
+            if keep(i + 1):
+                print(f"② コマ{i + 1}は前回の絵を使います")
+                panels.append(reuse_image(prev, f"panel{i + 1}.jpg", out / f"panel{i + 1}.jpg"))
+                continue
             print(f"② コマ{i + 1}の絵を生成中…")
             # 2コマ目以降は1コマ目も見本にして、背景とキャラをそろえる
             extra = [out / "panel1.jpg"] if i > 0 else []
             panels.append(gen_image(cfg, panel_prompt(cfg, script, p, i), sizes["panel"], out / f"panel{i + 1}.jpg", extra))
-        print("② note見出しを生成中…")
-        note_art = gen_image(cfg, note_header_prompt(cfg, script, episode), sizes["note_header"], out / "note_header_raw.jpg")
+        if keep("note"):
+            note_art = reuse_image(prev, "note_header.jpg", out / "note_header_raw.jpg")
+        else:
+            print("② note見出しを生成中…")
+            note_art = gen_image(cfg, note_header_prompt(cfg, script, episode), sizes["note_header"], out / "note_header_raw.jpg")
 
     print("③ 吹き出し・4コマ画像・動画を作成中…")
     data = script.model_dump()
