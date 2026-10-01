@@ -1,0 +1,60 @@
+name: X・YouTube・TikTok 自動投稿
+
+on:
+  schedule:
+    # 日本時間 = UTC + 9時間。予定時刻を過ぎていて未チェックのものだけ投稿する（合言葉が未登録のSNSは何もしない）
+    - cron: "1 9 * * *"     # 18:01 YouTubeショート
+    - cron: "1 10 * * *"    # 19:01 TikTok（受信箱へ）
+    - cron: "1 12 * * *"    # 21:01 X
+    - cron: "40 12 * * *"   # 21:40 取りこぼし・失敗のやり直し
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check＝つながっているか確認だけ／post＝時間が来たものを投稿／tiktok_code＝TikTokとつなぐ"
+        type: choice
+        options: [check, post, tiktok_code]
+        default: check
+      code:
+        description: "（tiktok_code のとき）TikTokとつないだ後の画面に出たコード"
+        required: false
+      issue:
+        description: "（post のとき）このIssue番号の、時間が来ている分だけ投稿（空欄なら全部）"
+        required: false
+
+permissions:
+  contents: write   # TikTok の合言葉（暗号化）を保存するため
+  issues: write
+
+concurrency:
+  group: sns-publish-more
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests pyyaml requests-oauthlib cryptography
+
+      - name: 投稿
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODE: ${{ github.event.inputs.mode || 'post' }}
+          CODE: ${{ github.event.inputs.code }}
+          ISSUE: ${{ github.event.inputs.issue }}
+        run: python sns/scripts/publish_more.py
