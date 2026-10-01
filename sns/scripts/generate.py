@@ -321,11 +321,12 @@ def mock_images(out: Path) -> tuple[list[Image.Image], Image.Image, Image.Image]
 # ---------------------------------------------------------------- 本体
 
 def next_post_date(cfg: dict, history: list[dict], today: dt.date) -> dt.date:
-    """投稿日＝「開始日」「今日＋lead_days」「予定済みの最後の日の翌日」のうち一番遅い日。"""
+    """投稿日＝「開始日」「今日＋lead_days」「予定済みの最後の日＋interval_days」のうち一番遅い日。"""
     start = dt.date.fromisoformat(str(cfg.get("start_date", today)))
     lead = today + dt.timedelta(days=int(cfg.get("lead_days", 1)))
+    step = dt.timedelta(days=int(cfg.get("interval_days", 1)))
     booked = [dt.date.fromisoformat(h.get("post_date", h["date"])) for h in history]
-    return max([start, lead] + [d + dt.timedelta(days=1) for d in booked])
+    return max([start, lead] + [d + step for d in booked])
 
 
 def next_episode(cfg: dict, history: list[dict]) -> int:

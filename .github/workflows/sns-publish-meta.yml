@@ -1,0 +1,49 @@
+name: インスタ・Facebook 自動投稿
+
+on:
+  schedule:
+    # 日本時間 = UTC + 9時間。予定時刻を過ぎていて未チェックのものだけ投稿する
+    - cron: "1 11 * * *"    # 20:01 リール・Facebook
+    - cron: "7 11 * * *"    # 20:07 ストーリーズ
+    - cron: "40 11 * * *"   # 20:40 取りこぼし・失敗のやり直し
+    - cron: "1 3 * * *"     # 12:01 カルーセル（翌日）
+    - cron: "40 3 * * *"    # 12:40 取りこぼし・失敗のやり直し
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check＝つながっているか確認だけ（投稿しない）／post＝時間が来たものを投稿"
+        type: choice
+        options: [check, post]
+        default: check
+      issue:
+        description: "（post のとき）このIssue番号の、時間が来ている分だけ投稿（空欄なら全部）"
+        required: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: sns-publish-meta
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests pyyaml
+
+      - name: 投稿
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODE: ${{ github.event.inputs.mode || 'post' }}
+          ISSUE: ${{ github.event.inputs.issue }}
+        run: python sns/scripts/publish_meta.py
