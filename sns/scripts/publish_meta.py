@@ -305,6 +305,16 @@ def main() -> int:
 
     if mode == "check":
         summary += ["", "#### 見つかった商品（instagram_product_id に番号を書くと、その商品に固定できます）"] + [f"- {c}" for c in acc.candidates]
+        if acc.ig_id:
+            seen = set()
+            summary += ["", "#### カタログ内の関連商品（審査状況つき）"]
+            for c in meta("GET", f"{acc.ig_id}/available_catalogs", token)["data"]:
+                for q in ("福合わせ", "たぬき", "猫", "招き", "信楽"):
+                    for p in meta("GET", f"{acc.ig_id}/catalog_product_search", token,
+                                  params={"catalog_id": c["catalog_id"], "q": q})["data"]:
+                        if p["product_id"] not in seen:
+                            seen.add(p["product_id"])
+                            summary.append(f"- `{p['product_id']}` {p.get('product_name', '')}（{p.get('review_status', '?')}）")
         write_summary(summary)
         return 0
 
