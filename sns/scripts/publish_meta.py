@@ -62,7 +62,7 @@ def meta(method: str, path: str, token: str, base: str = FB, **kw):
 class Accounts:
     """トークンから Facebookページ・インスタ・商品 を見つける。"""
 
-    def __init__(self, token: str, product_name: str):
+    def __init__(self, token: str, product_name: str, product_id: str = ""):
         self.user_token = token
         pages = meta("GET", "me/accounts", token, params={
             "fields": "id,name,access_token,instagram_business_account{id,username}"})["data"]
@@ -75,22 +75,32 @@ class Accounts:
         self.ig_id, self.ig_name = ig.get("id"), ig.get("username")
         self.product_id = None
         self.product_note = ""
+        self.candidates: list[str] = []
         if self.ig_id and product_name:
             try:
-                self.product_id, self.product_note = self._find_product(product_name)
+                self.product_id, self.product_note = self._find_product(product_name, str(product_id or ""))
             except MetaError as e:
                 self.product_note = f"商品が見つかりませんでした（{e}）"
 
-    def _find_product(self, name: str):
-        cats = meta("GET", f"{self.ig_id}/available_catalogs", self.user_token)["data"]
-        for c in cats:
-            res = meta("GET", f"{self.ig_id}/catalog_product_search", self.user_token,
-                       params={"catalog_id": c["catalog_id"], "q": name})["data"]
-            ok = [p for p in res if p.get("review_status", "approved") in ("approved", "")] or res
-            if ok:
-                p = ok[0]
-                return p["product_id"], f"{p.get('product_name', name)}（{c.get('catalog_name', '')}）"
-        return None, "商品が見つかりませんでした"
+    def _find_product(self, name: str, want_id: str):
+        """商品を探す。config の instagram_product_id があればそれ、なければ名前がいちばん短いもの（＝本体）。"""
+        found = []
+        for c in meta("GET", f"{self.ig_id}/available_catalogs", self.user_token)["data"]:
+            for q in dict.fromkeys([name, name.replace("たぬき猫", " たぬき猫"), "福合わせ"]):
+                res = meta("GET", f"{self.ig_id}/catalog_product_search", self.user_token,
+                           params={"catalog_id": c["catalog_id"], "q": q})["data"]
+                found += [p for p in res if p.get("review_status", "approved") in ("approved", "")
+                          and p["product_id"] not in {f["product_id"] for f in found}]
+        self.candidates = [f"`{p['product_id']}` {p.get('product_name', '')}" for p in found]
+        if want_id:
+            p = next((p for p in found if str(p["product_id"]) == want_id), None)
+            if not p:
+                return None, f"instagram_product_id {want_id} が見つかりませんでした"
+        elif found:
+            p = min(found, key=lambda p: len(p.get("product_name", "")))
+        else:
+            return None, "商品が見つかりませんでした"
+        return p["product_id"], p.get("product_name", name)
 
 
 def release_url(repo: str, tag: str, name: str) -> str:
@@ -284,7 +294,7 @@ def main() -> int:
     cfg = yaml.safe_load((ROOT / "sns/config.yml").read_text(encoding="utf-8"))
     summary = []
 
-    acc = Accounts(token, cfg.get("instagram_product_tag", ""))
+    acc = Accounts(token, cfg.get("instagram_product_tag", ""), cfg.get("instagram_product_id", ""))
     days = token_days_left(token)
     summary += [
         f"- Facebookページ：**{acc.page_name}**",
@@ -296,6 +306,17 @@ def main() -> int:
         warn_token(repo, days)
 
     if mode == "check":
+        summary += ["", "#### 見つかった商品（instagram_product_id に番号を書くと、その商品に固定できます）"] + [f"- {c}" for c in acc.candidates]
+        if acc.ig_id:
+            seen = set()
+            summary += ["", "#### カタログ内の関連商品（審査状況つき）"]
+            for c in meta("GET", f"{acc.ig_id}/available_catalogs", token)["data"]:
+                for q in ("福合わせ", "たぬき猫"):
+                    for p in meta("GET", f"{acc.ig_id}/catalog_product_search", token,
+                                  params={"catalog_id": c["catalog_id"], "q": q})["data"]:
+                        if p["product_id"] not in seen:
+                            seen.add(p["product_id"])
+                            summary.append(f"- `{p['product_id']}` {p.get('product_name', '')}（{p.get('review_status', '?')}）")
         write_summary(summary)
         return 0
 

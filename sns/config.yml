@@ -138,6 +138,8 @@ hashtags:
 
 # インスタの商品タグ（ショッピング機能・STORES連携の商品名）
 instagram_product_tag: 福合わせたぬき猫
+# 自動投稿で付ける商品（カタログの「福合わせ たぬき猫」本体。Tシャツと間違えないよう番号で固定）
+instagram_product_id: "27581653274789790"
 # Facebook と ストーリーズで使うショップのURL
 shop_url: https://yoshitsune20231001.stores.jp
 
