@@ -86,9 +86,11 @@ class Accounts:
         """商品を探す。config の instagram_product_id があればそれ、なければ名前がいちばん短いもの（＝本体）。"""
         found = []
         for c in meta("GET", f"{self.ig_id}/available_catalogs", self.user_token)["data"]:
-            res = meta("GET", f"{self.ig_id}/catalog_product_search", self.user_token,
-                       params={"catalog_id": c["catalog_id"], "q": name})["data"]
-            found += [p for p in res if p.get("review_status", "approved") in ("approved", "")]
+            for q in dict.fromkeys([name, name.replace("たぬき猫", " たぬき猫"), "福合わせ"]):
+                res = meta("GET", f"{self.ig_id}/catalog_product_search", self.user_token,
+                           params={"catalog_id": c["catalog_id"], "q": q})["data"]
+                found += [p for p in res if p.get("review_status", "approved") in ("approved", "")
+                          and p["product_id"] not in {f["product_id"] for f in found}]
         self.candidates = [f"`{p['product_id']}` {p.get('product_name', '')}" for p in found]
         if want_id:
             p = next((p for p in found if str(p["product_id"]) == want_id), None)
