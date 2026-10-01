@@ -201,6 +201,7 @@ def panel_prompt(cfg: dict, sc: Script, panel: Panel, idx: int) -> str:
         "Draw white round speech bubbles with this exact Japanese dialogue (vertical-friendly line breaks, "
         "clear readable black text, tail pointing to the speaker):\n"
         f"{lines}\n"
+        "If a line is spoken by ご主人 (the owner), point that bubble's tail to the owner's hand/sleeve; never draw the owner's face.\n"
         "Keep the same background location and character designs as the other panels. No other text."
     )
 

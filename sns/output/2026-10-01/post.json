@@ -5,22 +5,22 @@
   "location_en": "A sunny early-autumn rice field path in Omihachiman, with golden rice paddies ready for harvest, low green-brown satoyama hills in the background, a narrow earthen ridge, small puddles, dragonflies, sparrows, and a wooden tray with fresh rice balls. Keep the same location for all four panels, changing camera angles and distance. Leave open space near the top for speech bubbles.",
   "panels": [
     {
-      "scene_ja": "黄金色の田んぼを見て、たぬきがあぜ道を走り出す。猫は水たまりを跳び越えながら追いかける。",
-      "scene_en": "Wide shot on the rice field ridge. the TANUKI runs excitedly along the narrow path toward swaying golden rice, arms spread, surprised and delighted. the NEKO (boy cat) jumps over a small puddle behind him with a worried but amused face. Dragonflies fly around, satoyama hills in the distance, top area left open for speech bubbles.",
+      "scene_ja": "黄金色に実った田んぼの前で、たぬきが両手を上げて大喜び。猫は腕まくりをして、収穫を手伝う気まんまん。",
+      "scene_en": "On a country path beside a golden rice field with satoyama hills, the TANUKI throws both arms up in delight at the heavy, drooping golden rice ears, while the NEKO (boy cat) rolls up his sleeves and pumps a fist, eager to help with the harvest. Dragonflies and sparrows around. There are NO rice balls (onigiri) anywhere in this panel.",
       "lines": [
         {
           "speaker": "たぬき",
-          "text": "金色が走ってる！"
+          "text": "たくさん実ったね"
         },
         {
           "speaker": "猫",
-          "text": "稲穂がゆれてるの"
+          "text": "収穫手伝おう！"
         }
       ]
     },
     {
-      "scene_ja": "ふたりは刈った稲束を運ぶ手伝いをする。たぬきは稲束を抱えてふらつき、猫が後ろから押している。",
-      "scene_en": "Medium shot from the side on the same ridge. the TANUKI staggers while carrying a huge bundle of harvested rice stalks, knees wobbling and cheeks puffed with effort. the NEKO (boy cat) pushes the bundle from behind, leaning forward with determination. A few sparrows hop nearby, top area left open for speech bubbles.",
+      "scene_ja": "ふたりで刈った稲束を運ぶ。たぬきは大きな稲束を抱えてふらつき、猫が後ろから押している。",
+      "scene_en": "The TANUKI staggers while hugging a huge bundle of harvested rice sheaves, sweating, and the NEKO (boy cat) pushes him from behind to help, on the same rice-field path. There are NO rice balls (onigiri) anywhere in this panel.",
       "lines": [
         {
           "speaker": "たぬき",
@@ -33,49 +33,53 @@
       ]
     },
     {
-      "scene_ja": "ご主人の手元から新米おむすびの乗った盆が出る。たぬきが飛びついて、ひとつがころころ転がり、猫も追いかける。",
-      "scene_en": "Dynamic low-angle shot on the rice field path. Only the hands of ご主人 are visible, holding a wooden tray with fresh rice balls wrapped partly in leaves. the TANUKI leaps toward the tray with sparkling eyes, accidentally making one rice ball roll down the ridge. the NEKO (boy cat) dashes after the rolling rice ball with arms stretched out. Motion lines, scattered rice grains, top area left open for speech bubbles.",
+      "scene_ja": "左下からご主人の手が新米おにぎりの盆を差し出す。たぬきは大喜びでバンザイ、猫はお腹を押さえてぐぅ〜と鳴らしている。",
+      "scene_en": "From the lower-left corner, only the owner's hand and sleeve (no face) hold out a woven tray with three fresh new-rice onigiri; the rice balls stay neatly on the tray, nothing is falling. The TANUKI jumps for joy with both arms raised, sparkling eyes. The NEKO (boy cat) holds his round tummy with both paws, which is rumbling (small 'growl' swirl lines near the belly), with a hungry, drooling smile.",
       "lines": [
         {
+          "speaker": "ご主人",
+          "text": "新米おにぎりだよ"
+        },
+        {
           "speaker": "たぬき",
-          "text": "おむすび逃げた！"
+          "text": "わーい！おにぎりだ"
         },
         {
           "speaker": "猫",
-          "text": "待って、右手招き！"
+          "text": "おなかすいたね"
         }
       ]
     },
     {
-      "scene_ja": "追いかけた末、たぬきは田んぼ脇でころんで顔に米粒をつける。無事なおむすびを前に、猫が思わずツッコむ。",
-      "scene_en": "Close-up comedic shot beside the same rice field ridge. the TANUKI has tumbled gently onto the grass, lying face-up with one shiny rice grain stuck on his nose, smiling proudly as if he found treasure. The intact rice ball rests safely beside him on a leaf. the NEKO (boy cat) crouches nearby, laughing and pointing in playful disbelief. Warm autumn light, top area left open for speech bubbles.",
+      "scene_ja": "たぬきが手のひらにのせたお米を一粒、すずめにそっと差し出す。すずめがついばみ、猫はやさしく笑って見ている。",
+      "scene_en": "Close-up, warm and gentle: the TANUKI kneels and holds out one single grain of rice on his open paw to a small sparrow, which happily pecks it. The NEKO (boy cat) watches beside them with a soft, warm smile, one paw raised in a beckoning pose. Golden rice field and evening sunlight behind. There are NO rice balls (onigiri) anywhere in this panel.",
       "lines": [
         {
           "speaker": "たぬき",
-          "text": "まず一粒！"
+          "text": "一粒どうぞ"
         },
         {
           "speaker": "猫",
-          "text": "そこから!?"
+          "text": "お米一粒にも福があるね！"
         }
       ]
     }
   ],
-  "moral": "大きな実りも、はじまりは小さな一粒。\n一粒を笑って味わえる時間が、今日の福。",
-  "hook_line1": "新米おむすびが",
-  "hook_line2": "ころころ\n逃げた!?",
-  "moral_short": "一粒から福",
-  "closing_line": "一粒から、福は来る。",
-  "title_card_scene_en": "Vertical title card illustration. In the same bright early-autumn Omihachiman rice field, the TANUKI and the NEKO (boy cat) smile while holding the key items: a fresh rice ball on a leaf and a small golden rice sheaf. Golden paddies, satoyama hills, dragonflies, and a warm seasonal atmosphere. Leave clear space for the Japanese title text.",
-  "note_header_scene_en": "Horizontal note header illustration with the same warm atmosphere. the TANUKI and the NEKO (boy cat) sit on a rice field ridge, smiling with a fresh rice ball and a small golden rice sheaf between them. Golden rice paddies stretch behind them toward Omihachiman satoyama hills, with dragonflies in the sky. Leave clean negative space for article title text.",
-  "x_post": "「金色が走ってる！」\n「稲穂がゆれてるの」\n「おむすび逃げた！」\n「まず一粒！」\n「そこから!?」\n\n大きな実りも、はじまりは小さな一粒。\n一粒を笑って味わえる時間が、今日の福。",
-  "x_reply": "信楽焼のたぬき×招き猫「福合わせたぬき猫」の4コマ、第13話です🍙🦝🐱\n生みの親のご主人の物語はこちら👇\nオンラインショップにて販売中です（プロフィールのリンクから）。",
-  "instagram_reel_caption": "新米おむすびが、ころころ逃げた!?🍙\n\nこんにちは、福合わせたぬき猫です🍂\n\n「金色が走ってる！」\n「稲穂がゆれてるの」\n\n実りの秋の田んぼで、\n稲束を運んでいたら……\n\n「おむすび逃げた！」\n\n追いかけて、転んで、\n最後に見つけたのは\n鼻についた、お米一粒。\n\n「まず一粒！」\n「そこから!?」\n\n大きな実りも、\nはじまりは小さな一粒。\n\n一粒を笑って味わえることが、\n今日の福なのかも🍀\n\n━━━━━━━\n\n📌 クスッとしたら保存してね🐾\n\n福合わせたぬき猫は\nオンラインショップで販売中。\n右手で金運💰左手で良縁🤝\nプロフィールのリンクから会いに来てね✨",
-  "instagram_post_caption": "「新米おむすびが、ころころ逃げた!?」\n\nこんにちは、福合わせたぬき猫です🍂\n\n今日は、実りの秋の田んぼへ。\n黄金色にゆれる稲穂を見て、たぬきがひとこと。\n\n「金色が走ってる！」\n\n「稲穂がゆれてるの」\n\n刈った稲束を運ぶお手伝いをしたら、\n思ったよりずっしり。\n\n「百万両より重い！」\n「実りの重さだね」\n\nそこへ、ご主人の手元から\n新米のおむすびが登場🍙\n\nところが、たぬきが飛びついた拍子に\nおむすびが、ころころころ……。\n\n「おむすび逃げた！」\n「待って、右手招き！」\n\n追いかけて、転んで、\nようやく止まったおむすびの横で、\nたぬきの鼻には、お米が一粒。\n\n「まず一粒！」\n「そこから!?」\n\nふふ。\n大きな実りも、はじまりは小さな一粒。\n\n山盛りの幸せじゃなくても、\n一粒を見つけて笑えるなら、\nそれはもう立派な福なのかもしれません🍀\n\nみなさまにも今日ひとつ、\n新米の一粒みたいな小さな幸せが\n訪れますように。\n\n━━━━━━━\n\n📌 クスッとしたら、保存して✨\n\n福合わせたぬき猫は\nオンラインショップで販売中。\n右手で金運💰左手で良縁🤝\nプロフィールのリンクから会いに来てね🐾",
-  "tiktok_caption": "新米おむすびが逃げた!?🍙💨\n「おむすび逃げた！」「まず一粒！」「そこから!?」\n実りの秋、福はお米一粒から始まるかも🍂🦝🐱\n福合わせたぬき猫はプロフィールのリンクから✨",
-  "tiktok_pinned_comment": "みなさんの“秋の小さな福”は何ですか？🍙🍂 コメントで教えてください🦝🐱 ショップはプロフィールのリンクから✨",
-  "youtube_title": "新米おむすびが逃げた!? 一粒から始まる秋の福🍙 福合わせたぬき猫4コマ第13話 #shorts",
-  "youtube_description": "信楽焼のたぬき×招き猫「福合わせたぬき猫」の4コマ・第13話。\n\n実りの秋の田んぼで、黄金色にゆれる稲穂を見たたぬき。\n「金色が走ってる！」\n「稲穂がゆれてるの」\n\n稲束を運ぶお手伝いをして、\n新米のおむすびを前にしたら……\nころころころ、とおむすびが逃げ出した!?\n\n「おむすび逃げた！」\n「まず一粒！」\n「そこから!?」\n\n大きな実りも、はじまりは小さな一粒。\n一粒を笑って味わえることが、今日の福なのかもしれません。\n\nたぬきの八相縁起と、招き猫の招き。お互いの福を“合わせ持つ”から、福合わせ。\n\n右手で金運💰 左手で良縁🤝\n縁起物「福合わせたぬき猫」の4コマ・第13話です。\n\n福合わせたぬき猫は、オンラインショップにて販売中です👇\n（プロフィール・概要欄のリンクから）",
+  "moral": "大きな実りも、はじまりは小さな一粒。\n分け合う一粒に、福はちゃんと宿っている。",
+  "hook_line1": "新米おにぎりを前に、",
+  "hook_line2": "すずめに\n一粒どうぞ",
+  "moral_short": "一粒にも、福がある",
+  "closing_line": "お米一粒にも、福を。",
+  "title_card_scene_en": "The TANUKI and the NEKO (boy cat) jump happily in a golden rice field, each holding up a bundle of golden rice ears, a little sparrow perched on the TANUKI's straw hat, autumn leaves and dragonflies, bright autumn sky.",
+  "note_header_scene_en": "Wide golden rice field at harvest time; the TANUKI on the left and the NEKO (boy cat) on the right cheerfully hold up golden rice ears, a sparrow flying between them, satoyama hills behind.",
+  "x_post": "「たくさん実ったね」\n「収穫手伝おう！」\n「百万両より重い！」\n「新米おにぎりだよ」\n「一粒どうぞ」\n\n大きな実りも、はじまりは小さな一粒。\nお米一粒にも、ちゃんと福がある。",
+  "x_reply": "信楽焼のたぬき×招き猫「福合わせたぬき猫」の4コマ、第13話です🌾🦝🐱\n生みの親のご主人の物語はこちら👇\nオンラインショップにて販売中です（プロフィールのリンクから）。",
+  "instagram_reel_caption": "新米おにぎりより先に、すずめに一粒!?🌾\n\nこんにちは、福合わせたぬき猫です🍂\n\n「たくさん実ったね」\n「収穫手伝おう！」\n\n黄金色の田んぼで、\n稲束運びをお手伝い。\n\n「新米おにぎりだよ」\n「わーい！おにぎりだ」\n\nでも、たぬきが最初にしたのは——\n\n「一粒どうぞ」\n\n大きな実りも、\nはじまりは小さな一粒。\n\nお米一粒にも、\nちゃんと福があるのかも🍀\n\n━━━━━━━\n\n📌 ほっこりしたら保存してね🐾\n\n福合わせたぬき猫は\nオンラインショップで販売中。\n右手で金運💰左手で良縁🤝\nプロフィールのリンクから会いに来てね✨",
+  "instagram_post_caption": "「お米一粒にも、福があるね！」\n\nこんにちは、福合わせたぬき猫です🍂\n\n今日は、実りの秋の田んぼへ。\n黄金色の稲穂が、頭を重そうに垂れていました。\n\n「たくさん実ったね」\n「収穫手伝おう！」\n\n刈った稲束を運ぶお手伝いをしたら、\n思ったよりずっしり。\n\n「百万両より重い！」\n「実りの重さだね」\n\nそこへ、ご主人の手から\n新米のおにぎりが登場🍙\n\n「新米おにぎりだよ」\n「わーい！おにぎりだ」\n「おなかすいたね」\n\nでも、たぬきがまずしたのは、\n近くに来たすずめへのおすそわけ。\n\n「一粒どうぞ」\n「お米一粒にも福があるね！」\n\nふふ。\n大きな実りも、はじまりは小さな一粒。\n分け合う一粒に、福はちゃんと宿っているのかもしれません🍀\n\nみなさまにも今日ひとつ、\n新米の一粒みたいな小さな幸せが\n訪れますように。\n\n━━━━━━━\n\n📌 ほっこりしたら、保存して✨\n\n福合わせたぬき猫は\nオンラインショップで販売中。\n右手で金運💰左手で良縁🤝\nプロフィールのリンクから会いに来てね🐾",
+  "tiktok_caption": "新米おにぎりより先に、すずめに一粒🌾🐦\n「たくさん実ったね」「一粒どうぞ」\nお米一粒にも福があるね🍀🦝🐱\n福合わせたぬき猫はプロフィールのリンクから✨",
+  "tiktok_pinned_comment": "みなさんの“秋の小さな福”は何ですか？🌾🍙 コメントで教えてください🦝🐱 ショップはプロフィールのリンクから✨",
+  "youtube_title": "新米おにぎりより先に、すずめに一粒🌾 福合わせたぬき猫4コマ第13話 #shorts",
+  "youtube_description": "信楽焼のたぬき×招き猫「福合わせたぬき猫」の4コマ・第13話。\n\n黄金色に実った秋の田んぼで、\n「たくさん実ったね」「収穫手伝おう！」\n\n稲束運びをお手伝いして、\nご主人から新米おにぎりが届いたのに……\nたぬきがまずしたのは、すずめへのおすそわけ。\n\n「一粒どうぞ」\n「お米一粒にも福があるね！」\n\n大きな実りも、はじまりは小さな一粒。\n分け合う一粒に、福は宿っているのかもしれません。\n\nたぬきの八相縁起と、招き猫の招き。お互いの福を“合わせ持つ”から、福合わせ。\n\n右手で金運💰 左手で良縁🤝\n縁起物「福合わせたぬき猫」の4コマ・第13話です。\n\n福合わせたぬき猫は、オンラインショップにて販売中です👇\n（プロフィール・概要欄のリンクから）",
   "youtube_tags": [
     "福合わせたぬき猫",
     "信楽焼",
@@ -83,15 +87,16 @@
     "たぬき",
     "縁起物",
     "新米",
-    "おむすび",
+    "おにぎり",
+    "すずめ",
     "実りの秋",
     "4コマ漫画",
     "開運",
     "癒し"
   ],
-  "youtube_pinned_comment": "おむすび一個より、まず一粒🍙 小さな福から味わいたいですね。見てくださってありがとうございます🦝🐱\n\n▼オンラインショップにて販売中（プロフィール・概要欄のリンクから）",
-  "note_title": "新米おむすびが逃げ出して、鼻についた一粒に福を見つけた話",
-  "note_body": "こんにちは。よしつねの秘密基地の義恒(よしつね)です。\n\n信楽焼のたぬきと招き猫を掛け合わせた「福合わせたぬき猫」。\n4コマ漫画も、今回で第13話になりました。\n\n今日は、実りの秋にぴったりの話です。\n\n\n■ 黄金色の田んぼ\n\n秋の田んぼは、ほんとうにきれいです。\n稲穂が風にゆれて、光を受けると、まるで金色の波のように見えます。\n\nその景色を見たたぬきが、思わず走り出しました。\n\n「金色が走ってる！」\n\n〔①コマ目の画像〕\n\n猫は水たまりを跳び越えながら、すぐにツッコミます。\n\n「稲穂がゆれてるの」\n\nたしかに、走っているのではなく、風にゆれているだけ。\nでも、たぬきの目には、福が向こうから走ってくるように見えたのかもしれません。\n\n\n■ 実りの重さ\n\nせっかくなので、ふたりも稲束を運ぶお手伝い。\nところが、刈った稲は見た目よりもずっしりしています。\n\n「百万両より重い！」\n「実りの重さだね」\n\n〔②コマ目の画像〕\n\nお腹に「百万両」を下げているたぬきですが、\nこの日の稲束は、それ以上に重たく感じたようです。\n\nお米になるまでには、土があって、水があって、太陽があって、\n育てる人の手間があります。\n\nだからこそ、実りには重みがあるのですね。\n\n\n■ 新米おむすび、逃げる\n\nそこへ、ご主人の手元から新米のおむすびが登場します。\n\nつやつや、ほかほか。\n秋のごちそうです。\n\nところが、たぬきがうれしくて飛びついた拍子に、\nおむすびがひとつ、ころころころ……。\n\n「おむすび逃げた！」\n「待って、右手招き！」\n\n〔③コマ目の画像〕\n\n右手で金運を招く自慢の手で、\n今度はおむすびまで招こうとする猫。\n\n田んぼのあぜ道を、ふたりであわてて追いかけます。\n\n\n■ 「まず一粒！」\n\nようやくおむすびは止まりました。\n無事でよかった、と思ったその横で、たぬきがころんでいます。\n\nそして、鼻の先にはお米が一粒。\n\n「まず一粒！」\n「そこから!?」\n\n〔④コマ目の画像〕\n\n思わず、笑ってしまいました。\nおむすび全部ではなく、まずは鼻についた一粒から。\n\nでも、これも案外いいことだなあと思うのです。\n\n大きな実りも、はじまりは小さな一粒。\n山盛りの幸せを探さなくても、目の前の一粒に気づけたら、\nそれだけで少し、心があたたかくなります。\n\n新米のおむすびを誰かと分けて、\n「おいしいね」と笑う時間。\nそんな小さな時間の中に、福はちゃんと隠れているのかもしれません。\n\n思えば、この子たちを応援してくださる皆さまも、\nきっと、日々の小さな幸せを大切にされている方ばかり。\nだからこそ、この福々しいたぬき猫を、\nそばに置きたいと思ってくださったのだろうと思います。\n\nみなさまにも今日、\n新米の一粒みたいな小さな福が、そっと訪れますように。\n\n福合わせたぬき猫と一緒に、皆さまに福が訪れますように。\n\nよしつねの秘密基地　義恒スタッフ一同",
+  "youtube_pinned_comment": "おにぎりより先に、すずめに一粒🌾 小さな福のおすそわけでした。見てくださってありがとうございます🦝🐱\n\n▼オンラインショップにて販売中（プロフィール・概要欄のリンクから）",
+  "note_title": "新米おにぎりを前に、たぬきがすずめに一粒をおすそわけした話",
+  "note_body": "こんにちは。よしつねの秘密基地の義恒(よしつね)です。\n\n信楽焼のたぬきと招き猫を掛け合わせた「福合わせたぬき猫」。\n4コマ漫画も、今回で第13話になりました。\n\n今日は、実りの秋にぴったりの、ちょっとほっこりする話です。\n\n\n■ 黄金色の田んぼ\n\n秋の田んぼは、ほんとうにきれいです。\n稲穂が重そうに頭を垂れて、一面が金色に輝いています。\n\n「たくさん実ったね」\n「収穫手伝おう！」\n\n〔①コマ目の画像〕\n\n実りを前にしたふたりは、もうやる気まんまん。\n猫は腕まくりをして、すっかりお手伝いモードです。\n\n\n■ 実りの重さ\n\nところが、刈った稲束は見た目よりもずっしり。\n\n「百万両より重い！」\n「実りの重さだね」\n\n〔②コマ目の画像〕\n\nお腹に「百万両」を下げているたぬきですが、\nこの日の稲束は、それ以上に重たく感じたようです。\n\nお米になるまでには、土があって、水があって、太陽があって、\n育てる人の手間があります。\nだからこそ、実りには重みがあるのですね。\n\n\n■ 新米おにぎりが届いた\n\nお手伝いのあとは、お待ちかねのごほうび。\nご主人の手から、つやつやの新米おにぎりが登場します。\n\n「新米おにぎりだよ」\n「わーい！おにぎりだ」\n「おなかすいたね」\n\n〔③コマ目の画像〕\n\nたぬきは大喜び、猫のお腹はぐぅ〜っと鳴っています。\n\n\n■ 「一粒どうぞ」\n\nさあ、いただきます……と思ったら、\nたぬきがまずしたのは、近くに来たすずめへのおすそわけでした。\n\n「一粒どうぞ」\n「お米一粒にも福があるね！」\n\n〔④コマ目の画像〕\n\n山盛りのおにぎりを前にして、\nまず小さな一粒を、誰かに分けてあげる。\nなんだか、たぬきに教えられた気がしました。\n\n大きな実りも、はじまりは小さな一粒。\nそして、分け合うことで、その一粒は福に変わるのかもしれません。\n\n思えば、この子たちを応援してくださる皆さまも、\nきっと、日々の小さな幸せを大切にされている方ばかり。\nだからこそ、この福々しいたぬき猫を、\nそばに置きたいと思ってくださったのだろうと思います。\n\nみなさまにも今日、\n新米の一粒みたいな小さな福が、そっと訪れますように。\n\n福合わせたぬき猫と一緒に、皆さまに福が訪れますように。\n\nよしつねの秘密基地　義恒スタッフ一同",
   "extra_hashtags": [
     "#実りの秋",
     "#新米"
@@ -188,5 +193,7 @@
   ],
   "status": "承認待ち",
   "mock": false,
-  "post_date": "2026-10-02"
+  "post_date": "2026-10-02",
+  "facebook_post": "信楽焼のたぬき×招き猫「福合わせたぬき猫」の4コマ漫画、第13話「一粒の福」です🌾\n\n黄金色に実った田んぼで「たくさん実ったね」「収穫手伝おう！」。\n稲束運びをお手伝いして「百万両より重い！」。\nごほうびに新米おにぎりが届いたのに、たぬきがまずしたのは、すずめへの一粒のおすそわけでした。\n\n「一粒どうぞ」「お米一粒にも福があるね！」\n\n大きな実りも、はじまりは小さな一粒。\n分け合う一粒に、福はちゃんと宿っているのかもしれません。\n\n福合わせたぬき猫は、オンラインショップでお迎えいただけます。",
+  "story_text": "新作4コマ公開！"
 }
