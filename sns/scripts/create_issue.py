@@ -113,7 +113,7 @@ def main() -> None:
 <!-- tag:{post['release_tag']} -->
 <!-- episode:{post['episode']} -->
 
-> ※ YouTube・TikTok・X・note は今は手動です（投稿したらチェックを入れてください）。
+> ※ X・YouTube・TikTok も、つなぐ設定が済んだものから自動になります（YouTubeは審査が通るまで非公開で上がる・TikTokはアプリの受信箱に届く）。note は手動です。
 """
     issue = gh("POST", f"/repos/{repo}/issues", json={
         "title": f"【4コマ確認】第{post['episode']}話「{post['title']}」（{base.month}/{base.day}投稿）",
