@@ -158,7 +158,7 @@ schedule:
   - {sns: Facebook,             day: 当日, time: "20:00"}
   - {sns: ストーリーズ,          day: 当日, time: "20:05"}
   - {sns: X,                    day: 当日, time: "21:00"}
-  - {sns: note,                 day: 当日, time: "07:00"}
+  - {sns: note,                 day: 当日, time: "23:00"}
   - {sns: インスタ（カルーセル）, day: 当日, time: "12:00"}
 
 # ---- リール動画（第10話と同じ構成）----
@@ -178,8 +178,10 @@ reel:
     tiktok: sns/assets/reel/end_card_tiktok.jpg
   shop_line: オンラインショップで販売中
   shop_sub: プロフィールのリンクから
-  # sns/assets/bgm/ に mp3 を置くとBGMが付きます（無ければ無音。今まで通りアプリでBGMを付けてOK）
-  bgm_volume: 0.35
+  # sns/assets/bgm/ の mp3 からランダムで1曲、下の SNS の動画にだけBGMを付けます（ほかは無音）
+  # 今は自作のポップスBGM10曲（make_bgm.py で作成）。商用OK・再配布OKの mp3 を足してもOK
+  bgm_for: [instagram]      # インスタのリール・ストーリーズ（Facebookも同じ動画）
+  bgm_volume: 0.6
 
 # ---- ダッシュボードの「超人チーム」（SNSごとの担当キャラ）----
 # 元ネタのキャラの特徴（おでこの文字・仮面の形・記章など）は入れない、オリジナルのデザイン
