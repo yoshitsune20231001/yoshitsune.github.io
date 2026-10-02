@@ -20,6 +20,7 @@ OUT = ROOT / "sns/assets/bgm"
 
 YO = [0, 2, 5, 7, 9]        # 陽音階（明るい民謡風）
 MIYAKO = [0, 1, 5, 7, 8]    # 都節音階（しっとり）
+RYUKYU = [0, 4, 5, 7, 11]   # 琉球音階（沖縄風）
 
 
 def hz(midi: float) -> float:
@@ -47,6 +48,17 @@ def bell(freq: float, dur: float) -> np.ndarray:
     s = sum(a * np.sin(2 * np.pi * freq * m * t) * np.exp(-t * d)
             for m, a, d in [(1, 1, 6), (2.76, 0.5, 9), (5.4, 0.25, 14)])
     return s * 0.3
+
+
+def flute(freq: float, dur: float, rng) -> np.ndarray:
+    """笛（息の音＋ゆれ）。"""
+    t = np.arange(int(SR * dur)) / SR
+    vib = 1 + 0.006 * np.sin(2 * np.pi * 5.2 * t) * np.minimum(1, t / 0.4)
+    ph = 2 * np.pi * np.cumsum(freq * vib) / SR
+    tone = np.sin(ph) + 0.25 * np.sin(2 * ph) + 0.08 * np.sin(3 * ph)
+    breath = np.convolve(rng.uniform(-1, 1, t.size), np.ones(8) / 8, "same") * 0.12
+    env = np.minimum(1, t / 0.08) * np.minimum(1, (dur - t) / 0.15).clip(0)
+    return (tone + breath) * env * 0.5
 
 
 def taiko(dur: float, rng, low=True) -> np.ndarray:
@@ -88,7 +100,7 @@ def mix_at(track: np.ndarray, sound: np.ndarray, at: float, gain: float) -> None
         track[i:j] += sound[: j - i] * gain
 
 
-def song(name, scale, bpm, seed, base, drums, inst="koto", bars=16):
+def song(name, scale, bpm, seed, base, drums, inst="koto", bars=16, fue=False, bass=True):
     rng = np.random.default_rng(seed)
     beat = 60 / bpm
     step = beat / 2
@@ -97,18 +109,31 @@ def song(name, scale, bpm, seed, base, drums, inst="koto", bars=16):
     R = np.zeros_like(L)
 
     # 主旋律
-    for k, m in enumerate(melody(scale, rng, bars, base)):
+    notes = melody(scale, rng, bars, base, rest=0.15 if inst == "fue" else 0.25)
+    for k, m in enumerate(notes):
         if m is None:
             continue
-        if inst == "shamisen":
+        if inst == "fue":  # 笛が主役：2音分の長さでゆったり
+            if k % 2:
+                continue
+            s = flute(hz(m + 12), step * 2.2, rng)
+        elif inst == "shamisen":
             s = pluck(hz(m), step * 2.5, rng, bright=0.9, decay=0.990)
         else:
             s = pluck(hz(m), step * 4, rng, bright=0.6, decay=0.997)
         mix_at(L, s, k * step, 0.55)
         mix_at(R, s, k * step + 0.012, 0.45)
 
+    # 笛の合いの手（4小節ごと、後半2小節で長い音）
+    if fue and inst != "fue":
+        for bar in range(2, bars, 4):
+            for b, d in [(0, 0), (2, 2)]:
+                m = base + 12 + scale[[4, 2][b // 2] if d else 3]
+                mix_at(L, flute(hz(m), beat * 2, rng), (bar * 4 + b) * beat, 0.3)
+                mix_at(R, flute(hz(m), beat * 2, rng), (bar * 4 + b) * beat, 0.35)
+
     # 低音の琴（1小節に2回、主音と5度）
-    for bar in range(bars):
+    for bar in range(bars if bass else 0):
         for b, off in [(0, 0), (2, 7)]:
             s = pluck(hz(base - 12 + off), beat * 2, rng, bright=0.3, decay=0.998)
             mix_at(L, s, (bar * 4 + b) * beat, 0.35)
@@ -151,6 +176,14 @@ def main() -> None:
     song("wa_hokkori", MIYAKO, 80, 23, 72, [(0, True)])
     song("wa_omatsuri", YO, 124, 37, 69, [(0, True), (1, False), (1.5, True), (2, True), (3, False)],
          inst="shamisen")
+    song("wa_sakura", MIYAKO, 92, 41, 74, [], fue=True)
+    song("wa_minori", YO, 96, 53, 72, [(0, True), (2, True)], inst="fue")
+    song("wa_ryukyu", RYUKYU, 108, 61, 72, [(0, True), (1.5, False), (2, True), (3, False)], inst="shamisen")
+    song("wa_yuuyake", MIYAKO, 70, 71, 74, [], inst="fue")
+    song("wa_ennichi", YO, 136, 83, 71, [(0, True), (0.5, False), (1, False), (2, True), (2.5, True), (3, False)],
+         inst="shamisen", fue=True)
+    song("wa_ochanoma", YO, 88, 97, 76, [(0, True)], bass=False)
+    song("wa_tsukimi", MIYAKO, 76, 101, 69, [(0, True)], fue=True)
 
 
 if __name__ == "__main__":
