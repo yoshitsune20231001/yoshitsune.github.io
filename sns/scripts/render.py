@@ -240,10 +240,10 @@ def build_reels(frames: list, ends: dict, out: Path, r: dict, bgm_dir: Path) -> 
             subprocess.run([ff, "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst),
                             "-c", "copy", str(video)], check=True)
             total = sum(x[1] for x in frames) + sec
-            if bgm:
+            if bgm and name in r.get("bgm_for", [name]):
                 audio_in = ["-stream_loop", "-1", "-i", bgm]
                 af = f"volume={r.get('bgm_volume', 0.35)},afade=t=in:d=0.5,afade=t=out:st={total - 1.5:.2f}:d=1.5"
-            else:  # 無音（BGMはアプリで付ける運用）。投稿APIのため無音トラックは入れておく
+            else:  # 無音（BGMはアプリで付ける運用、Xなど）。投稿APIのため無音トラックは入れておく
                 audio_in = ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"]
                 af = "anull"
             subprocess.run([ff, "-y", "-loglevel", "error", "-i", str(video), *audio_in, "-map", "0:v", "-map", "1:a",

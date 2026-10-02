@@ -178,8 +178,10 @@ reel:
     tiktok: sns/assets/reel/end_card_tiktok.jpg
   shop_line: オンラインショップで販売中
   shop_sub: プロフィールのリンクから
-  # sns/assets/bgm/ に mp3 を置くとBGMが付きます（無ければ無音。今まで通りアプリでBGMを付けてOK）
-  bgm_volume: 0.35
+  # sns/assets/bgm/ の mp3 からランダムで1曲、下の SNS の動画にだけBGMを付けます（ほかは無音）
+  # 今は自作の和風BGM（make_bgm.py で作成）。フリーBGMの mp3 を足してもOK
+  bgm_for: [instagram]      # インスタのリール・ストーリーズ（Facebookも同じ動画）
+  bgm_volume: 0.8
 
 # ---- ダッシュボードの「超人チーム」（SNSごとの担当キャラ）----
 # 元ネタのキャラの特徴（おでこの文字・仮面の形・記章など）は入れない、オリジナルのデザイン
