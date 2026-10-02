@@ -390,7 +390,7 @@ YouTube Shorts 投稿文｜{t} 第{ep}話
 {sc.youtube_pinned_comment}
 
 【設定メモ】
-- 動画：reel_youtube.mp4（無音・BGMはアプリで）
+- 動画：reel_youtube.mp4（BGM入り）
 - AI開示（改変/合成コンテンツ）：はい（AIイラストのため）
 - 子ども向けではない → 「いいえ、子ども向けではありません」
 - 再生リスト「福合わせたぬき猫 4コマ漫画」に追加

@@ -180,7 +180,7 @@ reel:
   shop_sub: プロフィールのリンクから
   # sns/assets/bgm/ の mp3 からランダムで1曲、下の SNS の動画にだけBGMを付けます（ほかは無音）
   # 今は自作のポップスBGM10曲（make_bgm.py で作成）。商用OK・再配布OKの mp3 を足してもOK
-  bgm_for: [instagram]      # インスタのリール・ストーリーズ（Facebookも同じ動画）
+  bgm_for: [instagram, youtube]   # インスタのリール・ストーリーズ（Facebookも同じ動画）・YouTubeショート
   bgm_volume: 0.6
 
 # ---- ダッシュボードの「超人チーム」（SNSごとの担当キャラ）----
