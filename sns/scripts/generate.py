@@ -413,7 +413,7 @@ TikTok投稿文｜第{ep}話「{t}」（4コマ動画）
 """,
         f"インスタリール投稿文_{t}.txt": f"""{BAR}
 インスタリール投稿文｜第{ep}話「{t}」（たぬき猫本人視点）
-※動画：reel_instagram.mp4（和風BGM入り）
+※動画：reel_instagram.mp4（BGM入り）
 ※AIラベル：ON（AIイラスト）
 ※リールはキャプション途中省略。1行目にフックを置く
 ※🛍️ 商品タグ：「{cfg.get('instagram_product_tag', '')}」を付ける（投稿画面の「商品をタグ付け」から）
