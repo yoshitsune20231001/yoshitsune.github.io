@@ -158,7 +158,7 @@ schedule:
   - {sns: Facebook,             day: 当日, time: "20:00"}
   - {sns: ストーリーズ,          day: 当日, time: "20:05"}
   - {sns: X,                    day: 当日, time: "21:00"}
-  - {sns: note,                 day: 当日, time: "07:00"}
+  - {sns: note,                 day: 当日, time: "23:00"}
   - {sns: インスタ（カルーセル）, day: 当日, time: "12:00"}
 
 # ---- リール動画（第10話と同じ構成）----
