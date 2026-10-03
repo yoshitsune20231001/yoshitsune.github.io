@@ -206,6 +206,22 @@ def make_script(cfg: dict, today: dt.date, theme: str | None, history: list[dict
     raise RuntimeError("台本を生成できませんでした")
 
 
+def revise_script(cfg: dict, sc: Script, feedback: str) -> Script:
+    """「絵だけ作り直し」のコメントにセリフ・文章の直しがあれば、台本のその部分だけ書き換える。"""
+    from openai import OpenAI
+
+    prompt = (
+        "次の4コマ漫画の台本(JSON)を、ご主人の修正指示のとおりに直してください。\n"
+        "- 指示で頼まれた台詞・文章だけを変える。ほかの項目（場面説明・英語の説明など）は一字一句そのまま。\n"
+        "- 台詞を変えたら、その台詞を引用している投稿文（x_post など）も同じ言葉に合わせる。\n"
+        "- 指示が絵の直しだけで、文章の直しが無ければ、何も変えずにそのまま返す。\n\n"
+        f"修正指示：\n{feedback}\n\n台本：\n{sc.model_dump_json()}"
+    )
+    resp = OpenAI().responses.parse(model=cfg["openai"]["text_model"], input=prompt, text_format=Script)
+    new = resp.output_parsed
+    return new if new and len(new.panels) == 4 else sc
+
+
 # ---------------------------------------------------------------- 絵づくり
 
 def _common(cfg: dict) -> str:
@@ -531,6 +547,13 @@ def main() -> None:
         print("① 台本は前回のまま使います")
         episode = prev["episode"]
         script = Script.model_validate(prev)
+        if cfg.get("_feedback") and not args.mock:
+            old = [[(ln.speaker, ln.text) for ln in p.lines] for p in script.panels]
+            script = revise_script(cfg, script, cfg["_feedback"])
+            new = [[(ln.speaker, ln.text) for ln in p.lines] for p in script.panels]
+            cfg["_changed_panels"] = {i + 1 for i in range(4) if old[i] != new[i]}
+            if cfg["_changed_panels"]:
+                print(f"   台詞を直したコマ：{sorted(cfg['_changed_panels'])}")
     else:
         print("① 台本を作成中…")
         episode = prev["episode"] if prev else next_episode(cfg, history)
@@ -550,6 +573,8 @@ def main() -> None:
         sizes = cfg["openai"]["sizes"]
         # 「絵だけ作り直し」でコメントに「3コマ目」などとあれば、その絵だけ描き直して残りは前回のものを使う
         only = redo_targets(cfg.get("_feedback", "")) if (prev and mode == "images") else None
+        if only is not None or cfg.get("_changed_panels"):  # 台詞を変えたコマは描き直す（吹き出しは絵の中にあるため）
+            only = (only or set()) | cfg.get("_changed_panels", set())
         keep = (lambda name: only is not None and name not in only)
         if keep("title"):
             title_card = reuse_image(prev, "title_card.jpg", out / "title_card_raw.jpg")
