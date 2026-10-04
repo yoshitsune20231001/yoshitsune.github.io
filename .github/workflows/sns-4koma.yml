@@ -12,6 +12,10 @@ on:
         description: "テストモード（AIを使わない・料金ゼロ）"
         type: boolean
         default: false
+      auto:
+        description: "毎朝の自動実行と同じ動き（予定がもう埋まっていれば作らない）。外部の時計サービスから呼ぶとき用"
+        type: boolean
+        default: false
   issues:
     types: [labeled]        # 「作り直し」ラベルで作り直す
 
@@ -47,7 +51,7 @@ jobs:
           REDO_ISSUE: ${{ github.event.issue.number }}
           REDO_MODE: ${{ github.event.label.name == '絵だけ作り直し' && 'images' || 'full' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          EVENT_NAME: ${{ github.event_name }}
+          EVENT_NAME: ${{ github.event.inputs.auto == 'true' && 'schedule' || github.event_name }}
         run: python sns/scripts/generate.py ${{ github.event.inputs.mock == 'true' && '--mock' || '' }}
 
       - name: 画像・動画を Releases に置く
