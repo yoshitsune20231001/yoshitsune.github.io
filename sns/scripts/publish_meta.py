@@ -39,6 +39,30 @@ def gh(method: str, path: str, **kw):
     return r.json() if r.text else {}
 
 
+def posted_before(repo: str, num: int, sns: str, when: str, cache: dict) -> bool:
+    """コメントに「投稿済み」の記録があるか。本文のチェックが（人の編集などで）消えても二重投稿しないため。"""
+    if num not in cache:
+        texts, page = [], 1
+        while True:
+            got = gh("GET", f"/repos/{repo}/issues/{num}/comments", params={"per_page": 100, "page": page})
+            texts += [c.get("body") or "" for c in got]
+            if len(got) < 100:
+                break
+            page += 1
+        cache[num] = "\n".join(texts)
+    t = cache[num]
+    return (f"<!-- posted:{sns}:{when} -->" in t or f"✅ **{sns}** に自動投稿しました" in t
+            or f"📤 **{sns}** に送りました" in t)
+
+
+def retick(repo: str, num: int, sns: str, when: str) -> None:
+    """消えてしまったチェックを入れ直す。"""
+    cur = gh("GET", f"/repos/{repo}/issues/{num}")["body"] or ""
+    new = cur.replace(f"- [ ] {sns} ｜ {when}", f"- [x] {sns} ｜ {when}", 1)
+    if new != cur:
+        gh("PATCH", f"/repos/{repo}/issues/{num}", json={"body": new})
+
+
 # ---------------------------------------------------------------- Meta
 class MetaError(RuntimeError):
     pass
@@ -324,7 +348,7 @@ def main() -> int:
     only = os.environ.get("ISSUE", "").strip()
     issues = [gh("GET", f"/repos/{repo}/issues/{only}")] if only else gh(
         "GET", f"/repos/{repo}/issues", params={"state": "open", "labels": "4コマ,承認", "per_page": 30})
-    failed = False
+    failed, seen = False, {}
     for it in issues:
         labels = {l["name"] for l in it.get("labels", [])}
         if it.get("state") != "open" or "承認" not in labels:
@@ -346,6 +370,10 @@ def main() -> int:
                 continue
             if sns != "Facebook" and not acc.ig_id:
                 continue
+            if posted_before(repo, it["number"], sns, when, seen):
+                print(f"#{it['number']} {sns}（{when}）は投稿済みの記録があるので飛ばします（チェックを入れ直します）")
+                retick(repo, it["number"], sns, when)
+                continue
             print(f"#{it['number']} {sns}（{when}）を投稿します")
             try:
                 link, note = fn(acc, post, repo, tag, cfg)
@@ -363,7 +391,7 @@ def main() -> int:
             gh("PATCH", f"/repos/{repo}/issues/{it['number']}", json={"body": cur})
             body = cur
             gh("POST", f"/repos/{repo}/issues/{it['number']}/comments", json={
-                "body": f"✅ **{sns}** に自動投稿しました（{dt.datetime.now(JST):%m/%d %H:%M}）\n{link}\n{note}\n<!-- bot -->"})
+                "body": f"✅ **{sns}** に自動投稿しました（{dt.datetime.now(JST):%m/%d %H:%M}）\n{link}\n{note}\n<!-- posted:{sns}:{when} -->\n<!-- bot -->"})
             summary.append(f"- ✅ #{it['number']} {sns}: {link}")
             print(f"  投稿しました: {link}")
 

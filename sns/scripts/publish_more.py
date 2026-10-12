@@ -30,7 +30,7 @@ import requests
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from publish_meta import JST, LINE, ROOT, STALE_HOURS, download, gh  # noqa: E402
+from publish_meta import JST, LINE, ROOT, STALE_HOURS, download, gh, posted_before, retick  # noqa: E402
 
 TIKTOK_STATE = ROOT / "sns/state/tiktok.enc"
 TIKTOK_REDIRECT = "https://yoshitsune20231001.github.io/yoshitsune.github.io/sns/oauth/tiktok/"
@@ -285,7 +285,7 @@ def main() -> int:
     only = os.environ.get("ISSUE", "").strip()
     issues = [gh("GET", f"/repos/{repo}/issues/{only}")] if only else gh(
         "GET", f"/repos/{repo}/issues", params={"state": "open", "labels": "4コマ,承認", "per_page": 30})
-    summary, failed = [], False
+    summary, failed, seen = [], False, {}
     for it in issues:
         if it.get("state") != "open" or "承認" not in {l["name"] for l in it.get("labels", [])}:
             continue
@@ -307,6 +307,11 @@ def main() -> int:
             at = dt.datetime.strptime(when, "%Y-%m-%d %H:%M").replace(tzinfo=JST)
             if at > now or (not only and now - at > dt.timedelta(hours=STALE_HOURS)):
                 continue
+            if posted_before(repo, it["number"], sns, when, seen):
+                print(f"#{it['number']} {sns}（{when}）は投稿済みの記録があるので飛ばします")
+                if tick:
+                    retick(repo, it["number"], sns, when)
+                continue
             print(f"#{it['number']} {sns}（{when}）を投稿します")
             try:
                 link, note = fn(post, repo, tag, cfg)
@@ -327,7 +332,7 @@ def main() -> int:
             body = cur
             head = f"✅ **{sns}** に自動投稿しました" if tick else f"📤 **{sns}** に送りました"
             gh("POST", f"/repos/{repo}/issues/{it['number']}/comments", json={
-                "body": f"{head}（{dt.datetime.now(JST):%m/%d %H:%M}）\n{link}\n{note}\n<!-- bot -->"})
+                "body": f"{head}（{dt.datetime.now(JST):%m/%d %H:%M}）\n{link}\n{note}\n<!-- posted:{sns}:{when} -->\n<!-- bot -->"})
             summary.append(f"- ✅ #{it['number']} {sns}: {link}")
 
     write_summary(summary or ["- 今回投稿するものはありませんでした"])
