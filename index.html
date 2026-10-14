@@ -9,6 +9,7 @@
   <meta name="keywords" content="義恒,よしつね,近江八幡,八幡堀,陶器,雑貨,招き猫,インテリア,ECサイト,古民家,お土産,インバウンド,滋賀,有田焼,波佐見焼,九谷焼">
   <meta name="author" content="義恒">
   <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#07060a">
   <link rel="canonical" href="https://yoshitsune20231001.github.io/yoshitsune.github.io/">
 
   <!-- OGP（SNSシェア用） -->
@@ -40,7 +41,7 @@
       "streetAddress": "宮内町182-4 たばこ会館1階",
       "addressLocality": "近江八幡市",
       "addressRegion": "滋賀県",
-      "postalCode": "523-0801",
+      "postalCode": "523-0828",
       "addressCountry": "JP"
     },
     "founder": {
@@ -52,695 +53,585 @@
   }
   </script>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Zen+Old+Mincho:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #07060a;
+      --bg2: #0d0b12;
+      --panel: rgba(255, 255, 255, 0.035);
+      --panel-hi: rgba(255, 255, 255, 0.06);
+      --line: rgba(227, 184, 95, 0.22);
+      --gold: #e3b85f;
+      --gold-hi: #ffdf9a;
+      --cyan: #5ee6ff;
+      --red: #ff4d5e;
+      --text: #f2ead8;
+      --muted: #a69d8b;
+      --en: 'Orbitron', sans-serif;
+      --mincho: 'Zen Old Mincho', 'Yu Mincho', 'Hiragino Mincho ProN', serif;
+      --sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
     }
 
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'MS Mincho', serif;
-      color: #333;
-      background: #fafaf8;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.8;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+      line-break: strict;
+      word-break: auto-phrase;
     }
+    .nw { display: inline-block; }
+    body.lock { overflow: hidden; }
+    header.menu-open, header.scrolled.menu-open { backdrop-filter: none; -webkit-backdrop-filter: none; background: transparent; border-bottom-color: transparent; }
+    a { color: inherit; }
+    img { display: block; max-width: 100%; }
 
-    /* ヘッダー */
-    header {
-      background: #2c1a0e;
-      color: #f0e6d0;
-      padding: 8px 12px;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-logo {
-      height: 52px;
-      width: auto;
-      flex-shrink: 0;
-      filter: invert(1);
-    }
-
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      align-items: center;
-      flex: 1;
-      min-width: 0;
-      gap: 0;
-    }
-
-    nav a {
-      color: #f0e6d0;
-      text-decoration: none;
-      padding: 3px 7px;
-      font-size: 0.75rem;
-      letter-spacing: 0.02em;
-      white-space: nowrap;
-      transition: color 0.2s;
-    }
-
-    nav a:hover {
-      color: #c9a96e;
-    }
-
-    /* ヒーローセクション */
-    .hero {
-      position: relative;
-      color: #f0e6d0;
-      text-align: center;
-      padding: 80px 20px;
-      background: #2c1a0e;
-      overflow: hidden;
-    }
-
-    .hero-img {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: auto;
-      height: 100%;
-      max-width: 100%;
-      object-fit: contain;
-      opacity: 0.55;
+    /* 背景の微細グリッド＋ノイズ */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(227,184,95,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(227,184,95,0.035) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
       z-index: 0;
     }
 
-    .hero-content {
-      position: relative;
+    /* マウス追従の光 */
+    .cursor-glow {
+      position: fixed;
+      width: 520px; height: 520px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(227,184,95,0.10), transparent 65%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
       z-index: 1;
+      transition: opacity .4s;
     }
+    @media (hover: none) { .cursor-glow { display: none; } }
 
-    .hero h1 {
-      font-size: 3.5rem;
-      letter-spacing: 0.5em;
-      margin-bottom: 20px;
+    /* ===== 起動ローダー ===== */
+    .loader {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 18px;
+      transition: opacity .7s ease, visibility .7s;
     }
-
-    .hero p {
-      font-size: 1.2rem;
-      letter-spacing: 0.2em;
-      opacity: 0.85;
-      margin-bottom: 10px;
+    .loader.done { opacity: 0; visibility: hidden; }
+    .loader-kanji {
+      font-family: var(--mincho);
+      font-size: 3rem; font-weight: 900;
+      letter-spacing: .4em; padding-left: .4em;
+      color: var(--gold);
+      text-shadow: 0 0 24px rgba(227,184,95,.6);
     }
+    .loader-bar { width: 220px; height: 2px; background: rgba(255,255,255,.08); overflow: hidden; }
+    .loader-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--cyan)); box-shadow: 0 0 12px var(--gold); }
+    .loader-num { font-family: var(--en); font-size: .75rem; letter-spacing: .3em; color: var(--muted); }
 
-    .hero .subtitle {
-      font-size: 1rem;
-      opacity: 0.7;
-      margin-top: 20px;
+    /* ===== ヘッダー ===== */
+    header {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 28px;
+      transition: background .4s, padding .4s, border-color .4s;
+      border-bottom: 1px solid transparent;
     }
-
-    /* セクション共通 */
-    section {
-      padding: 80px 20px;
-      max-width: 900px;
-      margin: 0 auto;
+    header.scrolled {
+      background: rgba(7, 6, 10, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 8px 28px;
+      border-bottom-color: var(--line);
     }
-
-    .section-title {
-      font-size: 1.8rem;
-      letter-spacing: 0.3em;
-      color: #2c1a0e;
-      border-left: 5px solid #c9a96e;
-      padding-left: 16px;
-      margin-bottom: 40px;
-    }
-
-    /* 事業内容 */
-    .business-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 36px 28px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      border-top: 4px solid #c9a96e;
-    }
-
-    .card h3 {
-      font-size: 1.15rem;
-      color: #2c1a0e;
-      margin-bottom: 14px;
-      letter-spacing: 0.1em;
-    }
-
-    .card p {
-      font-size: 0.95rem;
-      line-height: 1.9;
-      color: #555;
-    }
-
-    /* 会社概要 */
-    .company-info {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      overflow: hidden;
-    }
-
-    .company-info table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .company-info tr {
-      border-bottom: 1px solid #f0ebe3;
-    }
-
-    .company-info tr:last-child {
-      border-bottom: none;
-    }
-
-    .company-info th {
-      background: #f7f1e8;
-      color: #5a3a1a;
-      font-weight: normal;
-      width: 180px;
-      padding: 20px 24px;
-      text-align: left;
-      letter-spacing: 0.05em;
-      font-size: 0.95rem;
-      vertical-align: top;
-    }
-
-    .company-info td {
-      padding: 20px 24px;
-      font-size: 0.95rem;
-      line-height: 1.8;
-      color: #444;
-    }
-
-    /* 最新トピックス */
-    #topics {
-      background: #fdf6e8;
-      border-top: 4px solid #c9a96e;
-      border-bottom: 4px solid #c9a96e;
-      padding: 70px 20px;
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
+    .brand img { height: 46px; width: auto; filter: invert(1); mix-blend-mode: screen; }
+    .brand span { font-family: var(--en); font-size: .7rem; letter-spacing: .35em; color: var(--gold); }
+    nav { margin-left: auto; display: flex; gap: 4px; }
+    nav a {
       position: relative;
-      overflow: hidden;
+      text-decoration: none;
+      font-size: .8rem;
+      letter-spacing: .08em;
+      padding: 8px 12px;
+      color: var(--text);
+      opacity: .82;
+      transition: opacity .2s, color .2s;
     }
+    nav a::after {
+      content: ''; position: absolute; left: 12px; right: 12px; bottom: 2px;
+      height: 1px; background: var(--gold);
+      transform: scaleX(0); transform-origin: left; transition: transform .3s;
+      box-shadow: 0 0 8px var(--gold);
+    }
+    nav a:hover { opacity: 1; color: var(--gold-hi); }
+    nav a:hover::after { transform: scaleX(1); }
+    .menu-btn { display: none; margin-left: auto; background: none; border: 1px solid var(--line); width: 44px; height: 44px; border-radius: 8px; cursor: pointer; }
+    .menu-btn span { display: block; width: 18px; height: 1.5px; background: var(--gold); margin: 4px auto; transition: transform .3s, opacity .3s; }
+    .menu-btn.open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+    .menu-btn.open span:nth-child(2) { opacity: 0; }
+    .menu-btn.open span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 
-    .sns-bar {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    /* ===== ヒーロー ===== */
+    .hero {
+      position: relative;
+      height: 100vh; height: 100svh; min-height: 600px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
       z-index: 2;
     }
+    .hero-photo {
+      position: absolute; inset: 0;
+      background: url('hero.png') center 35% / cover no-repeat;
+      opacity: .22;
+      filter: saturate(.8) contrast(1.1);
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+      mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+      animation: kenburns 24s ease-in-out infinite alternate;
+    }
+    @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.12) translateY(-2%); } }
+    #net { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-    .sns-bar.left { left: 16px; }
-    .sns-bar.right { right: 16px; }
+    /* 床の遠近グリッド */
+    .floor {
+      position: absolute; left: -50%; right: -50%; bottom: -10%;
+      height: 55%;
+      background-image:
+        linear-gradient(rgba(227,184,95,.45) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(227,184,95,.45) 1px, transparent 1px);
+      background-size: 70px 70px;
+      transform: perspective(500px) rotateX(68deg);
+      transform-origin: center top;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 70%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, #000 35%, #000 70%, transparent);
+      opacity: .35;
+      animation: floor 3.5s linear infinite;
+    }
+    @keyframes floor { to { background-position: 0 70px; } }
 
-    .sns-bar a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: rgba(44,26,14,0.1);
-      border: 1px solid rgba(201,169,110,0.5);
+    .hero-core { position: relative; z-index: 3; text-align: center; padding: 0 20px; }
+
+    /* 回転するHUDリング */
+    .hud {
+      position: relative;
+      width: min(340px, 72vw, 40vh); aspect-ratio: 1;
+      margin: 0 auto 10px;
+    }
+    .hud svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .hud .r1 { animation: spin 26s linear infinite; }
+    .hud .r2 { animation: spin 16s linear infinite reverse; }
+    .hud .r3 { animation: spin 40s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hud svg circle, .hud svg path { transform-origin: 50% 50%; }
+    .hud-logo {
+      position: absolute; inset: 22%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hud-logo img {
+      width: 100%; height: auto;
+      filter: invert(1) drop-shadow(0 0 14px rgba(227,184,95,.55));
+      mix-blend-mode: screen;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float { 50% { transform: translateY(-8px); } }
+
+    .hero-title {
+      font-family: var(--mincho);
+      font-weight: 900;
+      font-size: clamp(3.2rem, 11vw, 7rem);
+      letter-spacing: .35em; padding-left: .35em;
+      line-height: 1.1;
+      background: linear-gradient(100deg, #b98a35 10%, var(--gold-hi) 40%, #fff6dc 50%, var(--gold-hi) 60%, #b98a35 90%);
+      background-size: 250% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 22px rgba(227,184,95,.35));
+      animation: shine 6s linear infinite;
+      position: relative;
+    }
+    @keyframes shine { to { background-position: -250% 0; } }
+    .hero-en {
+      font-family: var(--en);
+      font-size: clamp(.62rem, 1.6vw, .8rem);
+      letter-spacing: .55em; padding-left: .55em;
+      color: var(--cyan);
+      margin: 14px 0 22px;
+      text-shadow: 0 0 10px rgba(94,230,255,.55);
+    }
+    .hero-copy {
+      font-family: var(--mincho);
+      font-size: clamp(1rem, 2.6vw, 1.35rem);
+      letter-spacing: .18em;
+      min-height: 1.9em;
+      white-space: pre-line;
+    }
+    .hero-copy .caret { display: inline-block; width: 2px; height: 1.1em; background: var(--gold); vertical-align: -0.15em; margin-left: 4px; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .hero-sub { margin-top: 10px; font-size: .85rem; letter-spacing: .15em; color: var(--muted); }
+
+    .reveal-up { opacity: 0; transform: translateY(24px); transition: opacity 1s ease, transform 1s ease; }
+    .booted .reveal-up { opacity: 1; transform: none; }
+    .booted .d1 { transition-delay: .15s; } .booted .d2 { transition-delay: .45s; }
+    .booted .d3 { transition-delay: .75s; } .booted .d4 { transition-delay: 1.05s; }
+
+    @media (max-height: 760px) { .scroll-cue { display: none !important; } }
+    .scroll-cue {
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      z-index: 3;
+      font-family: var(--en); font-size: .6rem; letter-spacing: .4em; color: var(--muted);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
       text-decoration: none;
-      transition: background 0.2s, transform 0.2s;
     }
+    .scroll-cue i { width: 1px; height: 46px; background: linear-gradient(var(--gold), transparent); position: relative; overflow: hidden; }
+    .scroll-cue i::after { content: ''; position: absolute; left: 0; top: -40%; width: 100%; height: 40%; background: #fff; animation: drop 1.8s ease-in infinite; }
+    @keyframes drop { to { top: 100%; } }
 
-    .sns-bar a:hover {
-      background: #c9a96e;
-      transform: scale(1.1);
-    }
-
-    .sns-bar a svg { width: 26px; height: 26px; fill: #5a3a1a; }
-    .sns-bar a:hover svg { fill: #fff; }
-
-    .sns-row {
-      display: none;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 14px;
-      margin-top: 24px;
-    }
-
-    .sns-row a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: rgba(44,26,14,0.1);
-      border: 1px solid rgba(201,169,110,0.5);
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-
-    .sns-row a:hover { background: #c9a96e; }
-    .sns-row a svg { width: 26px; height: 26px; fill: #5a3a1a; }
-    .sns-row a:hover svg { fill: #fff; }
-
-    @media (max-width: 1050px) {
-      .sns-bar { display: none; }
-      .sns-row { display: flex; }
-    }
-
-    #topics::before {
-      content: 'NEWS';
-      position: absolute;
-      top: -10px;
-      right: 30px;
-      font-size: 8rem;
-      font-weight: bold;
-      color: rgba(201,169,110,0.08);
-      letter-spacing: 0.2em;
-      pointer-events: none;
-      line-height: 1;
-    }
-
-    #topics .inner {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .topics-label {
-      display: inline-block;
-      background: #2c1a0e;
-      color: #c9a96e;
-      font-size: 0.75rem;
-      font-weight: bold;
-      letter-spacing: 0.2em;
-      padding: 4px 14px;
-      border-radius: 2px;
-      margin-bottom: 20px;
-    }
-
-    .topics-card {
-      background: #fff;
-      border: 1px solid #e8d9bc;
-      border-left: 5px solid #c9a96e;
-      border-radius: 8px;
-      padding: 40px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 40px;
-      align-items: center;
-      box-shadow: 0 4px 20px rgba(44,26,14,0.08);
-    }
-
-    .topics-badge {
-      display: inline-block;
-      background: #c0392b;
-      color: #fff;
-      font-size: 0.78rem;
-      font-weight: bold;
-      letter-spacing: 0.1em;
-      padding: 4px 12px;
-      border-radius: 2px;
-      margin-bottom: 14px;
-    }
-
-    .topics-date {
-      color: #c0392b;
-      font-size: 1.2rem;
-      font-weight: bold;
-      letter-spacing: 0.1em;
-      margin-bottom: 10px;
-    }
-
-    .topics-title {
-      color: #2c1a0e;
-      font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: 0.05em;
-      margin-bottom: 8px;
-      line-height: 1.4;
-    }
-
-    .topics-sub {
-      color: #888;
-      font-size: 0.9rem;
-      letter-spacing: 0.1em;
-      margin-bottom: 20px;
-    }
-
-    .topics-desc {
-      color: #555;
-      font-size: 0.9rem;
+    /* 四隅のHUDフレーム */
+    .corner { position: absolute; width: 38px; height: 38px; border: 1px solid var(--gold); opacity: .6; z-index: 3; }
+    .corner.tl { top: 90px; left: 28px; border-right: 0; border-bottom: 0; }
+    .corner.tr { top: 90px; right: 28px; border-left: 0; border-bottom: 0; }
+    .corner.bl { bottom: 28px; left: 28px; border-right: 0; border-top: 0; }
+    .corner.br { bottom: 28px; right: 28px; border-left: 0; border-top: 0; }
+    .hud-meta {
+      position: absolute; z-index: 3;
+      font-family: var(--en); font-size: .58rem; letter-spacing: .25em; color: var(--muted);
       line-height: 1.9;
-      margin-bottom: 24px;
     }
+    .hud-meta.left { left: 36px; bottom: 76px; }
+    .hud-meta.right { right: 36px; bottom: 76px; text-align: right; }
+    .hud-meta b { color: var(--gold); font-weight: 500; }
 
-    .topics-btn {
-      display: inline-block;
-      background: #2c1a0e;
-      color: #c9a96e;
-      font-weight: bold;
-      font-size: 0.92rem;
-      letter-spacing: 0.1em;
-      padding: 12px 28px;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: background 0.2s;
+    /* ===== 流れるテロップ ===== */
+    .ticker {
+      position: relative; z-index: 2;
+      border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      background: rgba(227,184,95,.04);
+      overflow: hidden; white-space: nowrap;
+      padding: 14px 0;
     }
-
-    .topics-btn:hover {
-      background: #5a3a1a;
+    .ticker-track { display: inline-flex; animation: ticker 40s linear infinite; }
+    .ticker span {
+      font-family: var(--en); font-size: .8rem; letter-spacing: .3em; color: var(--gold);
+      padding: 0 28px;
     }
+    .ticker span.jp { font-family: var(--mincho); letter-spacing: .2em; color: var(--text); }
+    .ticker span::before { content: '◆'; color: var(--cyan); margin-right: 28px; font-size: .55rem; vertical-align: .15em; }
+    @keyframes ticker { to { transform: translateX(-50%); } }
 
-    .topics-qr {
-      text-align: center;
-      flex-shrink: 0;
+    /* ===== セクション共通 ===== */
+    main { position: relative; z-index: 2; }
+    .sec { padding: 120px 24px; position: relative; }
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    .sec-head { margin-bottom: 56px; }
+    .sec-num {
+      font-family: var(--en); font-size: .72rem; letter-spacing: .4em; color: var(--cyan);
+      display: flex; align-items: center; gap: 14px;
     }
-
-    .topics-qr img {
-      width: 160px;
-      height: 160px;
-      border-radius: 8px;
-      background: #fff;
-      padding: 8px;
-      border: 1px solid #e8d9bc;
-    }
-
-    .topics-qr p {
-      color: #999;
-      font-size: 0.78rem;
+    .sec-num::after { content: ''; height: 1px; width: 80px; background: linear-gradient(90deg, var(--cyan), transparent); }
+    .sec-title {
+      font-family: var(--mincho); font-weight: 700;
+      font-size: clamp(1.8rem, 4.2vw, 2.7rem);
+      letter-spacing: .2em;
       margin-top: 10px;
-      letter-spacing: 0.05em;
     }
+    .sec-lead { color: var(--muted); font-size: .9rem; margin-top: 10px; }
 
-    @media (max-width: 600px) {
-      .topics-card {
-        grid-template-columns: 1fr;
-        padding: 28px 20px;
-        gap: 24px;
-      }
-      .topics-title {
-        font-size: 1.4rem;
-      }
-      .topics-qr img {
-        width: 130px;
-        height: 130px;
-      }
-    }
-
-    /* 事業内容カード内画像 */
-    .card-images {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .card-images img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-
-    .ec-placeholder {
-      margin-top: 16px;
-      background: #f7f1e8;
-      border: 2px dashed #c9a96e;
-      border-radius: 6px;
-      height: 160px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #a08060;
-      font-size: 0.88rem;
-      letter-spacing: 0.05em;
-    }
-
-    /* 沿革 */
-    #history {
-      background: #f7f1e8;
-      max-width: 100%;
-      padding: 80px 20px;
-    }
-
-    #history .inner {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .timeline {
+    .glass {
       position: relative;
-      padding-left: 20px;
-      border-left: 3px solid #c9a96e;
-    }
-
-    .timeline-item {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 24px;
-      align-items: flex-start;
-    }
-
-    .timeline-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .timeline-year {
-      font-size: 0.95rem;
-      color: #c9a96e;
-      font-weight: bold;
-      white-space: nowrap;
-      min-width: 60px;
-      padding-top: 2px;
-    }
-
-    .timeline-text {
-      font-size: 0.95rem;
-      line-height: 1.7;
-      color: #444;
-    }
-
-    /* 経営理念 */
-    .philosophy-box {
-      background: #2c1a0e;
-      color: #f0e6d0;
-      border-radius: 8px;
-      padding: 44px 40px;
-      font-size: 1rem;
-      line-height: 2.1;
-      letter-spacing: 0.05em;
-      position: relative;
-    }
-
-    .philosophy-box::before {
-      content: '「';
-      font-size: 4rem;
-      color: #c9a96e;
-      opacity: 0.3;
-      position: absolute;
-      top: 10px;
-      left: 20px;
-      line-height: 1;
-    }
-
-    /* 主な取引先・事業の強み */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-    }
-
-    .partners-list {
-      list-style: none;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 18px;
+      backdrop-filter: blur(6px);
       overflow: hidden;
     }
-
-    .partners-list li {
-      padding: 16px 24px;
-      border-bottom: 1px solid #f0ebe3;
-      font-size: 0.95rem;
-      color: #444;
+    /* ホバーで光るスポットライト */
+    .glass.spot::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(227,184,95,.13), transparent 45%);
+      opacity: 0; transition: opacity .35s;
+      pointer-events: none;
     }
+    .glass.spot:hover::before { opacity: 1; }
+    .glass.spot:hover { border-color: var(--line); }
 
-    .partners-list li:last-child {
-      border-bottom: none;
+    /* スクロールで出現 */
+    .rv { opacity: 0; transform: translateY(40px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+    .rv.in { opacity: 1; transform: none; }
+
+    /* ===== トピックス ===== */
+    .topic {
+      display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center;
+      padding: 40px;
+      margin-bottom: 24px;
     }
-
-    .strengths-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .topic::after {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: linear-gradient(var(--gold), var(--cyan));
+      box-shadow: 0 0 16px var(--gold);
     }
-
-    .strengths-list li {
-      background: #fff;
-      border-radius: 8px;
-      padding: 18px 20px 18px 24px;
-      font-size: 0.92rem;
-      line-height: 1.7;
-      color: #444;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      border-left: 4px solid #c9a96e;
+    .badge {
+      display: inline-block;
+      font-family: var(--en); font-size: .65rem; font-weight: 700; letter-spacing: .25em;
+      padding: 5px 12px; border-radius: 4px;
+      border: 1px solid var(--red); color: var(--red);
+      box-shadow: 0 0 12px rgba(255,77,94,.35) inset;
+      margin-bottom: 14px;
     }
+    .badge.gold { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 12px rgba(227,184,95,.3) inset; }
+    .topic-date { color: var(--gold); font-weight: 700; letter-spacing: .08em; margin-bottom: 6px; }
+    .topic-title { font-family: var(--mincho); font-weight: 700; font-size: 1.45rem; line-height: 1.5; margin-bottom: 6px; }
+    .topic-sub { color: var(--muted); font-size: .85rem; letter-spacing: .08em; margin-bottom: 16px; }
+    .topic-desc { color: #d4cab6; font-size: .9rem; margin-bottom: 24px; }
+    .topic-desc strong { color: var(--gold-hi); }
+    .qr { text-align: center; }
+    .qr img { width: 150px; height: 150px; border-radius: 12px; background: #fff; padding: 8px; box-shadow: 0 0 0 1px var(--line), 0 0 30px rgba(227,184,95,.2); }
+    .qr p { color: var(--muted); font-size: .72rem; margin-top: 10px; }
 
-    /* 取扱商品構成比 */
-    .composition {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .composition-item {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      text-align: center;
-      padding: 30px 16px;
-      border-top: 4px solid #c9a96e;
-    }
-
-    .composition-item .pct {
-      font-size: 2.2rem;
-      font-weight: bold;
-      color: #2c1a0e;
-      letter-spacing: 0.05em;
-    }
-
-    .composition-item .cat {
-      font-size: 0.9rem;
-      color: #777;
-      margin-top: 6px;
-    }
-
-    /* 今後の展望 */
-    .vision-box {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      padding: 36px 32px;
-      font-size: 0.95rem;
-      line-height: 2;
-      color: #444;
-      border-left: 5px solid #c9a96e;
-    }
-
-    /* お問い合わせ */
-    #contact {
-      background: #2c1a0e;
-      color: #f0e6d0;
-      max-width: 100%;
-      padding: 80px 20px;
-    }
-
-    #contact .inner {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    #contact .section-title {
-      color: #f0e6d0;
-      border-left-color: #c9a96e;
-    }
-
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      margin-top: 10px;
-    }
-
-    .contact-item {
-      background: rgba(255,255,255,0.08);
-      border-radius: 8px;
-      padding: 30px 24px;
-    }
-
-    .contact-item .label {
-      font-size: 0.85rem;
-      opacity: 0.7;
-      letter-spacing: 0.1em;
-      margin-bottom: 10px;
-    }
-
-    .contact-item .value {
-      font-size: 1.1rem;
-      letter-spacing: 0.05em;
-    }
-
-    .contact-item a {
-      color: #c9a96e;
+    .btn {
+      position: relative;
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 13px 28px;
+      font-size: .88rem; font-weight: 700; letter-spacing: .1em;
+      color: var(--bg);
+      background: linear-gradient(110deg, var(--gold), var(--gold-hi));
+      border-radius: 999px;
       text-decoration: none;
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+      box-shadow: 0 0 0 rgba(227,184,95,0);
     }
+    .btn::after {
+      content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+      transform: skewX(-20deg);
+      animation: sweep 3.2s ease-in-out infinite;
+    }
+    @keyframes sweep { 0%, 60% { left: -60%; } 100% { left: 130%; } }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(227,184,95,.45); }
 
-    .contact-item a:hover {
-      text-decoration: underline;
+    .sns { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 36px; }
+    .sns a {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      transition: transform .25s, background .25s, box-shadow .25s;
     }
+    .sns a svg { width: 22px; height: 22px; fill: var(--gold); transition: fill .25s; }
+    .sns a:hover { transform: translateY(-4px); background: var(--gold); box-shadow: 0 0 24px rgba(227,184,95,.5); }
+    .sns a:hover svg { fill: var(--bg); }
 
-    /* フッター */
-    footer .footer-links a {
-      color: rgba(240,230,208,0.85);
+    /* ===== 事業内容 ===== */
+    .biz { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .biz-card { padding: 0; display: flex; flex-direction: column; }
+    .biz-img { position: relative; height: 240px; overflow: hidden; }
+    .biz-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
+    .biz-card:hover .biz-img img { transform: scale(1.07); }
+    .biz-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,6,10,.95), rgba(7,6,10,.1) 60%); }
+    .biz-img .scan { position: absolute; left: 0; right: 0; height: 2px; background: var(--cyan); box-shadow: 0 0 14px var(--cyan); opacity: .7; z-index: 2; animation: scan 4s ease-in-out infinite; }
+    @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+    .biz-img.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .biz-body { padding: 28px 30px 32px; flex: 1; }
+    .biz-tag { font-family: var(--en); font-size: .62rem; letter-spacing: .35em; color: var(--cyan); }
+    .biz-body h3 { font-family: var(--mincho); font-size: 1.3rem; letter-spacing: .1em; margin: 6px 0 12px; }
+    .biz-body p { color: #cfc5b1; font-size: .9rem; }
+    .shops { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+    .shop {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: .8rem; font-weight: 500;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      transition: border-color .25s, transform .25s, background .25s;
     }
+    .shop i { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--c); box-shadow: 0 0 10px var(--c); }
+    .shop:hover { border-color: var(--c); transform: translateX(4px); background: rgba(255,255,255,.06); }
+
+    /* ===== 数字 ===== */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .stat { padding: 30px 20px; text-align: center; }
+    .stat-num { font-family: var(--en); font-weight: 900; font-size: clamp(2rem, 4.5vw, 2.8rem); color: var(--gold-hi); text-shadow: 0 0 20px rgba(227,184,95,.45); line-height: 1.2; }
+    .stat-num small { font-size: .45em; margin-left: 4px; color: var(--gold); }
+    .stat-label { font-size: .8rem; color: var(--muted); letter-spacing: .1em; margin-top: 8px; }
+
+    /* ===== 会社概要 ===== */
+    .info { width: 100%; border-collapse: collapse; }
+    .info tr { border-bottom: 1px solid rgba(255,255,255,.06); }
+    .info tr:last-child { border-bottom: 0; }
+    .info th {
+      width: 200px; text-align: left; vertical-align: top;
+      padding: 22px 28px;
+      font-weight: 500; font-size: .85rem; letter-spacing: .12em;
+      color: var(--gold);
+    }
+    .info th::before { content: '// '; color: var(--cyan); font-family: var(--en); font-size: .7rem; }
+    .info td { padding: 22px 28px; font-size: .95rem; }
+    .info td a { color: var(--text); text-decoration: none; border-bottom: 1px dashed var(--line); }
+    .info td a:hover { color: var(--gold-hi); }
+
+    /* ===== 沿革 ===== */
+    .timeline { position: relative; padding-left: 40px; }
+    .timeline::before { content: ''; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 1px; background: rgba(255,255,255,.1); }
+    .timeline .beam {
+      position: absolute; left: 8px; top: 6px; width: 1px; height: 0;
+      background: linear-gradient(var(--gold), var(--cyan));
+      box-shadow: 0 0 12px var(--gold);
+    }
+    .tl-item { position: relative; display: flex; gap: 28px; padding: 14px 0; }
+    .tl-item::before {
+      content: ''; position: absolute; left: -37px; top: 23px;
+      width: 11px; height: 11px; border-radius: 50%;
+      border: 1px solid var(--gold); background: var(--bg);
+      transition: background .4s, box-shadow .4s;
+    }
+    .tl-item.in::before { background: var(--gold); box-shadow: 0 0 14px var(--gold); }
+    .tl-year { font-family: var(--en); font-weight: 700; font-size: .9rem; color: var(--gold); min-width: 66px; letter-spacing: .08em; padding-top: 2px; }
+    .tl-text { font-size: .95rem; min-width: 0; overflow-wrap: anywhere; }
+    .tl-item.hot .tl-text { color: var(--gold-hi); }
+
+    /* ===== 経営理念 ===== */
+    .philo { padding: 64px 56px; text-align: center; }
+    .philo-key {
+      font-family: var(--mincho); font-weight: 900;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      letter-spacing: .3em; padding-left: .3em;
+      color: var(--gold-hi);
+      text-shadow: 0 0 30px rgba(227,184,95,.45);
+      margin-bottom: 30px;
+    }
+    .philo p { font-family: var(--mincho); font-size: 1.02rem; line-height: 2.3; letter-spacing: .06em; color: #e4dac6; max-width: 760px; margin: 0 auto; text-align: left; }
+    .philo p + p { margin-top: 1.2em; }
+    .philo .ring {
+      position: absolute; width: 520px; height: 520px; border-radius: 50%;
+      border: 1px dashed rgba(227,184,95,.15);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      animation: spin2 60s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes spin2 { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+    /* ===== 取引先 ===== */
+    .partners { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+    .partner { padding: 22px 16px; text-align: center; }
+    .partner b { display: block; font-family: var(--mincho); font-size: 1rem; letter-spacing: .05em; }
+    .partner span { display: block; font-size: .72rem; color: var(--muted); margin-top: 6px; }
+
+    /* ===== 事業の強み ===== */
+    .strengths { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .strength { padding: 32px 30px; }
+    .strength:first-child { grid-column: 1 / -1; }
+    .strength .no { font-family: var(--en); font-weight: 900; font-size: 2.4rem; color: transparent; -webkit-text-stroke: 1px var(--gold); line-height: 1; opacity: .8; }
+    .strength h3 { font-family: var(--mincho); font-size: 1.12rem; line-height: 1.6; margin: 12px 0 10px; color: var(--gold-hi); }
+    .strength p { font-size: .88rem; color: #cfc5b1; }
+
+    /* ===== 構成比 ===== */
+    .bars { display: grid; gap: 22px; }
+    .bar-row { display: grid; grid-template-columns: 160px 1fr 70px; align-items: center; gap: 18px; }
+    .bar-label { font-size: .92rem; }
+    .bar { height: 10px; border-radius: 99px; background: rgba(255,255,255,.06); overflow: hidden; }
+    .bar span { display: block; height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, var(--gold), var(--gold-hi), var(--cyan)); box-shadow: 0 0 14px rgba(227,184,95,.6); transition: width 1.6s cubic-bezier(.2,.7,.2,1); }
+    .bar-pct { font-family: var(--en); font-weight: 700; color: var(--gold-hi); text-align: right; }
+
+    .vision { padding: 44px 44px; font-size: .98rem; line-height: 2.1; color: #ddd3bf; }
+    .vision::after { content: 'FUTURE'; position: absolute; right: -10px; bottom: -28px; font-family: var(--en); font-weight: 900; font-size: 7rem; color: rgba(227,184,95,.05); pointer-events: none; }
+
+    /* ===== お問い合わせ ===== */
+    .contact { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .contact-item { padding: 30px; }
+    .contact-item .label { font-family: var(--en); font-size: .62rem; letter-spacing: .35em; color: var(--cyan); margin-bottom: 8px; }
+    .contact-item .value { font-size: 1.08rem; word-break: break-all; }
+    .contact-item a { color: var(--gold-hi); text-decoration: none; }
+    .contact-item a:hover { text-shadow: 0 0 12px rgba(227,184,95,.7); }
+
     footer {
-      background: #1a0f06;
-      color: rgba(240,230,208,0.6);
+      position: relative; z-index: 2;
       text-align: center;
-      padding: 24px;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
+      padding: 40px 20px;
+      border-top: 1px solid var(--line);
+      font-family: var(--en); font-size: .65rem; letter-spacing: .35em; color: var(--muted);
     }
 
-    /* レスポンシブ */
-    @media (max-width: 600px) {
-      header {
-        padding: 6px 8px;
-        gap: 6px;
+    .footer-links { font-family: var(--sans); font-size: .78rem; letter-spacing: .08em; margin-bottom: 14px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; }
+    .footer-links a { color: rgba(242,234,216,.85); text-decoration: none; }
+    .footer-links a:hover { color: var(--gold-hi); }
+    .footer-links span { color: var(--muted); }
+    .sep { height: 1px; max-width: 1080px; margin: 0 auto; background: linear-gradient(90deg, transparent, var(--line), transparent); }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 960px) {
+      nav {
+        position: fixed; inset: 0;
+        flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+        background: rgba(7,6,10,.96);
+        backdrop-filter: blur(16px);
+        opacity: 0; pointer-events: none;
+        transition: opacity .35s;
       }
-      .header-logo {
-        height: 42px;
-      }
-      nav a {
-        padding: 3px 0;
-        font-size: 0.68rem;
-        letter-spacing: 0;
-        width: 25%;
-        text-align: center;
-        box-sizing: border-box;
-      }
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-      .business-cards,
-      .contact-grid,
-      .two-col,
-      .composition {
-        grid-template-columns: 1fr;
-      }
-      .composition {
-        grid-template-columns: 1fr 1fr;
-      }
-      .company-info th {
-        width: 120px;
-      }
+      nav.open { opacity: 1; pointer-events: auto; }
+      nav a { font-size: 1.1rem; font-family: var(--mincho); letter-spacing: .2em; }
+      .menu-btn { display: block; position: relative; z-index: 101; }
+      .partners { grid-template-columns: repeat(3, 1fr); }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .hud-meta { display: none; }
+    }
+    @media (max-width: 720px) {
+      header, header.scrolled { padding-left: 16px; padding-right: 16px; }
+      .brand span { display: none; }
+      .sec { padding: 84px 16px; }
+      .biz, .strengths, .contact { grid-template-columns: 1fr; }
+      .topic { grid-template-columns: 1fr; padding: 28px 22px; gap: 24px; }
+      .topic-title { font-size: 1.2rem; }
+      .partners { grid-template-columns: repeat(2, 1fr); }
+      .info th { width: 110px; padding: 16px 14px; font-size: .78rem; }
+      .info td { padding: 16px 14px; font-size: .88rem; }
+      .bar-row { grid-template-columns: 1fr 56px; }
+      .bar-row .bar { grid-column: 1 / -1; grid-row: 2; }
+      .philo { padding: 44px 22px; }
+      .vision { padding: 30px 22px; }
+      .shops { grid-template-columns: 1fr; }
+      .corner { display: none; }
+    }
+
+    /* 動きを減らす設定の人には静かに表示 */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .rv, .reveal-up { opacity: 1 !important; transform: none !important; }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <img src="logo.png" alt="義恒ロゴ" class="header-logo">
-    <nav>
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader-kanji">義恒</div>
+    <div class="loader-bar"><span id="loaderBar"></span></div>
+    <div class="loader-num" id="loaderNum">LOADING 000</div>
+  </div>
+
+  <div class="cursor-glow" id="glow"></div>
+
+  <header id="header">
+    <a href="#top" class="brand">
+      <img src="logo.png" alt="義恒ロゴ">
+      <span>YOSHITSUNE</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="メニュー"><span></span><span></span><span></span></button>
+    <nav id="nav">
       <a href="#topics">最新情報</a>
       <a href="#business">事業内容</a>
       <a href="#about">会社概要</a>
@@ -752,341 +643,495 @@
     </nav>
   </header>
 
-  <div class="hero">
-    <img src="hero.png" alt="義恒" class="hero-img">
-    <div class="hero-content">
-      <h1>義恒</h1>
-      <p>滋賀県近江八幡から、日本の良いものをお届けします</p>
-      <p class="subtitle">ECサイト販売 ／ 八幡堀 古民家スペース 物品販売</p>
+  <!-- ===== ヒーロー ===== -->
+  <section class="hero" id="top">
+    <div class="hero-photo"></div>
+    <canvas id="net"></canvas>
+    <div class="floor"></div>
+
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+    <div class="hud-meta left">
+      <b>LAT</b> 35.1283° N<br>
+      <b>LNG</b> 136.0976° E<br>
+      OMIHACHIMAN / SHIGA
+    </div>
+    <div class="hud-meta right">
+      EST. <b>2023.10.01</b><br>
+      CHANNELS <b>ONLINE × OFFLINE</b><br>
+      MARKET <b>JAPAN → WORLD</b>
+    </div>
+
+    <div class="hero-core">
+      <div class="hud reveal-up d1">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle class="r3" cx="100" cy="100" r="98" fill="none" stroke="rgba(227,184,95,.18)" stroke-width=".6" stroke-dasharray="1 5"/>
+          <circle class="r1" cx="100" cy="100" r="90" fill="none" stroke="rgba(227,184,95,.75)" stroke-width="1" stroke-dasharray="60 20 6 20 120 40" stroke-linecap="round"/>
+          <circle class="r2" cx="100" cy="100" r="80" fill="none" stroke="rgba(94,230,255,.65)" stroke-width="1.4" stroke-dasharray="18 34" />
+          <circle cx="100" cy="100" r="72" fill="none" stroke="rgba(227,184,95,.15)" stroke-width=".6"/>
+        </svg>
+        <div class="hud-logo"><img src="logo.png" alt="義恒"></div>
+      </div>
+      <h1 class="hero-title reveal-up d2">義恒</h1>
+      <div class="hero-en reveal-up d3">YOSHITSUNE — FROM OMIHACHIMAN TO THE WORLD</div>
+      <p class="hero-copy reveal-up d3"><span id="typed"></span><span class="caret"></span></p>
+      <p class="hero-sub reveal-up d4"><span class="nw">ECサイト販売 ／</span> <span class="nw">八幡堀 古民家スペース 物品販売</span></p>
+    </div>
+
+    <a href="#topics" class="scroll-cue">SCROLL<i></i></a>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>YOSHITSUNE</span><span class="jp">信楽焼</span><span>ENGIMONO</span><span class="jp">福合わせたぬき猫</span><span>OMIHACHIMAN</span><span class="jp">三方よし</span><span>E-COMMERCE</span><span class="jp">八幡堀</span><span>INBOUND</span><span class="jp">縁起物</span><span>GLOBAL</span>
+      <span>YOSHITSUNE</span><span class="jp">信楽焼</span><span>ENGIMONO</span><span class="jp">福合わせたぬき猫</span><span>OMIHACHIMAN</span><span class="jp">三方よし</span><span>E-COMMERCE</span><span class="jp">八幡堀</span><span>INBOUND</span><span class="jp">縁起物</span><span>GLOBAL</span>
     </div>
   </div>
 
-  <!-- 最新トピックス -->
-  <div id="topics">
+  <main>
 
-    <!-- SNS左（PC） -->
-    <div class="sns-bar left">
-      <a href="https://www.instagram.com/yoshitsune1001" target="_blank" title="Instagram">
-        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.333.014 7.053.072 5.775.131 4.602.445 3.635 1.412 2.668 2.379 2.354 3.552 2.295 4.83.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.059 1.277.373 2.45 1.34 3.417.967.967 2.14 1.281 3.417 1.34C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.277-.059 2.45-.373 3.417-1.34.967-.967 1.281-2.14 1.34-3.417.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.667-.072-4.947-.059-1.277-.373-2.45-1.34-3.417-.967-.967-2.14-1.281-3.417-1.34C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-      </a>
-      <a href="https://www.youtube.com/@よしつねの秘密基地" target="_blank" title="YouTube">
-        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-      </a>
-      <a href="https://x.com/yoshitsune2023" target="_blank" title="X">
-        <svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
-      </a>
-    </div>
+    <!-- ===== 最新情報 ===== -->
+    <section class="sec" id="topics">
+      <div class="wrap">
+        <div class="sec-head rv">
+          <div class="sec-num">01 / LATEST TOPICS</div>
+          <h2 class="sec-title">最新情報</h2>
+        </div>
 
-    <!-- SNS右（PC） -->
-    <div class="sns-bar right">
-      <a href="https://www.tiktok.com/@user7403129274832" target="_blank" title="TikTok">
-        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
-      </a>
-      <a href="https://note.com/yoshitsune1001" target="_blank" title="note">
-        <svg viewBox="0 0 24 24"><path d="M4 0h16a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4zm2.5 7a1 1 0 0 0 0 2h3v7a1 1 0 0 0 2 0v-7h3a1 1 0 0 0 0-2h-8z"/></svg>
-      </a>
-      <a href="https://www.facebook.com/profile.php?id=61561100234456" target="_blank" title="Facebook">
-        <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-      </a>
-    </div>
-
-    <div class="inner">
-      <div class="topics-label">LATEST TOPICS</div>
-
-      <!-- YouTube出演トピックス -->
-      <div class="topics-card">
-        <div>
-          <div class="topics-badge" style="background:#c0392b;">NEW</div>
-          <div class="topics-date">2026年9月　東京ビッグサイト ギフトショー会場にて</div>
-          <div class="topics-title" style="font-size:1.4rem;">チャンネル登録者25万人超え！「ラッキーマインチャンネル」あべむつきさんの動画に出演</div>
-          <div class="topics-sub">東京インターナショナル・ギフト・ショー 秋2026 会場より</div>
-          <div class="topics-desc">
-            東京ビッグサイトで開催中のギフトショー会場にて、チャンネル登録者数25万人超えのYouTuber「あべむつき」さんの動画に義恒が出演しました。<br>
-            福合わせたぬき猫をご紹介いただいています。ぜひご覧ください！<br>
-            ※ Makuakeでの応援購入は<strong>9月11日（木）まで</strong>受け付けています。
+        <article class="glass spot topic rv">
+          <div>
+            <div class="badge">NEW</div>
+            <div class="topic-date">2026年9月　東京ビッグサイト ギフトショー会場にて</div>
+            <div class="topic-title">チャンネル登録者25万人超え！「ラッキーマインチャンネル」あべむつきさんの動画に出演</div>
+            <div class="topic-sub">東京インターナショナル・ギフト・ショー 秋2026 会場より</div>
+            <div class="topic-desc">
+              東京ビッグサイトで開催中のギフトショー会場にて、チャンネル登録者数25万人超えのYouTuber「あべむつき」さんの動画に義恒が出演しました。<br>
+              福合わせたぬき猫をご紹介いただいています。ぜひご覧ください！<br>
+              ※ Makuakeでの応援購入は<strong>9月11日（木）まで</strong>受け付けています。
+            </div>
+            <a href="https://youtu.be/078pr4oQRGI" target="_blank" rel="noopener" class="btn">▶ YouTube動画を見る</a>
           </div>
-          <a href="https://youtu.be/078pr4oQRGI" target="_blank" class="topics-btn">▶ YouTube動画を見る</a>
-        </div>
-        <div class="topics-qr">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://youtu.be/078pr4oQRGI" alt="QRコード">
-          <p>スマホでスキャン<br>して動画を視聴</p>
-        </div>
-      </div>
-
-      <div class="topics-card" style="margin-top:24px;">
-        <div>
-          <div class="topics-badge">MAKUAKE</div>
-          <div class="topics-date">2026年7月8日(水) 10:00 Makuake公開！</div>
-          <div class="topics-title">福合わせたぬき猫</div>
-          <div class="topics-sub">信楽焼たぬき × 招き猫　―　奇跡のハイブリッド誕生</div>
-          <div class="topics-desc">
-            信楽の名工と仕上げた、新しい縁起物。<br>
-            「福」と「縁起」を一体に宿した、よしつねの秘密基地初のオリジナル商品が<br>
-            クラウドファンディングサイト「Makuake」にていよいよ公開！
+          <div class="qr">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://youtu.be/078pr4oQRGI" alt="QRコード">
+            <p>スマホでスキャン<br>して動画を視聴</p>
           </div>
-          <a href="https://www.makuake.com/project/yoshitsune/" target="_blank" class="topics-btn">▶ Makuakeで応援・詳細を見る</a>
-        </div>
-        <div class="topics-qr">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://www.makuake.com/project/yoshitsune/" alt="QRコード">
-          <p>スマホでスキャン<br>して登録できます</p>
-        </div>
-      </div>
-      <!-- SNS横並び（スマホ） -->
-      <div class="sns-row">
-        <a href="https://www.instagram.com/yoshitsune1001" target="_blank" title="Instagram">
-          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.333.014 7.053.072 5.775.131 4.602.445 3.635 1.412 2.668 2.379 2.354 3.552 2.295 4.83.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.059 1.277.373 2.45 1.34 3.417.967.967 2.14 1.281 3.417 1.34C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.277-.059 2.45-.373 3.417-1.34.967-.967 1.281-2.14 1.34-3.417.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.667-.072-4.947-.059-1.277-.373-2.45-1.34-3.417-.967-.967-2.14-1.281-3.417-1.34C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-        </a>
-        <a href="https://www.youtube.com/@よしつねの秘密基地" target="_blank" title="YouTube">
-          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </a>
-        <a href="https://x.com/yoshitsune2023" target="_blank" title="X">
-          <svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
-        </a>
-        <a href="https://www.tiktok.com/@user7403129274832" target="_blank" title="TikTok">
-          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
-        </a>
-        <a href="https://note.com/yoshitsune1001" target="_blank" title="note">
-          <svg viewBox="0 0 24 24"><path d="M4 0h16a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4zm2.5 7a1 1 0 0 0 0 2h3v7a1 1 0 0 0 2 0v-7h3a1 1 0 0 0 0-2h-8z"/></svg>
-        </a>
-        <a href="https://www.facebook.com/profile.php?id=61561100234456" target="_blank" title="Facebook">
-          <svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-        </a>
-      </div>
-    </div>
-  </div>
+        </article>
 
-  <section id="business">
-    <h2 class="section-title">事業内容</h2>
-    <div class="business-cards">
-      <div class="card">
-        <h3>ECサイト運営</h3>
-        <p>インターネットを通じて、複数の販売チャネルを運営。こだわりの商品を全国へお届けしています。お客様の暮らしに彩りを添えるアイテムをセレクトし、丁寧にお届けします。</p>
-        <div style="margin-top:16px;">
-          <a href="https://yoshitsune20231001.stores.jp" target="_blank" style="display:inline-block; background:#c9a96e; color:#fff; padding:10px 20px; border-radius:6px; text-decoration:none; font-size:0.92rem; letter-spacing:0.05em; margin-bottom:14px;">🛒 よしつねの秘密基地 ショップはこちら</a>
-        </div>
-        <div style="margin-top:0;">
-          <img src="ec.jpg" alt="ECサイト販売商品一覧" style="width:100%; border-radius:6px; object-fit:cover;">
-        </div>
-        <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">
-          <a href="https://yoshitsune20231001.stores.jp" target="_blank" style="display:inline-block; background:#c9a96e; color:#fff; padding:10px 20px; border-radius:6px; text-decoration:none; font-size:0.92rem; letter-spacing:0.05em;">🛒 よしつねの秘密基地（STORES）</a>
-          <a href="https://www.amazon.co.jp/s?i=merchant-items&me=A3VUCT69VK3VFR&s=popularity-rank&fs=true&ref=lp_26286483051_sar" target="_blank" style="display:inline-block; background:#ff9900; color:#fff; padding:10px 20px; border-radius:6px; text-decoration:none; font-size:0.92rem; letter-spacing:0.05em;">📦 Amazon 義恒</a>
-          <a href="https://auctions.yahoo.co.jp/seller/5u7G3GtAFLZkZhDUgFT54dPc8p6gg?user_type=c" target="_blank" style="display:inline-block; background:#720096; color:#fff; padding:10px 20px; border-radius:6px; text-decoration:none; font-size:0.92rem; letter-spacing:0.05em;">🏷️ ヤフオク よしつね</a>
-          <a href="https://jp.mercari.com/shops/profile/2JVF2rcUEoHPw3uQ7MP36H" target="_blank" style="display:inline-block; background:#ff4752; color:#fff; padding:10px 20px; border-radius:6px; text-decoration:none; font-size:0.92rem; letter-spacing:0.05em;">🛍️ メルカリShops よしつねの秘密基地</a>
-        </div>
-      </div>
-      <div class="card">
-        <h3>八幡堀 古民家スペース 物品販売</h3>
-        <p>近江商人を育んだ歴史の町、近江八幡。豊臣秀次が築いた城下町として栄え、「売り手よし・買い手よし・世間よし」の三方よしの理念は、今もこの地に深く根付いています。その精神が息づく八幡堀沿いの古民家スペースにて、国内外から訪れる観光客の方々に向けた物品販売を行っています。歴史ある空間で地域の魅力に触れながら、心に残る特別なお買い物体験をお楽しみください。</p>
-        <div class="card-images">
-          <img src="shop1.jpg" alt="店舗商品陳列">
-          <img src="shop2.jpg" alt="店舗内観">
-        </div>
-      </div>
-    </div>
-  </section>
+        <article class="glass spot topic rv">
+          <div>
+            <div class="badge gold">MAKUAKE</div>
+            <div class="topic-date">2026年7月8日(水) 10:00 Makuake公開！</div>
+            <div class="topic-title" style="font-size:1.8rem;">福合わせたぬき猫</div>
+            <div class="topic-sub">信楽焼たぬき × 招き猫　―　奇跡のハイブリッド誕生</div>
+            <div class="topic-desc">
+              信楽の名工と仕上げた、新しい縁起物。<br>
+              「福」と「縁起」を一体に宿した、よしつねの秘密基地初のオリジナル商品が<br>
+              クラウドファンディングサイト「Makuake」にていよいよ公開！
+            </div>
+            <a href="https://www.makuake.com/project/yoshitsune/" target="_blank" rel="noopener" class="btn">▶ Makuakeで応援・詳細を見る</a>
+          </div>
+          <div class="qr">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://www.makuake.com/project/yoshitsune/" alt="QRコード">
+            <p>スマホでスキャン<br>して登録できます</p>
+          </div>
+        </article>
 
-  <section id="about">
-    <h2 class="section-title">会社概要</h2>
-    <div class="company-info">
-      <table>
-        <tr>
-          <th>会社名</th>
-          <td>義恒（よしつね）</td>
-        </tr>
-        <tr>
-          <th>代表者名</th>
-          <td>川地　義行</td>
-        </tr>
-        <tr>
-          <th>設立</th>
-          <td>2023年10月1日</td>
-        </tr>
-        <tr>
-          <th>所在地</th>
-          <td>〒523-0801<br>滋賀県近江八幡市宮内町182-4　たばこ会館1階</td>
-        </tr>
-        <tr>
-          <th>電話番号</th>
-          <td><a href="tel:07041041001" style="color:#5a3a1a; text-decoration:none;">070-4104-1001</a></td>
-        </tr>
-        <tr>
-          <th>メールアドレス</th>
-          <td><a href="mailto:yoshitsune20231001@gmail.com" style="color:#5a3a1a; text-decoration:none;">yoshitsune20231001@gmail.com</a></td>
-        </tr>
-        <tr>
-          <th>事業内容</th>
-          <td>ECサイトでの物品販売<br>八幡堀古民家スペースにおける観光客への物品販売</td>
-        </tr>
-      </table>
-    </div>
-  </section>
-
-  <!-- 沿革 -->
-  <div id="history">
-    <div class="inner">
-      <h2 class="section-title">沿革</h2>
-      <div class="timeline">
-        <div class="timeline-item">
-          <span class="timeline-year">R5.10</span>
-          <span class="timeline-text">個人事業主として創業</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R6.01</span>
-          <span class="timeline-text">ヤフオク「よしつね」にて中古品販売開始</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R6.07</span>
-          <span class="timeline-text">自社ECサイト「よしつねの秘密基地」にて販売開始</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R6.08</span>
-          <span class="timeline-text">メルカリショップ「よしつねの秘密基地」にて販売開始</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R7.04</span>
-          <span class="timeline-text">Amazon「義恒」にて販売開始</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R8.04</span>
-          <span class="timeline-text">近江八幡市の古民家スペースを間借りし実店舗オープン</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R8.05</span>
-          <span class="timeline-text">Shopeeシンガポール「yoshitsune」にて販売開始</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R8.07</span>
-          <span class="timeline-text">オリジナル商品「福合わせたぬき猫」Makuakeにてクラウドファンディング開始</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R8.08</span>
-          <span class="timeline-text">WorldShopping BIZにて海外228国の海外販売開始</span>
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-year">R8.09</span>
-          <span class="timeline-text">第102回 東京インターナショナル・ギフト・ショー 秋2026 出展（東京ビッグサイト）</span>
+        <div class="sns rv">
+          <a href="https://www.instagram.com/yoshitsune1001" target="_blank" rel="noopener" title="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.333.014 7.053.072 5.775.131 4.602.445 3.635 1.412 2.668 2.379 2.354 3.552 2.295 4.83.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.059 1.277.373 2.45 1.34 3.417.967.967 2.14 1.281 3.417 1.34C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.277-.059 2.45-.373 3.417-1.34.967-.967 1.281-2.14 1.34-3.417.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.667-.072-4.947-.059-1.277-.373-2.45-1.34-3.417-.967-.967-2.14-1.281-3.417-1.34C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+          <a href="https://www.youtube.com/@よしつねの秘密基地" target="_blank" rel="noopener" title="YouTube"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.930.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+          <a href="https://x.com/yoshitsune2023" target="_blank" rel="noopener" title="X"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
+          <a href="https://www.tiktok.com/@user7403129274832" target="_blank" rel="noopener" title="TikTok"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.890-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg></a>
+          <a href="https://note.com/yoshitsune1001" target="_blank" rel="noopener" title="note"><svg viewBox="0 0 24 24"><path d="M4 0h16a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4zm2.5 7a1 1 0 0 0 0 2h3v7a1 1 0 0 0 2 0v-7h3a1 1 0 0 0 0-2h-8z"/></svg></a>
+          <a href="https://www.facebook.com/profile.php?id=61561100234456" target="_blank" rel="noopener" title="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.100 4.388 23.094 10.125 24v-8.437H7.078v-3.490h3.047V9.430c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.830c-1.491 0-1.956.925-1.956 1.874v2.250h3.328l-.532 3.490h-2.796V24C19.612 23.094 24 18.100 24 12.073z"/></svg></a>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- 経営理念 -->
-  <section id="philosophy">
-    <h2 class="section-title">経営理念</h2>
-    <div class="philosophy-box">
-      私たちは、画面の向こうのお客様、店舗を訪れる地域の人々、そして支えてくださるお取引先様との「人とのつながり」をすべての事業の根幹に据えます。<br><br>
-      国内外への販路拡大やオリジナル商品の制作、積極的な情報発信を通じて世界中へ笑顔をお届けするとともに、出会えた一期一会を何より大切にいたします。関わるすべての人々と確かな絆を深め、心通う温かい未来を共に紡ぎ、豊かな社会の実現に貢献してまいります。
-    </div>
-  </section>
+    <div class="sep"></div>
 
-  <!-- 主な取引先 -->
-  <div id="partners" style="background:#f7f1e8; padding:80px 20px;">
-    <div style="max-width:900px; margin:0 auto;">
-      <h2 class="section-title">主な取引先</h2>
-      <p style="font-size:0.9rem; color:#888; margin-bottom:24px;">約60社のお取引先のうち、主要な企業をご紹介します。</p>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-        <ul class="partners-list">
-          <li>伊万里陶芸<br><span style="font-size:0.82rem; color:#888;">波佐見焼・伊万里焼・有田焼</span></li>
-          <li>㈱三井陶器<br><span style="font-size:0.82rem; color:#888;">美濃焼・瀬戸焼</span></li>
-          <li>松本陶器㈱<br><span style="font-size:0.82rem; color:#888;">瀬戸焼</span></li>
-          <li>伊野正峰㈱<br><span style="font-size:0.82rem; color:#888;">九谷焼</span></li>
-          <li>㈱パレ<br><span style="font-size:0.82rem; color:#888;">ちりめん細工など</span></li>
-        </ul>
-        <ul class="partners-list">
-          <li>カネイシ㈱<br><span style="font-size:0.82rem; color:#888;">フィギュア</span></li>
-          <li>コールソン<br><span style="font-size:0.82rem; color:#888;">アパレル</span></li>
-          <li>La Bella㈱<br><span style="font-size:0.82rem; color:#888;">ハンディファン</span></li>
-          <li>中三エス・ティ㈱<br><span style="font-size:0.82rem; color:#888;">リーメント</span></li>
-          <li>㈲アニマルストアー<br><span style="font-size:0.82rem; color:#888;">雑貨</span></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- 事業の強み -->
-  <section id="strengths">
-    <div>
-        <h2 class="section-title">事業の強み</h2>
-        <ul class="strengths-list">
-          <li>
-            <strong>1. オン・オフライン＆グローバルを繋ぐ「多角的な販売網」</strong><br>
-            自社ECサイトを含め国内の主要な販売チャネル、メルカリ、Amazon、ヤフオクを抑え、さらに東南アジア最大級のプラットフォーム「Shopee（シンガポール）」まで、国内外の主要なデジタル販路を網羅しています。そこに「古民家スペースの実店舗」というリアルな顧客接点が加わったことで、オンラインとオフライン、国内と海外を縦横無尽に行き来できる、規模に対して非常に強固で多角的な販売網を持っています。
-          </li>
-          <li>
-            <strong>2. インバウンドと海外展開の「二刀流」によるグローバル成長性</strong><br>
-            近江八幡の古民家実店舗という「日本らしさ」を活かした空間でインバウンド（訪日外国人）の需要を直接掴む一方で、Shopeeを通じて海外現地へ直接アプローチする体制を整えています。「日本に来る外国人」と「海外にいる外国人」の両方にアプローチできる、時流に乗った極めて高い成長性があります。
-          </li>
-          <li>
-            <strong>3. ニーズを捉える「柔軟な商品ポートフォリオ」と「高付加価値化」</strong><br>
-            陶器、インテリア、おもちゃ、アパレルなど、特定のジャンルに依存しすぎない安定した商品構成を持っています。これにより市場好不調の波を最小限に抑えつつ、トレンドに合わせたスピーディーな商品選定が可能です。また、今後は「オリジナル商品の制作」へと舵を切ることで、単なる仕入れ販売から脱却し、商品に高い付加価値をつけて販売力を向上させる仕組み作りを進めています。
-          </li>
-          <li>
-            <strong>4. 圧倒的な「事業展開のスピード感」</strong><br>
-            令和5年10月の創業からわずか2〜3年の間に、複数の主要ECモールの開拓、自社ECの立ち上げ、実店舗のオープン、さらには海外市場（Shopee）への進出まで、驚異的なスピードで事業を拡大しています。市場の変化を恐れず、即座に挑戦・実行に移せる機動力こそが、他社には真似できない最大の強みです。
-          </li>
-          <li>
-            <strong>5. 情報発信とファン作りの「オープンな認知拡大戦略」</strong><br>
-            今後はSNSでの発信や展示会への積極的な参加など、自社のストーリーや商品の魅力を外に向けてオープンに発信していくフェーズに入っています。実店舗や自社ECという「ファンが帰ってこられる場所（基地）」があるからこそ、これらの認知拡大施策が点ではなく線で繋がり、熱量の高いファンやビジネスパートナーを巻き込んでいく発信力を持っています。
-          </li>
-        </ul>
-    </div>
-
-    <h2 class="section-title" style="margin-top:60px;">取扱商品構成比</h2>
-    <div class="composition">
-      <div class="composition-item">
-        <div class="pct">40%</div>
-        <div class="cat">陶器製品</div>
-      </div>
-      <div class="composition-item">
-        <div class="pct">30%</div>
-        <div class="cat">インテリア・雑貨</div>
-      </div>
-      <div class="composition-item">
-        <div class="pct">20%</div>
-        <div class="cat">おもちゃ</div>
-      </div>
-      <div class="composition-item">
-        <div class="pct">10%</div>
-        <div class="cat">アパレル</div>
-      </div>
-    </div>
-
-    <h2 class="section-title" style="margin-top:60px;">今後の展望</h2>
-    <div class="vision-box">
-      オンライン販売からスタートした「義恒」は、近江八幡の実店舗を通じた地域へのアプローチと、グローバルな海外展開を両立するハイブリッドなエンタープライズへと進化します。今後は設立時から苦楽を共にするパートナーと協力し、独自の価値を持つオリジナル商品の開発に注力してまいります。さらに、SNSや展示会など多角的なメディア・イベントを通じて発信力を強化することで、国内外から愛されるブランドへの成長を牽引してまいります。
-    </div>
-  </section>
-
-  <div id="contact">
-    <div class="inner">
-      <h2 class="section-title">お問い合わせ</h2>
-      <div class="contact-grid">
-        <div class="contact-item">
-          <div class="label">電話番号</div>
-          <div class="value"><a href="tel:07041041001">070-4104-1001</a></div>
+    <!-- ===== 事業内容 ===== -->
+    <section class="sec" id="business">
+      <div class="wrap">
+        <div class="sec-head rv">
+          <div class="sec-num">02 / BUSINESS</div>
+          <h2 class="sec-title">事業内容</h2>
         </div>
-        <div class="contact-item">
-          <div class="label">メールアドレス</div>
-          <div class="value"><a href="mailto:yoshitsune20231001@gmail.com">yoshitsune20231001@gmail.com</a></div>
+
+        <div class="biz">
+          <article class="glass spot biz-card rv">
+            <div class="biz-img"><img src="ec.jpg" alt="ECサイト販売商品一覧"><div class="scan"></div></div>
+            <div class="biz-body">
+              <div class="biz-tag">ONLINE / E-COMMERCE</div>
+              <h3>ECサイト運営</h3>
+              <p>インターネットを通じて、複数の販売チャネルを運営。こだわりの商品を全国へお届けしています。お客様の暮らしに彩りを添えるアイテムをセレクトし、丁寧にお届けします。</p>
+              <div class="shops">
+                <a class="shop" style="--c:#e3b85f" href="https://yoshitsune20231001.stores.jp" target="_blank" rel="noopener"><i></i>よしつねの秘密基地（STORES）</a>
+                <a class="shop" style="--c:#ff9900" href="https://www.amazon.co.jp/s?i=merchant-items&me=A3VUCT69VK3VFR&s=popularity-rank&fs=true&ref=lp_26286483051_sar" target="_blank" rel="noopener"><i></i>Amazon 義恒</a>
+                <a class="shop" style="--c:#b04bff" href="https://auctions.yahoo.co.jp/seller/5u7G3GtAFLZkZhDUgFT54dPc8p6gg?user_type=c" target="_blank" rel="noopener"><i></i>ヤフオク よしつね</a>
+                <a class="shop" style="--c:#ff4752" href="https://jp.mercari.com/shops/profile/2JVF2rcUEoHPw3uQ7MP36H" target="_blank" rel="noopener"><i></i>メルカリShops</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="glass spot biz-card rv">
+            <div class="biz-img duo">
+              <img src="shop1.jpg" alt="店舗商品陳列">
+              <img src="shop2.jpg" alt="店舗内観">
+              <div class="scan" style="animation-delay:-2s"></div>
+            </div>
+            <div class="biz-body">
+              <div class="biz-tag">OFFLINE / HACHIMANBORI</div>
+              <h3>八幡堀 古民家スペース 物品販売</h3>
+              <p>近江商人を育んだ歴史の町、近江八幡。豊臣秀次が築いた城下町として栄え、「売り手よし・買い手よし・世間よし」の三方よしの理念は、今もこの地に深く根付いています。その精神が息づく八幡堀沿いの古民家スペースにて、国内外から訪れる観光客の方々に向けた物品販売を行っています。歴史ある空間で地域の魅力に触れながら、心に残る特別なお買い物体験をお楽しみください。</p>
+            </div>
+          </article>
         </div>
-        <div class="contact-item">
-          <div class="label">所在地</div>
-          <div class="value">滋賀県近江八幡市宮内町182-4<br>たばこ会館1階</div>
-        </div>
-        <div class="contact-item">
-          <div class="label">営業時間</div>
-          <div class="value">お気軽にお問い合わせください</div>
+
+        <div class="stats" style="margin-top:28px;">
+          <div class="glass stat rv"><div class="stat-num"><span class="count" data-to="2023">0</span></div><div class="stat-label">創業（R5.10）</div></div>
+          <div class="glass stat rv"><div class="stat-num">約<span class="count" data-to="60">0</span><small>社</small></div><div class="stat-label">お取引先</div></div>
+          <div class="glass stat rv"><div class="stat-num"><span class="count" data-to="7">0</span><small>販路</small></div><div class="stat-label">国内外の販売チャネル＋実店舗</div></div>
+          <div class="glass stat rv"><div class="stat-num"><span class="count" data-to="228">0</span><small>国</small></div><div class="stat-label">海外販売の対応国</div></div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
+
+    <div class="sep"></div>
+
+    <!-- ===== 会社概要 ===== -->
+    <section class="sec" id="about">
+      <div class="wrap">
+        <div class="sec-head rv">
+          <div class="sec-num">03 / COMPANY</div>
+          <h2 class="sec-title">会社概要</h2>
+        </div>
+        <div class="glass rv">
+          <table class="info">
+            <tr><th>会社名</th><td>義恒（よしつね）</td></tr>
+            <tr><th>代表者名</th><td>川地　義行</td></tr>
+            <tr><th>設立</th><td>2023年10月1日</td></tr>
+            <tr><th>所在地</th><td>〒523-0828<br>滋賀県近江八幡市宮内町182-4　たばこ会館1階</td></tr>
+            <tr><th>電話番号</th><td><a href="tel:07041041001">070-4104-1001</a></td></tr>
+            <tr><th>メールアドレス</th><td><a href="mailto:yoshitsune20231001@gmail.com">yoshitsune20231001@gmail.com</a></td></tr>
+            <tr><th>事業内容</th><td>ECサイトでの物品販売<br>八幡堀古民家スペースにおける観光客への物品販売</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 沿革 ===== -->
+    <section class="sec" id="history" style="padding-top:40px;">
+      <div class="wrap">
+        <div class="sec-head rv">
+          <div class="sec-num">04 / HISTORY</div>
+          <h2 class="sec-title">沿革</h2>
+        </div>
+        <div class="timeline" id="timeline">
+          <div class="beam" id="beam"></div>
+          <div class="tl-item"><span class="tl-year">R5.10</span><span class="tl-text">個人事業主として創業</span></div>
+          <div class="tl-item"><span class="tl-year">R6.01</span><span class="tl-text">ヤフオク「よしつね」にて中古品販売開始</span></div>
+          <div class="tl-item"><span class="tl-year">R6.07</span><span class="tl-text">自社ECサイト「よしつねの秘密基地」にて販売開始</span></div>
+          <div class="tl-item"><span class="tl-year">R6.08</span><span class="tl-text">メルカリショップ「よしつねの秘密基地」にて販売開始</span></div>
+          <div class="tl-item"><span class="tl-year">R7.04</span><span class="tl-text">Amazon「義恒」にて販売開始</span></div>
+          <div class="tl-item"><span class="tl-year">R8.04</span><span class="tl-text">近江八幡市の古民家スペースを間借りし実店舗オープン</span></div>
+          <div class="tl-item"><span class="tl-year">R8.05</span><span class="tl-text">Shopeeシンガポール「yoshitsune」にて販売開始</span></div>
+          <div class="tl-item hot"><span class="tl-year">R8.07</span><span class="tl-text">オリジナル商品「福合わせたぬき猫」Makuakeにてクラウドファンディング開始</span></div>
+          <div class="tl-item"><span class="tl-year">R8.08</span><span class="tl-text">WorldShopping BIZにて海外228国の海外販売開始</span></div>
+          <div class="tl-item hot"><span class="tl-year">R8.09</span><span class="tl-text">第102回 東京インターナショナル・ギフト・ショー 秋2026 出展（東京ビッグサイト）</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sep"></div>
+
+    <!-- ===== 経営理念 ===== -->
+    <section class="sec" id="philosophy">
+      <div class="wrap">
+        <div class="sec-head rv">
+          <div class="sec-num">05 / PHILOSOPHY</div>
+          <h2 class="sec-title">経営理念</h2>
+        </div>
+        <div class="glass philo rv">
+          <div class="ring"></div>
+          <div class="philo-key">人とのつながり</div>
+          <p>私たちは、画面の向こうのお客様、店舗を訪れる地域の人々、そして支えてくださるお取引先様との「人とのつながり」をすべての事業の根幹に据えます。</p>
+          <p>国内外への販路拡大やオリジナル商品の制作、積極的な情報発信を通じて世界中へ笑顔をお届けするとともに、出会えた一期一会を何より大切にいたします。関わるすべての人々と確かな絆を深め、心通う温かい未来を共に紡ぎ、豊かな社会の実現に貢献してまいります。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 主な取引先 ===== -->
+    <section class="sec" id="partners" style="padding-top:40px;">
+      <div class="wrap">
+        <div class="sec-head rv">
+          <div class="sec-num">06 / PARTNERS</div>
+          <h2 class="sec-title">主な取引先</h2>
+          <p class="sec-lead">約60社のお取引先のうち、主要な企業をご紹介します。</p>
+        </div>
+        <div class="partners">
+          <div class="glass spot partner rv"><b>伊万里陶芸</b><span>波佐見焼・伊万里焼・有田焼</span></div>
+          <div class="glass spot partner rv"><b>㈱三井陶器</b><span>美濃焼・瀬戸焼</span></div>
+          <div class="glass spot partner rv"><b>松本陶器㈱</b><span>瀬戸焼</span></div>
+          <div class="glass spot partner rv"><b>伊野正峰㈱</b><span>九谷焼</span></div>
+          <div class="glass spot partner rv"><b>㈱パレ</b><span>ちりめん細工など</span></div>
+          <div class="glass spot partner rv"><b>カネイシ㈱</b><span>フィギュア</span></div>
+          <div class="glass spot partner rv"><b>コールソン</b><span>アパレル</span></div>
+          <div class="glass spot partner rv"><b>La Bella㈱</b><span>ハンディファン</span></div>
+          <div class="glass spot partner rv"><b>中三エス・ティ㈱</b><span>リーメント</span></div>
+          <div class="glass spot partner rv"><b>㈲アニマルストアー</b><span>雑貨</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sep"></div>
+
+    <!-- ===== 事業の強み ===== -->
+    <section class="sec" id="strengths">
+      <div class="wrap">
+        <div class="sec-head rv">
+          <div class="sec-num">07 / STRENGTHS</div>
+          <h2 class="sec-title">事業の強み</h2>
+        </div>
+        <div class="strengths">
+          <div class="glass spot strength rv">
+            <div class="no">01</div>
+            <h3>オン・オフライン＆グローバルを繋ぐ「多角的な販売網」</h3>
+            <p>自社ECサイトを含め国内の主要な販売チャネル、メルカリ、Amazon、ヤフオクを抑え、さらに東南アジア最大級のプラットフォーム「Shopee（シンガポール）」まで、国内外の主要なデジタル販路を網羅しています。そこに「古民家スペースの実店舗」というリアルな顧客接点が加わったことで、オンラインとオフライン、国内と海外を縦横無尽に行き来できる、規模に対して非常に強固で多角的な販売網を持っています。</p>
+          </div>
+          <div class="glass spot strength rv">
+            <div class="no">02</div>
+            <h3>インバウンドと海外展開の「二刀流」によるグローバル成長性</h3>
+            <p>近江八幡の古民家実店舗という「日本らしさ」を活かした空間でインバウンド（訪日外国人）の需要を直接掴む一方で、Shopeeを通じて海外現地へ直接アプローチする体制を整えています。「日本に来る外国人」と「海外にいる外国人」の両方にアプローチできる、時流に乗った極めて高い成長性があります。</p>
+          </div>
+          <div class="glass spot strength rv">
+            <div class="no">03</div>
+            <h3>ニーズを捉える「柔軟な商品ポートフォリオ」と「高付加価値化」</h3>
+            <p>陶器、インテリア、おもちゃ、アパレルなど、特定のジャンルに依存しすぎない安定した商品構成を持っています。これにより市場好不調の波を最小限に抑えつつ、トレンドに合わせたスピーディーな商品選定が可能です。また、今後は「オリジナル商品の制作」へと舵を切ることで、単なる仕入れ販売から脱却し、商品に高い付加価値をつけて販売力を向上させる仕組み作りを進めています。</p>
+          </div>
+          <div class="glass spot strength rv">
+            <div class="no">04</div>
+            <h3>圧倒的な「事業展開のスピード感」</h3>
+            <p>令和5年10月の創業からわずか2〜3年の間に、複数の主要ECモールの開拓、自社ECの立ち上げ、実店舗のオープン、さらには海外市場（Shopee）への進出まで、驚異的なスピードで事業を拡大しています。市場の変化を恐れず、即座に挑戦・実行に移せる機動力こそが、他社には真似できない最大の強みです。</p>
+          </div>
+          <div class="glass spot strength rv">
+            <div class="no">05</div>
+            <h3>情報発信とファン作りの「オープンな認知拡大戦略」</h3>
+            <p>今後はSNSでの発信や展示会への積極的な参加など、自社のストーリーや商品の魅力を外に向けてオープンに発信していくフェーズに入っています。実店舗や自社ECという「ファンが帰ってこられる場所（基地）」があるからこそ、これらの認知拡大施策が点ではなく線で繋がり、熱量の高いファンやビジネスパートナーを巻き込んでいく発信力を持っています。</p>
+          </div>
+        </div>
+
+        <div class="sec-head rv" style="margin-top:100px;">
+          <div class="sec-num">08 / PRODUCT MIX</div>
+          <h2 class="sec-title">取扱商品構成比</h2>
+        </div>
+        <div class="glass rv" style="padding:40px;">
+          <div class="bars">
+            <div class="bar-row"><span class="bar-label">陶器製品</span><div class="bar"><span data-w="40"></span></div><span class="bar-pct"><span class="count" data-to="40">0</span>%</span></div>
+            <div class="bar-row"><span class="bar-label">インテリア・雑貨</span><div class="bar"><span data-w="30"></span></div><span class="bar-pct"><span class="count" data-to="30">0</span>%</span></div>
+            <div class="bar-row"><span class="bar-label">おもちゃ</span><div class="bar"><span data-w="20"></span></div><span class="bar-pct"><span class="count" data-to="20">0</span>%</span></div>
+            <div class="bar-row"><span class="bar-label">アパレル</span><div class="bar"><span data-w="10"></span></div><span class="bar-pct"><span class="count" data-to="10">0</span>%</span></div>
+          </div>
+        </div>
+
+        <div class="sec-head rv" style="margin-top:100px;">
+          <div class="sec-num">09 / VISION</div>
+          <h2 class="sec-title">今後の展望</h2>
+        </div>
+        <div class="glass vision rv">
+          オンライン販売からスタートした「義恒」は、近江八幡の実店舗を通じた地域へのアプローチと、グローバルな海外展開を両立するハイブリッドなエンタープライズへと進化します。今後は設立時から苦楽を共にするパートナーと協力し、独自の価値を持つオリジナル商品の開発に注力してまいります。さらに、SNSや展示会など多角的なメディア・イベントを通じて発信力を強化することで、国内外から愛されるブランドへの成長を牽引してまいります。
+        </div>
+      </div>
+    </section>
+
+    <div class="sep"></div>
+
+    <!-- ===== お問い合わせ ===== -->
+    <section class="sec" id="contact">
+      <div class="wrap">
+        <div class="sec-head rv">
+          <div class="sec-num">10 / CONTACT</div>
+          <h2 class="sec-title">お問い合わせ</h2>
+        </div>
+        <div class="contact">
+          <div class="glass spot contact-item rv"><div class="label">TEL</div><div class="value"><a href="tel:07041041001">070-4104-1001</a></div></div>
+          <div class="glass spot contact-item rv"><div class="label">MAIL</div><div class="value"><a href="mailto:yoshitsune20231001@gmail.com">yoshitsune20231001@gmail.com</a></div></div>
+          <div class="glass spot contact-item rv"><div class="label">ADDRESS</div><div class="value">滋賀県近江八幡市宮内町182-4<br>たばこ会館1階</div></div>
+          <div class="glass spot contact-item rv"><div class="label">HOURS</div><div class="value">お気軽にお問い合わせください</div></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
 
   <footer>
-    <p class="footer-links">
-      <a href="sns/legal/#privacy">プライバシーポリシー</a>　｜　<a href="sns/legal/#terms">利用規約</a>　｜　<a href="https://www.youtube.com/@よしつねの秘密基地" target="_blank">YouTube チャンネル</a>
-    </p>
-    <p>&copy; 2023 義恒 All Rights Reserved.</p>
+    <p class="footer-links"><a href="sns/legal/#privacy">プライバシーポリシー</a><span>｜</span><a href="sns/legal/#terms">利用規約</a><span>｜</span><a href="https://www.youtube.com/@よしつねの秘密基地" target="_blank" rel="noopener">YouTube チャンネル</a></p>
+    <p>&copy; 2023 YOSHITSUNE ALL RIGHTS RESERVED.</p>
   </footer>
 
+  <script>
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---- 起動ローダー ---- */
+    var loader = document.getElementById('loader');
+    var bar = document.getElementById('loaderBar');
+    var num = document.getElementById('loaderNum');
+    function boot() {
+      loader.classList.add('done');
+      document.body.classList.add('booted');
+      startTyping();
+    }
+    if (reduce) { boot(); }
+    else {
+      var p = 0;
+      var t = setInterval(function () {
+        p = Math.min(100, p + Math.random() * 9 + 3);
+        bar.style.width = p + '%';
+        num.textContent = 'LOADING ' + String(Math.floor(p)).padStart(3, '0');
+        if (p >= 100) { clearInterval(t); setTimeout(boot, 250); }
+      }, 55);
+    }
+
+    /* ---- タイプライター ---- */
+    function startTyping() {
+      var el = document.getElementById('typed');
+      var text = innerWidth < 720 ? '滋賀県近江八幡から、\n日本の良いものをお届けします' : '滋賀県近江八幡から、日本の良いものをお届けします';
+      if (reduce) { el.textContent = text; return; }
+      var i = 0;
+      setTimeout(function step() {
+        el.textContent = text.slice(0, ++i);
+        if (i < text.length) setTimeout(step, 85);
+      }, 900);
+    }
+
+    /* ---- ヘッダー・メニュー ---- */
+    var header = document.getElementById('header');
+    window.addEventListener('scroll', function () {
+      header.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+    var nav = document.getElementById('nav');
+    var menuBtn = document.getElementById('menuBtn');
+    function setMenu(on) { nav.classList.toggle('open', on); menuBtn.classList.toggle('open', on); header.classList.toggle('menu-open', on); document.body.classList.toggle('lock', on); }
+    menuBtn.addEventListener('click', function () { setMenu(!nav.classList.contains('open')); });
+    nav.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { setMenu(false); });
+    });
+
+    /* ---- マウス追従の光・カードのスポットライト ---- */
+    var glow = document.getElementById('glow');
+    window.addEventListener('pointermove', function (e) {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    }, { passive: true });
+    document.querySelectorAll('.spot').forEach(function (card) {
+      card.addEventListener('pointermove', function (e) {
+        var r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+
+    /* ---- 数字カウントアップ ---- */
+    function countUp(el) {
+      var to = +el.dataset.to;
+      if (reduce) { el.textContent = to; return; }
+      var start = performance.now(), dur = 1600;
+      (function tick(now) {
+        var k = Math.min(1, (now - start) / dur);
+        k = 1 - Math.pow(1 - k, 3);
+        el.textContent = Math.round(to * k);
+        if (k < 1) requestAnimationFrame(tick);
+      })(start);
+    }
+
+    /* ---- スクロールで出現 ---- */
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        el.classList.add('in');
+        el.querySelectorAll('.count').forEach(countUp);
+        el.querySelectorAll('.bar span').forEach(function (b) { b.style.width = b.dataset.w + '%'; });
+        io.unobserve(el);
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.rv, .tl-item').forEach(function (el, i) {
+      if (el.classList.contains('rv')) el.style.transitionDelay = ((i % 3) * 0.08) + 's';
+      io.observe(el);
+    });
+
+    /* ---- 沿革の光るライン ---- */
+    var tl = document.getElementById('timeline'), beam = document.getElementById('beam');
+    function updateBeam() {
+      var r = tl.getBoundingClientRect();
+      var seen = Math.max(0, Math.min(r.height - 12, window.innerHeight * 0.75 - r.top));
+      beam.style.height = seen + 'px';
+    }
+    window.addEventListener('scroll', updateBeam, { passive: true });
+    updateBeam();
+
+    /* ---- ヒーローの光の粒ネットワーク（＝人とのつながり） ---- */
+    var cv = document.getElementById('net');
+    var ctx = cv.getContext('2d');
+    var W, H, dpr, pts = [], mouse = { x: -9999, y: -9999 };
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = cv.clientWidth; H = cv.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.round(Math.min(110, W * H / 13000));
+      pts = [];
+      for (var i = 0; i < n; i++) {
+        pts.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
+          r: Math.random() * 1.6 + .6,
+          c: Math.random() < .18 ? '94,230,255' : '227,184,95'
+        });
+      }
+    }
+    cv.parentElement.addEventListener('pointermove', function (e) {
+      var r = cv.getBoundingClientRect();
+      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+    });
+    cv.parentElement.addEventListener('pointerleave', function () { mouse.x = mouse.y = -9999; });
+
+    var heroVisible = true;
+    new IntersectionObserver(function (e) { heroVisible = e[0].isIntersecting; }).observe(cv);
+
+    function draw() {
+      if (heroVisible) {
+        ctx.clearRect(0, 0, W, H);
+        var LINK = 130;
+        for (var i = 0; i < pts.length; i++) {
+          var p = pts[i];
+          var dx = mouse.x - p.x, dy = mouse.y - p.y, d = Math.sqrt(dx * dx + dy * dy);
+          if (d < 180) { p.vx += dx / d * .015; p.vy += dy / d * .015; }
+          p.vx *= .992; p.vy *= .992;
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > W) p.vx *= -1;
+          if (p.y < 0 || p.y > H) p.vy *= -1;
+          for (var j = i + 1; j < pts.length; j++) {
+            var q = pts[j], ex = p.x - q.x, ey = p.y - q.y, e2 = ex * ex + ey * ey;
+            if (e2 < LINK * LINK) {
+              ctx.strokeStyle = 'rgba(227,184,95,' + (0.22 * (1 - Math.sqrt(e2) / LINK)) + ')';
+              ctx.lineWidth = .7;
+              ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+            }
+          }
+          ctx.fillStyle = 'rgba(' + p.c + ',.9)';
+          ctx.shadowColor = 'rgba(' + p.c + ',1)';
+          ctx.shadowBlur = 8;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    if (!reduce) draw();
+  })();
+  </script>
 </body>
 </html>
