@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="ENISHI LAB（エニシ・ラボ）｜創設メンバー5社 募集">
+<meta property="og:description" content="一社では、届かない場所へ。小さな会社の共創サロン。主宰：義恒（よしつね）">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yoshitsune.github.io/salon.html">
+<meta property="og:image" content="https://yoshitsune.github.io/salon-ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<title>ENISHI LAB（エニシ・ラボ）｜創設メンバー5社 募集</title>
+<meta name="description" content="一社では、届かない場所へ。小さな会社の共創サロン ENISHI LAB（エニシ・ラボ）。創設メンバー5社を募集します。主宰：義恒（よしつね）">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Outfit:wght@600;700&family=Tektur:wght@500&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05060d; --ink:#eef1fa; --sub:#8a92ac; --low:#464c64;
+    --c1:#9c68ff; --c2:#00e2ff;
+    --grad:linear-gradient(100deg,var(--c1),var(--c2));
+    --glass:rgba(255,255,255,.04); --edge:rgba(255,255,255,.12);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",sans-serif;line-height:1.85;font-size:16px;overflow-x:hidden;
+    background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:40px 40px}
+  a{color:inherit}
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px;position:relative}
+  .mono{font-family:"DM Mono",monospace;letter-spacing:.22em;font-size:13px}
+  .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .glow{position:absolute;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0}
+
+  /* ヘッダー */
+  .top{display:flex;align-items:center;gap:12px;padding:26px 0}
+  .logo{display:flex;align-items:center;gap:10px;font-family:"Tektur",sans-serif;letter-spacing:.2em;font-size:18px}
+  .logo i{display:inline-block;width:18px;height:18px;border-radius:50%;border:2px solid var(--c1)}
+  .logo i+i{border-color:var(--c2);margin-left:-17px}
+
+  /* ヒーロー */
+  .hero{position:relative;padding:40px 0 72px;overflow:hidden}
+  .hero .kicker{display:flex;align-items:center;gap:14px;color:var(--c2)}
+  .hero .kicker::before{content:"";width:34px;height:2px;background:var(--grad)}
+  .hero h1{font-size:clamp(42px,10vw,88px);line-height:1.15;margin:18px 0 22px;font-weight:900;letter-spacing:-.01em}
+  .hero .lead{font-size:clamp(16px,3.6vw,19px);color:var(--sub);margin:0 0 30px;max-width:620px}
+  .hero .lead b{color:var(--ink);font-family:"Tektur",sans-serif;letter-spacing:.12em;font-weight:500}
+  .pill{display:inline-flex;align-items:center;gap:10px;padding:10px 26px;border-radius:999px;border:1.5px solid transparent;
+    background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--grad) border-box;box-shadow:0 0 28px rgba(0,226,255,.25);font-weight:700;margin-bottom:30px}
+  .pill strong{font-family:"Outfit",sans-serif;font-size:30px;line-height:1}
+  .btn{display:inline-flex;align-items:center;gap:12px;background:var(--grad);color:var(--bg);text-decoration:none;font-weight:900;padding:17px 34px;border-radius:999px;box-shadow:0 0 36px rgba(0,226,255,.35);transition:transform .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn::after{content:"→";font-weight:700}
+  .orb{position:absolute;right:-120px;top:10px;width:460px;height:460px;border-radius:50%;z-index:0;opacity:.7;
+    background:radial-gradient(circle at 35% 30%,rgba(156,104,255,.35),transparent 60%);
+    border:1px solid rgba(156,104,255,.35);box-shadow:inset 0 0 80px rgba(0,226,255,.15)}
+  .orb::before,.orb::after{content:"";position:absolute;inset:-40px -90px;border-radius:50%;border:1.5px solid rgba(0,226,255,.55);transform:rotate(-14deg) scaleY(.32)}
+  .orb::after{inset:-90px -150px;border-style:dashed;border-color:rgba(0,226,255,.3)}
+  .hero > .wrap{z-index:1}
+
+  section{padding:64px 0;position:relative;overflow-x:clip}
+  .sec-k{display:flex;align-items:center;gap:14px;color:var(--c2);margin:0 0 6px}
+  .sec-k::before{content:"";width:34px;height:2px;background:var(--grad)}
+  .sec-title{margin:0 0 10px;font-size:clamp(28px,6vw,42px);font-weight:900;line-height:1.3}
+  .sec-sub{color:var(--sub);margin:0 0 32px}
+  .card{background:var(--glass);border:1px solid var(--edge);border-radius:var(--radius)}
+
+  /* 課題 */
+  .worries{display:grid;gap:12px;padding:0;margin:0}
+  .worries li{list-style:none;padding:18px 22px 18px 76px;position:relative;font-weight:500}
+  .worries li span{position:absolute;left:24px;top:50%;transform:translateY(-50%);font-family:"Outfit";font-weight:700;font-size:24px}
+  .answer{margin-top:34px;font-size:clamp(22px,5vw,32px);font-weight:900}
+
+  /* 提案 */
+  .group{margin-top:34px}
+  .group h3{display:flex;align-items:baseline;gap:14px;font-size:20px;margin:0 0 14px}
+  .group h3 .mono{color:var(--sub);font-size:12px}
+  .ideas{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+  .idea{padding:24px 22px 22px;position:relative;overflow:hidden}
+  .idea .no{font-family:"Outfit";font-weight:700;font-size:44px;line-height:1;color:transparent;-webkit-text-stroke:1.5px var(--c1)}
+  .idea:nth-child(2) .no{-webkit-text-stroke-color:#5aa6ff}
+  .idea:nth-child(3) .no{-webkit-text-stroke-color:var(--c2)}
+  .idea h4{margin:12px 0 6px;font-size:19px;font-weight:900}
+  .idea p{margin:0;color:var(--sub);font-size:15px}
+  .proposal-note{margin-top:28px;padding:18px 22px;border-radius:16px;border:1px dashed rgba(0,226,255,.4);color:var(--ink);font-size:15px}
+
+  /* 中身 */
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+  .pillar{padding:24px}
+  .pillar .mono{color:var(--c2);font-size:11px}
+  .pillar b{display:block;font-size:18px;margin:6px 0 4px}
+  .pillar p{margin:0;color:var(--sub);font-size:15px}
+
+  /* 主宰 */
+  .host{padding:30px;display:grid;grid-template-columns:110px 1fr;gap:24px;align-items:center}
+  .host img{width:110px;height:110px;object-fit:contain;border-radius:50%;background:#fff;border:2px solid transparent;
+    background:linear-gradient(#fff,#fff) padding-box,var(--grad) border-box}
+  .host h3{margin:0 0 6px;font-size:20px}
+  .host p{margin:0;color:var(--sub);font-size:15px}
+  .host ul{margin:10px 0 0;padding-left:1.2em;font-size:14px;color:var(--sub)}
+
+  /* 会費 */
+  .normal{display:flex;justify-content:space-between;align-items:center;padding:22px 28px;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+  .normal b{color:var(--sub);font-size:18px}
+  .yen{font-family:"Outfit";font-weight:700;font-size:40px;line-height:1}
+  .yen small{font-family:"Noto Sans JP";font-size:15px;font-weight:500;color:var(--sub);margin-left:6px}
+  .founder{padding:40px 24px 36px;text-align:center;border:1.5px solid transparent;border-radius:28px;
+    background:linear-gradient(rgba(40,30,90,.55),rgba(10,12,30,.7)) padding-box,var(--grad) border-box;box-shadow:0 0 50px rgba(120,90,255,.25)}
+  .founder .mono{color:var(--c2)}
+  .founder h3{margin:8px 0 16px;font-size:clamp(22px,5vw,30px);font-weight:900}
+  .seats{display:flex;justify-content:center;align-items:center;gap:0;margin:0 auto 20px;max-width:360px}
+  .seats i{width:22px;height:22px;border-radius:50%;border:2px solid var(--c2);position:relative;flex:none;box-shadow:0 0 12px rgba(0,226,255,.6)}
+  .seats i::after{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}
+  .seats em{flex:1;height:1.5px;background:var(--grad);opacity:.7}
+  .strike{font-family:"Outfit";font-size:24px;color:var(--sub);text-decoration:line-through}
+  .big{display:flex;justify-content:center;align-items:baseline;gap:10px;flex-wrap:wrap;font-weight:900}
+  .big .n{font-family:"Outfit";font-size:clamp(54px,15vw,150px);line-height:1}
+  .big .z{font-size:clamp(17px,4.6vw,30px)}
+  @media (max-width:560px){ .big{gap:6px} }
+  .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+  .chips span{border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 20px 8px 16px;font-weight:500}
+  .chips span::before{content:"✓";color:var(--c2);margin-right:10px;font-weight:700}
+  .fine{font-size:13px;color:var(--sub);margin-top:14px}
+
+  /* こんな方 */
+  .fit{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .fit .card{padding:24px}
+  .fit h3{margin:0 0 8px;font-size:18px}
+  .fit ul{margin:0;padding-left:1.2em;font-size:15px;color:var(--sub)}
+  .ok h3{color:var(--c2)} .ng h3{color:#ff7a8a}
+
+  /* 流れ */
+  .flow{counter-reset:s;display:grid;gap:12px;padding:0;margin:0}
+  .flow li{list-style:none;counter-increment:s;padding:18px 22px 18px 76px;position:relative}
+  .flow li::before{content:"0" counter(s);position:absolute;left:22px;top:50%;transform:translateY(-50%);font-family:"Outfit";font-weight:700;font-size:24px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* FAQ */
+  details{padding:16px 22px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:700}
+  details p{margin:10px 0 0;color:var(--sub);font-size:15px}
+
+  .cta{text-align:center;padding:56px 22px;border-radius:30px;position:relative;overflow:hidden;
+    background:radial-gradient(circle at 50% 0,rgba(156,104,255,.35),transparent 65%),rgba(255,255,255,.03);border:1px solid var(--edge)}
+  .cta h2{margin:0 0 12px;font-size:clamp(26px,6vw,40px);font-weight:900;line-height:1.35}
+  .cta p{margin:0 0 28px;color:var(--sub)}
+  footer{text-align:center;font-size:13px;color:var(--sub);padding:30px 16px 44px;border-top:1px solid rgba(255,255,255,.08);margin-top:40px}
+  footer .logo{justify-content:center;margin-bottom:8px;color:var(--ink)}
+
+  @media (max-width:560px){
+    section{padding:48px 0}
+    .orb{width:300px;height:300px;right:-150px;top:-10px;opacity:.5}
+    .host{grid-template-columns:1fr;text-align:center}
+    .host img{margin:0 auto}
+    .host ul{text-align:left}
+    .worries li,.flow li{padding-left:64px}
+    .worries li span,.flow li::before{left:18px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="glow" style="width:420px;height:420px;background:#4a2aa8;right:-80px;top:-60px;opacity:.55"></div>
+  <div class="glow" style="width:360px;height:360px;background:#004a72;left:-140px;bottom:-80px;opacity:.6"></div>
+  <div class="orb" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="top"><span class="logo"><i></i><i></i>ENISHI LAB</span></div>
+    <div class="kicker mono">SMALL BUSINESS CO-CREATION SALON</div>
+    <h1>一社では、<br><span class="grad">届かない場所へ。</span></h1>
+    <p class="lead">小さな会社の共創サロン <b>ENISHI LAB</b>（エニシ・ラボ）。<br>“縁（えにし）”でつながった仲間と、一緒に売り、一緒につくり、一緒に挑戦する。小さくて濃い経営者のオンラインサロンです。</p>
+    <div class="pill">創設メンバー <strong class="grad">5</strong> 社 募集中</div><br>
+    <a class="btn" href="#apply">DMで話を聞いてみる</a>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="sec-k mono">PROBLEM</p>
+    <h2 class="sec-title">こんな壁、ありませんか？</h2>
+    <p class="sec-sub">小さな会社の社長は、だいたい一人で抱えています。</p>
+    <ul class="worries">
+      <li class="card"><span class="grad">01</span>急ぎの仕事や困りごとを、気軽に頼める相手がいない</li>
+      <li class="card"><span class="grad">02</span>展示会やイベントに出たいけど、一社だと費用も人手も足りない</li>
+      <li class="card"><span class="grad">03</span>自社の商品だけでは、ギフトや催事の提案に厚みが出ない</li>
+      <li class="card"><span class="grad">04</span>AIが気になるけど、自分の会社で何に使えるのかわからない</li>
+      <li class="card"><span class="grad">05</span>異業種交流会は名刺交換で終わってしまう</li>
+    </ul>
+    <p class="answer">その壁、<span class="grad">つながり</span>で越える。</p>
+  </div>
+</section>
+
+<section>
+  <div class="glow" style="width:420px;height:420px;background:#3a2390;right:-160px;top:120px;opacity:.45"></div>
+  <div class="wrap">
+    <p class="sec-k mono">IDEAS</p>
+    <h2 class="sec-title">こんなこと、やりませんか？</h2>
+    <p class="sec-sub">一社ではできない・割に合わないことも、仲間となら形になります。今考えている9つの案です。</p>
+
+    <div class="group">
+      <h3>売る場をつくる <span class="mono">SELL</span></h3>
+      <div class="ideas">
+        <div class="idea card"><div class="no">01</div><h4>合同イベント</h4>
+          <p>会員の商品やサービスが並ぶイベントを、一緒に開く。集客も準備も分け合えば、一社のときより大きな場がつくれます。</p></div>
+        <div class="idea card"><div class="no">02</div><h4>共同ECショップ</h4>
+          <p>会員の商品を集めたネットショップを、みんなで運営。撮影や運営の手間を分け合い、お互いのお客さんに商品が届きます。</p></div>
+        <div class="idea card"><div class="no">03</div><h4>展示会に共同出展</h4>
+          <p>ギフトショーなどの展示会に、みんなでブースを出展。ブース代も準備も分け合い、出展経験のあるメンバーが動き方を共有します。</p></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h3>商品をつくる <span class="mono">CREATE</span></h3>
+      <div class="ideas">
+        <div class="idea card"><div class="no">04</div><h4>合同ギフトセット</h4>
+          <p>会員の商品を詰め合わせたギフトセットを企画・販売。一社では出せない厚みのある提案ができます。</p></div>
+        <div class="idea card"><div class="no">05</div><h4>コラボ商品の開発</h4>
+          <p>会員どうしの技術や素材を掛け合わせて、新しい商品に。一社では作れない、話題になる商品を一緒に。</p></div>
+        <div class="idea card"><div class="no">06</div><h4>合同クラウドファンディング</h4>
+          <p>複数社の商品をリターンに並べて、Makuakeなどに一緒に挑戦。各社のファンが集まり、見ごたえのあるプロジェクトになります。</p></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h3>コストを下げる <span class="mono">SAVE</span></h3>
+      <div class="ideas">
+        <div class="idea card"><div class="no">07</div><h4>資材の共同仕入れ</h4>
+          <p>梱包材・段ボール・印刷物などをまとめて発注。量が増えるほど単価が下がり、送料も1回分で済みます。</p></div>
+        <div class="idea card"><div class="no">08</div><h4>合同の広告・PR</h4>
+          <p>合同チラシや情報誌への出稿、SNS広告を、費用を割り勘にして大きく出す。会員どうしのSNS紹介でフォロワーにも届きます。</p></div>
+        <div class="idea card"><div class="no">09</div><h4>AIで業務改善</h4>
+          <p>書類づくり、SNS投稿、在庫や帳簿の管理など、会員の会社の「面倒な作業」をAIで楽にする方法を一緒に試します。</p></div>
+      </div>
+    </div>
+
+    <p class="proposal-note">※ ここに挙げたのは、主宰が考えている<b>提案</b>です。実際に何をやるかは、集まった創設メンバーと話し合って決めていきます。「こんなこともやりたい」という案も大歓迎です。</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-k mono">INSIDE</p>
+    <h2 class="sec-title">サロンの中身</h2>
+    <p class="sec-sub">参加は「出られる時だけ」でOK。無理なく続けられる形にしています。</p>
+    <div class="pillars">
+      <div class="pillar card"><span class="mono">REPORT</span><b>主宰の「裏側レポート」</b><p>商品づくり、クラウドファンディング、展示会、卸の取引、AIでの業務自動化。小さな会社が実際にやってきたことを、数字や失敗も含めて共有します。</p></div>
+      <div class="pillar card"><span class="mono">BOARD</span><b>「困った・頼みたい」掲示板</b><p>「こんな業者さん知らない？」「この仕事お願いできる？」を気軽に投稿。主宰が合いそうな会員をつなぎます。</p></div>
+      <div class="pillar card"><span class="mono">MEETING</span><b>月1回のオンライン定例会</b><p>1社3分で近況と「今ほしい紹介・困りごと」を共有。共同企画の相談もここで進めます。</p></div>
+      <div class="pillar card"><span class="mono">RULE</span><b>同じ業種は原則1社まで</b><p>会員どうしでお客さんを取り合わないよう、同業種の入会はできるだけ1社に絞ります。</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="host card">
+      <img src="logo.png" alt="義恒ロゴ">
+      <div>
+        <h3>主宰：義恒（よしつね）</h3>
+        <p>2023年創業。縁起物の企画・販売を手がける小さな会社です。信楽焼の窯元さんと一緒に「福合わせたぬき猫」を商品化し、ECと店頭で販売しています。</p>
+        <ul>
+          <li>クラウドファンディング（Makuake）での商品デビュー</li>
+          <li>ギフトショーなど展示会への出展、雑貨店・量販店への卸</li>
+          <li>AI（Claude など）を使った業務の自動化、AI活用講座の開催</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="glow" style="width:480px;height:480px;background:#3a2390;left:50%;top:40%;transform:translateX(-50%);opacity:.45"></div>
+  <div class="wrap">
+    <p class="sec-k mono">MEMBERSHIP</p>
+    <h2 class="sec-title">会費</h2>
+    <p class="sec-sub">入会金はかかりません。</p>
+    <div class="normal card"><b>通常会費</b><span class="yen">3,000<small>円／月</small></span></div>
+    <div class="founder">
+      <div class="mono">FOUNDING MEMBER</div>
+      <h3>創設メンバー　先着5社</h3>
+      <div class="seats" aria-hidden="true"><i></i><em></em><i></i><em></em><i></i><em></em><i></i><em></em><i></i></div>
+      <div class="strike">3,000</div>
+      <div class="big"><span class="z">ずっと</span><span class="n grad">2,000</span><span class="z">円／月</span></div>
+    </div>
+    <div class="chips"><span>入会金なし</span><span>参加は出られる時だけでOK</span><span>いつでも退会できます</span></div>
+    <p class="fine">※ イベントの出店料・展示会のブース代・共同仕入れの代金・懇親会などは、参加する会員での実費の割り勘です。</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-k mono">FOR YOU</p>
+    <h2 class="sec-title">こんな方に来てほしいです</h2>
+    <p class="sec-sub">&nbsp;</p>
+    <div class="fit">
+      <div class="ok card"><h3>◎ ぴったりな方</h3>
+        <ul>
+          <li>小さな会社・お店・個人事業の経営者</li>
+          <li>自社の商品やサービスを、もっと広げたい方</li>
+          <li>「もらう」だけでなく「振る」こともできる方</li>
+          <li>新しいことを、まず試してみたい方</li>
+        </ul></div>
+      <div class="ng card"><h3>× ご遠慮いただく方</h3>
+        <ul>
+          <li>会員への一方的な営業・勧誘が目的の方</li>
+          <li>マルチ商法・投資・情報商材の勧誘</li>
+          <li>ルールや他の会員を大切にできない方</li>
+        </ul></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <p class="sec-k mono">FLOW</p>
+    <h2 class="sec-title">入会までの流れ</h2>
+    <p class="sec-sub">いきなり申し込まなくて大丈夫です。</p>
+    <ol class="flow">
+      <li class="card">Instagramの DM で「サロン」と送ってください</li>
+      <li class="card">サロンの詳しい内容を、DMでご案内します</li>
+      <li class="card">お互いに納得できたら入会。会員用のグループにご招待します</li>
+    </ol>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <p class="sec-k mono">FAQ</p>
+    <h2 class="sec-title">よくある質問</h2>
+    <p class="sec-sub">&nbsp;</p>
+    <details class="card"><summary>やることは、もう決まっていますか？</summary><p>まだ決まっていません。上の9つは主宰からの提案です。創設メンバーと話し合って、やりたいこと・効果がありそうなことから始めます。</p></details>
+    <details class="card"><summary>地域の決まりはありますか？</summary><p>ありません。活動は基本オンラインです。イベントや展示会など対面の企画は、参加できる方が参加する形です。</p></details>
+    <details class="card"><summary>どんな業種でも入れますか？</summary><p>業種は問いません。ただし、会員どうしの取り合いを防ぐため、同じ業種はできるだけ1社までとしています。</p></details>
+    <details class="card"><summary>忙しくて毎回参加できないのですが…</summary><p>大丈夫です。出られる時だけの参加でOKです。全部に参加しなくても、レポートや掲示板だけで役立つように運営します。</p></details>
+    <details class="card"><summary>AIに詳しくなくても大丈夫ですか？</summary><p>大丈夫です。パソコンやスマホの基本操作ができれば、使い方から一緒にやります。</p></details>
+    <details class="card"><summary>退会はいつでもできますか？</summary><p>はい、いつでも退会できます。次の支払日の前日までにご連絡ください。</p></details>
+  </div>
+</section>
+
+<section style="padding-top:0" id="apply">
+  <div class="wrap">
+    <div class="cta">
+      <p class="mono" style="color:var(--c2);margin-bottom:10px">JOIN US</p>
+      <h2>一社では届かない場所へ、<br><span class="grad">一緒に行きませんか。</span></h2>
+      <p>創設メンバーは先着5社です。<br>まずは気軽に、話を聞くところから。</p>
+      <a class="btn" href="https://www.instagram.com/yoshitsune1001/" target="_blank" rel="noopener">Instagram の DM で「サロン」と送る</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo"><i></i><i></i>ENISHI LAB</div>
+  小さな会社の共創サロン　主宰：義恒（よしつね）<br>
+  ※ 会則・特定商取引法に基づく表記は、正式な申込みの際にご案内します。
+</footer>
+
+</body>
+</html>
