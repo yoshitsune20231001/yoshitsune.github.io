@@ -1,0 +1,212 @@
+{
+  "title": "紅葉狩り",
+  "theme": "季節の行事・秋の行楽・八幡山の紅葉狩り",
+  "location": "八幡山ロープウェイふもとの乗り場とゴンドラ、山頂展望台",
+  "location_en": "Hachimanyama Ropeway in Omihachiman on a bright autumn afternoon, including the foot station at the base of the mountain, the gondola cabin, and the summit observation deck overlooking Lake Biwa. Warm October sunlight, red and yellow autumn leaves, distant town roofs, and a calm lake view. No real logos or copyrighted characters. Leave clear blank space near the top of each panel for speech bubbles.",
+  "panels": [
+    {
+      "scene_ja": "ふもとのロープウェイ乗り場の前で、猫とたぬきが紅葉した八幡山を見上げている。琵琶湖は見えず、町並みと山の紅葉が広がる。",
+      "scene_en": "Wide shot at the ropeway station at the foot of Mt. Hachiman before boarding. The NEKO (boy cat) and the TANUKI stand in front of the station, looking up at the autumn-colored mountain. A small signboard says 紅葉狩り. Lake Biwa must NOT be visible; show town streets, rooftops, and the red-yellow mountain rising behind them. Both look excited, with blank space above for speech bubbles.",
+      "lines": [
+        {
+          "speaker": "猫",
+          "text": "今日は八幡山で紅葉狩りしよう！"
+        },
+        {
+          "speaker": "たぬき",
+          "text": "琵琶湖見えるかなぁ"
+        }
+      ]
+    },
+    {
+      "scene_ja": "ゴンドラの中で、猫とたぬきが景色を眺めている。ゴンドラが少し揺れて、たぬきはちょっぴりこわがっている。",
+      "scene_en": "Inside the ropeway gondola, medium shot. The TANUKI looks a little scared and clutches the handrail as the cabin sways slightly. The NEKO (boy cat) steadies himself while looking surprised. Lake Biwa and autumn mountains are visible through the windows. Leave space above for speech bubbles.",
+      "lines": [
+        {
+          "speaker": "猫",
+          "text": "ゴンドラ揺れる！"
+        },
+        {
+          "speaker": "たぬき",
+          "text": "ちょっぴり怖いね"
+        }
+      ]
+    },
+    {
+      "scene_ja": "山頂の展望台に着き、紅葉と大きな琵琶湖が広がる絶景をふたりで見ている。猫は感動して琵琶湖を指さし、たぬきは足元の落ち葉や木の実を集め始める。",
+      "scene_en": "At the summit observation deck. A beautiful wide panoramic view of autumn leaves and the big Lake Biwa below. The NEKO (boy cat) points at the lake with an amazed expression. The TANUKI starts picking up fallen leaves and nuts at his feet, smiling eagerly. Open blue sky, red and yellow foliage, and a broad scenic overlook. Keep open space at the top for speech bubbles.",
+      "lines": [
+        {
+          "speaker": "猫",
+          "text": "見て見て！琵琶湖大きいよ"
+        },
+        {
+          "speaker": "たぬき",
+          "text": "紅葉狩りするよ！"
+        }
+      ]
+    },
+    {
+      "scene_ja": "山頂で、たぬきが落ち葉や木の実を両手いっぱいに抱えて満足顔をしている。猫はあきれ顔で笑い、背景には紅葉と琵琶湖が広がる。",
+      "scene_en": "Summit observation deck with Lake Biwa and brilliant autumn foliage in the background. The TANUKI proudly holds armfuls of colorful fallen leaves and nuts, looking completely satisfied. The NEKO (boy cat) stands beside him with an amused, slightly exasperated smile. Warm autumn light, scenic mountain atmosphere. Leave blank space above for speech bubbles.",
+      "lines": [
+        {
+          "speaker": "たぬき",
+          "text": "景色も紅葉も満タン！"
+        },
+        {
+          "speaker": "猫",
+          "text": "紅葉狩りって景色を眺めて楽しむことだけどね"
+        }
+      ]
+    }
+  ],
+  "moral": "紅葉狩りは、拾うより眺める楽しみ。\nでも、うれしい気持ちを集めるのも秋の宝物。",
+  "hook_line1": "紅葉狩りで、",
+  "hook_line2": "狩るのは\n景色!?",
+  "moral_short": "秋を楽しもう",
+  "closing_line": "紅葉も景色も満タン",
+  "title_card_scene_en": "Vertical title card composition at the Hachimanyama summit in autumn. The TANUKI and the NEKO (boy cat) smile brightly while holding colorful maple leaves and small nuts as the key items of the episode. Behind them are Lake Biwa, Omihachiman rooftops, ropeway cables, and warm October foliage. Cheerful autumn sightseeing atmosphere with space for the title text 紅葉狩り.",
+  "note_header_scene_en": "Horizontal note header composition with the same bright autumn mood. The TANUKI and the NEKO (boy cat) are near the Hachimanyama observation deck, happily enjoying maple leaves and small nuts. Lake Biwa stretches across the background, with soft sunlight and red-yellow foliage framing the scene. Leave clean space for headline text 紅葉狩り.",
+  "x_post": "「今日は八幡山で紅葉狩りしよう！」\n「琵琶湖見えるかなぁ」\n「ゴンドラ揺れる！」\n「ちょっぴり怖いね」\n「見て見て！琵琶湖大きいよ」\n「紅葉狩りするよ！」\n「景色も紅葉も満タン！」\n\n紅葉狩りは、拾うより眺める楽しみ。\nでも、うれしい気持ちを集めるのも秋の宝物。",
+  "x_reply": "信楽焼のたぬき×招き猫「福合わせたぬき猫」の4コマ、第20話です🍁🦝🐱\n生みの親のご主人の物語はこちら👇\nオンラインショップにて販売中です（プロフィールのリンクから）。",
+  "instagram_reel_caption": "八幡山で紅葉狩り🍁\n\nこんにちは、福合わせたぬき猫です🍂\n\n「今日は八幡山で紅葉狩りしよう！」\n「琵琶湖見えるかなぁ」\n「ゴンドラ揺れる！」\n「ちょっぴり怖いね」\n\n山頂に着いたら、目の前には\n紅葉と大きな琵琶湖の絶景。\n\nでも、たぬきは足元の落ち葉や木の実に夢中。\n\n「景色も紅葉も満タン！」\n\n紅葉狩りって、景色を眺めて楽しむことだけど、\nうれしい気持ちを集めるのも秋の宝物ですね🍀\n\n━━━━━━━\n\n📌 クスッとしたら保存してね🐾\n\n福合わせたぬき猫は\nオンラインショップで販売中。\n右手で金運💰左手で良縁🤝\nプロフィールのリンクから会いに来てね✨",
+  "instagram_post_caption": "「八幡山で紅葉狩り」\n\nこんにちは、福合わせたぬき猫です🍂\n\n今日はふたりで、八幡山へ紅葉狩りに出発しました。\n\n「今日は八幡山で紅葉狩りしよう！」\n「琵琶湖見えるかなぁ」\n\nふもとの乗り場から、紅葉した山を見上げてわくわく。\nゴンドラに乗ると、少しゆらゆら。\n\n「ゴンドラ揺れる！」\n「ちょっぴり怖いね」\n\n山頂に着くと、目の前には紅葉と大きな琵琶湖の絶景。\n\n「見て見て！琵琶湖大きいよ」\n\nところがたぬきは、足元の落ち葉や木の実をせっせと集め始めます。\n\n「紅葉狩りするよ！」\n\n両手いっぱいに抱えて、満足そうにひとこと。\n\n「景色も紅葉も満タン！」\n\n紅葉狩りは、景色を眺めて楽しむもの。\nでも、きれいな落ち葉を見つけたり、誰かと笑ったりする時間も、秋の宝物なのかもしれません🍀\n\nみなさまにも今日ひとつ、\n心がふわっと色づく景色が\n見つかりますように。\n\n━━━━━━━\n\n📌 クスッとしたら、保存して✨\n\n福合わせたぬき猫は\nオンラインショップで販売中。\n右手で金運💰左手で良縁🤝\nプロフィールのリンクから会いに来てね🐾",
+  "tiktok_caption": "八幡山で紅葉狩り🍁🦝🐱\n「ゴンドラ揺れる！」「ちょっぴり怖いね」\n山頂の琵琶湖に感動…と思ったら、たぬきは落ち葉集め!?😂\n景色も紅葉も満タン✨\nプロフィールのリンクから",
+  "facebook_post": "信楽焼のたぬき×招き猫「福合わせたぬき猫」の4コマ、第20話です。\n\n今回は、八幡山で紅葉狩りを楽しむお話です。ふもとの乗り場からゴンドラに乗って山頂へ。そこには紅葉と琵琶湖の絶景が広がっていました。\n\n「今日は八幡山で紅葉狩りしよう！」\n「琵琶湖見えるかなぁ」\n「見て見て！琵琶湖大きいよ」\n「景色も紅葉も満タン！」\n\n紅葉狩りは眺めて楽しむものですが、うれしい気持ちを集めるのも秋の宝物ですね。\n\nオンラインショップはこちら",
+  "story_text": "新作4コマ公開！",
+  "tiktok_pinned_comment": "みなさんが紅葉狩りに行きたい場所はどこですか？🍁 ショップはプロフィールのリンクからどうぞ🦝🐱",
+  "youtube_title": "八幡山で紅葉狩り！景色も紅葉も満タン🍁 福合わせたぬき猫4コマ第20話 #shorts",
+  "youtube_description": "信楽焼のたぬき×招き猫「福合わせたぬき猫」の4コマ・第20話。\n\n今回は、八幡山で紅葉狩り。\nふもとのロープウェイ乗り場からゴンドラに乗って、山頂を目指します。\n\n「今日は八幡山で紅葉狩りしよう！」\n「琵琶湖見えるかなぁ」\n「ゴンドラ揺れる！」\n「ちょっぴり怖いね」\n「見て見て！琵琶湖大きいよ」\n「紅葉狩りするよ！」\n「景色も紅葉も満タン！」\n\n紅葉狩りは、拾うより眺める楽しみ。\nでも、うれしい気持ちを集めるのも秋の宝物なのかもしれません。\n\nたぬきの八相縁起と、招き猫の招き。お互いの福を“合わせ持つ”から、福合わせ。\n\n右手で金運💰 左手で良縁🤝\n縁起物「福合わせたぬき猫」の4コマ・第20話です。\n\n福合わせたぬき猫は、オンラインショップにて販売中です👇\n（プロフィール・概要欄のリンクから）",
+  "youtube_tags": [
+    "福合わせたぬき猫",
+    "信楽焼",
+    "招き猫",
+    "たぬき",
+    "縁起物",
+    "紅葉狩り",
+    "八幡山ロープウェイ",
+    "近江八幡",
+    "4コマ漫画",
+    "秋の行楽",
+    "癒し"
+  ],
+  "youtube_pinned_comment": "八幡山の紅葉と琵琶湖の景色で、心も満タン🍁 見てくださってありがとうございます🦝🐱\n\n▼オンラインショップにて販売中（プロフィール・概要欄のリンクから）",
+  "note_title": "八幡山で紅葉狩り。琵琶湖の絶景と、たぬきの“狩り”の勘違い",
+  "note_body": "こんにちは。よしつねの秘密基地の義恒(よしつね)です。\n\n信楽焼のたぬきと招き猫を掛け合わせた「福合わせたぬき猫」。\n4コマ漫画も、今回で第20話になりました。\n\n今回は、八幡山の紅葉狩りのお話です。\n秋の山を見上げ、ゴンドラに揺られ、山頂から琵琶湖を眺める。\nそんな気持ちのいい一日を、ふたりらしく楽しみます。\n\n\n■ ふもとの乗り場から出発\n\n八幡山ロープウェイのふもとの乗り場で、猫が言いました。\n\n「今日は八幡山で紅葉狩りしよう！」\n\n紅葉した山を見上げながら、たぬきもわくわくしています。\n\n「琵琶湖見えるかなぁ」\n\n〔①コマ目の画像〕\n\nまだここからは琵琶湖は見えません。\nでも、町並みの向こうに色づいた八幡山が見えて、これから始まる小さな旅に胸が弾みます。\n\n\n■ ゴンドラは少しゆらゆら\n\nふたりはゴンドラに乗り込みます。\n窓の外には、秋の景色が広がっていきます。\n\n「ゴンドラ揺れる！」\n\n猫がびっくりすると、たぬきも手すりにつかまって少し不安そう。\n\n「ちょっぴり怖いね」\n\n〔②コマ目の画像〕\n\n高いところへ上がっていく時間は、わくわくするけれど、少しどきどきもしますね。\n\n\n■ 山頂に広がる絶景\n\n山頂の展望台に着くと、目の前には紅葉と大きな琵琶湖が広がっていました。\n\n猫は思わず、琵琶湖を指さします。\n\n「見て見て！琵琶湖大きいよ」\n\nところが、たぬきは足元の落ち葉や木の実に夢中です。\n\n「紅葉狩りするよ！」\n\n〔③コマ目の画像〕\n\n紅葉狩りの「狩り」を、少し本気で受け取ってしまったのかもしれません。\n\n\n■ 景色も紅葉も満タン！\n\nたぬきは、きれいな落ち葉や木の実を両手いっぱいに抱えて満足そうです。\n\n「景色も紅葉も満タン！」\n\nその姿を見て、猫はあきれながらも笑います。\n\n「紅葉狩りって景色を眺めて楽しむことだけどね」\n\n〔④コマ目の画像〕\n\n紅葉狩りは、紅葉を眺めて楽しむこと。\nでも、きれいな葉っぱを見つけたり、秋の実を拾ったり、誰かと笑い合ったりする時間も、やっぱり秋の楽しみです。\n\n琵琶湖の景色を眺める猫。\n足元の秋を集めるたぬき。\n\n楽しみ方は少し違っても、ふたりの心はきっと同じように満タンです。\n\nみなさまにも今日、\n心がふわっと色づくような小さな秋が、ひとつ見つかりますように。\n\n福合わせたぬき猫と一緒に、皆さまに福が訪れますように。\n\nよしつねの秘密基地　義恒スタッフ一同",
+  "extra_hashtags": [
+    "#紅葉狩り",
+    "#近江八幡観光"
+  ],
+  "episode": 20,
+  "date": "2026-10-16",
+  "post_date": "2026-10-17",
+  "dir": "sns/output/2026-10-16-2",
+  "release_tag": "ep20-2026-10-16-2",
+  "media": [
+    "carousel_0_cover.jpg",
+    "carousel_1.jpg",
+    "carousel_2.jpg",
+    "carousel_3.jpg",
+    "carousel_4.jpg",
+    "manga.jpg",
+    "note_header.jpg",
+    "panel1.jpg",
+    "panel2.jpg",
+    "panel3.jpg",
+    "panel4.jpg",
+    "reel_instagram.mp4",
+    "reel_tiktok.mp4",
+    "reel_x.mp4",
+    "reel_youtube.mp4",
+    "story.jpg",
+    "title_card.jpg"
+  ],
+  "hashtags": {
+    "x": [
+      "#招き猫",
+      "#信楽焼",
+      "#縁起物"
+    ],
+    "instagram": [
+      "#福合わせたぬき猫",
+      "#招き猫",
+      "#縁起物",
+      "#4コマ漫画",
+      "#よしつねの秘密基地"
+    ],
+    "youtube": [
+      "#福合わせたぬき猫",
+      "#信楽焼",
+      "#招き猫",
+      "#たぬき",
+      "#縁起物",
+      "#4コマ漫画",
+      "#shorts"
+    ],
+    "facebook": [
+      "#福合わせたぬき猫",
+      "#信楽焼",
+      "#招き猫",
+      "#縁起物"
+    ],
+    "tiktok": [
+      "#福合わせたぬき猫",
+      "#信楽焼",
+      "#招き猫",
+      "#たぬき",
+      "#縁起物",
+      "#4コマ漫画",
+      "#開運",
+      "#おすすめにのりたい",
+      "#fyp",
+      "#japan",
+      "#luckycat"
+    ]
+  },
+  "product_tag": "福合わせたぬき猫",
+  "schedule": [
+    {
+      "sns": "YouTubeショート",
+      "day": "当日",
+      "time": "18:00"
+    },
+    {
+      "sns": "TikTok",
+      "day": "当日",
+      "time": "19:00"
+    },
+    {
+      "sns": "インスタ（リール）",
+      "day": "当日",
+      "time": "20:00"
+    },
+    {
+      "sns": "Facebook",
+      "day": "当日",
+      "time": "20:00"
+    },
+    {
+      "sns": "ストーリーズ",
+      "day": "当日",
+      "time": "20:05"
+    },
+    {
+      "sns": "X",
+      "day": "当日",
+      "time": "21:00"
+    },
+    {
+      "sns": "note",
+      "day": "当日",
+      "time": "23:00"
+    },
+    {
+      "sns": "インスタ（カルーセル）",
+      "day": "当日",
+      "time": "12:00"
+    }
+  ],
+  "status": "承認待ち",
+  "mock": false
+}
