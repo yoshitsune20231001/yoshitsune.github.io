@@ -107,11 +107,13 @@ def redo_targets(feedback: str) -> set | None:
 
     nums = {"1": 1, "2": 2, "3": 3, "4": 4, "１": 1, "２": 2, "３": 3, "４": 4, "①": 1, "②": 2, "③": 3, "④": 4}
     t: set = set()
-    for m in re.findall(r"([1-4１-４])\s*(?:コマ|こま)|([①-④])", feedback or ""):
+    # 「1コマ目・2コマ目はそのままでOK」のような行は、描き直し対象に数えない
+    feedback = "\n".join(ln for ln in re.split(r"[\n。]", feedback or "") if not re.search(r"そのまま|変えない|変更なし", ln))
+    for m in re.findall(r"([1-4１-４])\s*(?:コマ|こま)|([①-④])", feedback):
         t.add(nums[m[0] or m[1]])
-    if re.search(r"タイトル|表紙", feedback or ""):
+    if re.search(r"タイトル|表紙", feedback):
         t.add("title")
-    if re.search(r"note|ノート|見出し", feedback or ""):
+    if re.search(r"note|ノート|見出し", feedback):
         t.add("note")
     return t or None
 
@@ -249,7 +251,8 @@ def panel_prompt(cfg: dict, sc: Script, panel: Panel, idx: int) -> str:
         "inside each bubble; never write the speaker's name, a colon or quotation marks in the bubble:\n"
         f"{lines}\n"
         "If a line is spoken by ご主人 (the owner), point that bubble's tail to the owner's hand/sleeve; never draw the owner's face.\n"
-        "Keep the same background location and character designs as the other panels. No other text."
+        "Keep the same background location and character designs as the other panels. No other text.\n"
+        "This image is ONE single panel showing ONE scene: never draw a comic grid, multiple panels or small frames inside it."
     )
 
 
