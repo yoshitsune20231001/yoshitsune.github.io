@@ -358,7 +358,11 @@ def main() -> int:
         mtag = re.search(r"<!-- tag:(.+?) -->", body)
         if not (mdir and mtag):
             continue
-        post = json.loads((ROOT / mdir.group(1).strip() / "post.json").read_text(encoding="utf-8"))
+        pj = ROOT / mdir.group(1).strip() / "post.json"
+        if not pj.exists():  # 古い回はフォルダが自動で消えている（keep_days）。止まらずに飛ばす
+            print(f"#{it['number']} は台本ファイルが残っていないので飛ばします（{pj.parent.name}）")
+            continue
+        post = json.loads(pj.read_text(encoding="utf-8"))
         tag = mtag.group(1).strip()
         for m in LINE.finditer(body):
             done, sns, when = m.group(1) == "x", m.group(2).strip(), m.group(3)
