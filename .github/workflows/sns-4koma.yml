@@ -24,7 +24,7 @@ permissions:
   issues: write
 
 concurrency:
-  group: sns-4koma
+  group: sns-4koma-v2   # 11/10 に止まったまま消せない実行が古い枠をふさいでいるため、枠の名前を変更
   cancel-in-progress: false
 
 jobs:
