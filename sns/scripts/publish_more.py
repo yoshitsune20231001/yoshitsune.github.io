@@ -224,8 +224,26 @@ def post_tiktok(post, repo, tag, cfg):
         "Content-Range": f"bytes 0-{len(body) - 1}/{len(body)}"})
     if up.status_code >= 400:
         raise RuntimeError(f"TikTok アップロードに失敗: {up.status_code} {up.text[:200]}")
+    # TikTok側の処理（受信箱に届くまで）を最大3分ほど見届ける。失敗ならその理由を出す
+    pid, state = j["data"].get("publish_id"), "?"
+    for _ in range(18):
+        time.sleep(10)
+        st = requests.post("https://open.tiktokapis.com/v2/post/publish/status/fetch/", timeout=30,
+                           headers={"Authorization": f"Bearer {tok}", "Content-Type": "application/json; charset=UTF-8"},
+                           json={"publish_id": pid}).json()
+        d = st.get("data") or {}
+        state = d.get("status") or st.get("error", {}).get("code", "?")
+        if state == "FAILED":  # 15分ごとに何度も送り直さないよう、例外にはせず理由を知らせる
+            state = f"FAILED（理由：{d.get('fail_reason', '不明')}）"
+            break
+        if state in ("SEND_TO_USER_INBOX", "PUBLISH_COMPLETE"):
+            break
+    print(f"  TikTok の状態: {state}")
     tags = " ".join(post.get("hashtags", {}).get("tiktok", []))
-    return "", ("📥 TikTokアプリの **受信箱（お知らせ）** に動画を送りました。アプリで開いて、BGMを付けて投稿してください。\n"
+    seen = ("✅ TikTokの受信箱に届いたことを確認しました。" if state == "SEND_TO_USER_INBOX" else
+            f"⚠️ TikTok側の処理で失敗しました（{state}）。確認ページの reel_tiktok.mp4 をスマホに保存して、アプリから投稿してください。"
+            if state.startswith("FAILED") else f"⏳ TikTok側はまだ処理中です（状態：{state}）。少し待ってから受信箱を見てください。")
+    return "", (seen + "\n📥 TikTokアプリの **受信箱（お知らせ）** に動画を送りました。アプリで開いて、BGMを付けて投稿してください。\n"
                 "投稿したら上のチェックを入れてください。\n\n**キャプション（コピー用）**\n```\n"
                 f"{post['tiktok_caption'].strip()}\n\n{tags}\n```\n**固定コメント**\n```\n{post.get('tiktok_pinned_comment', '').strip()}\n```")
 
